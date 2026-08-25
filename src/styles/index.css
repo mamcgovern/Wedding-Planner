@@ -3,4 +3,8 @@
 @import "./layout.css";
 @import "./dashboard.css";
 @import "./tasks.css";
-@import "./auth.css"
+@import "./calendar.css";
+@import "./auth.css";
+@import "./pins.css";
+@import "./guests.css";
+@import "./seating-chart.css";
