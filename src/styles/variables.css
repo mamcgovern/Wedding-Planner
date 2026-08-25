@@ -1,0 +1,28 @@
+:root {
+  --sage: #c3cec1;
+  --sage-dark: #6b705c;
+  --sage-light: #e5ebe3;
+
+  --blush: #e7cac3;
+  --blush-dark: #d7a49a;
+  --blush-light: #f4e5e1;
+
+  --ivory: #eee9e3;
+  --cream: #f8f5f1;
+  --white: #ffffff;
+
+  --charcoal: #373737;
+  --black: #000000;
+
+  --text: #373737;
+  --text-light: #77736f;
+  --border: #dfd9d3;
+
+  --sidebar-width: 250px;
+
+  --radius-small: 8px;
+  --radius-medium: 14px;
+  --radius-large: 22px;
+
+  --shadow-soft: 0 8px 28px rgba(55, 55, 55, 0.06);
+}
