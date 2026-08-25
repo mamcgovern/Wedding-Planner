@@ -1,35 +1,104 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import AppLayout from "./components/layout/AppLayout.jsx";
+import {
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 
-import Dashboard from "./pages/Dashboard";
-import Tasks from "./pages/Tasks";
-import Calendar from "./pages/Calendar";
-import Pins from "./pages/Pins";
-import Guests from "./pages/Guests";
-import SeatingChart from "./pages/SeatingChart";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AppLayout from "./components/layout/AppLayout";
+
 import Budget from "./pages/Budget";
-import Vendors from "./pages/Vendors";
-import Timeline from "./pages/Timeline";
+import Calendar from "./pages/Calendar";
+import Dashboard from "./pages/Dashboard";
 import Files from "./pages/Files";
+import Guests from "./pages/Guests";
+import Login from "./pages/Login";
+import Pins from "./pages/Pins";
+import SeatingChart from "./pages/SeatingChart";
 import Settings from "./pages/Settings";
+import Tasks from "./pages/Tasks";
+import Timeline from "./pages/Timeline";
+import Vendors from "./pages/Vendors";
 
 function App() {
   return (
     <Routes>
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/tasks" element={<Tasks />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/pins" element={<Pins />} />
-        <Route path="/guests" element={<Guests />} />
-        <Route path="/seating-chart" element={<SeatingChart />} />
-        <Route path="/budget" element={<Budget />} />
-        <Route path="/vendors" element={<Vendors />} />
-        <Route path="/timeline" element={<Timeline />} />
-        <Route path="/files" element={<Files />} />
-        <Route path="/settings" element={<Settings />} />
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path="/"
+          element={<Dashboard />}
+        />
+
+        <Route
+          path="/tasks"
+          element={<Tasks />}
+        />
+
+        <Route
+          path="/calendar"
+          element={<Calendar />}
+        />
+
+        <Route
+          path="/pins"
+          element={<Pins />}
+        />
+
+        <Route
+          path="/guests"
+          element={<Guests />}
+        />
+
+        <Route
+          path="/seating-chart"
+          element={<SeatingChart />}
+        />
+
+        <Route
+          path="/budget"
+          element={<Budget />}
+        />
+
+        <Route
+          path="/vendors"
+          element={<Vendors />}
+        />
+
+        <Route
+          path="/timeline"
+          element={<Timeline />}
+        />
+
+        <Route
+          path="/files"
+          element={<Files />}
+        />
+
+        <Route
+          path="/settings"
+          element={<Settings />}
+        />
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
+        />
       </Route>
     </Routes>
   );
