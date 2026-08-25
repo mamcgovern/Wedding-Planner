@@ -29,56 +29,77 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (firebaseUser) => {
+        setUser(firebaseUser);
 
-      if (!firebaseUser) {
-        setUserData(null);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const userRef = doc(db, "users", firebaseUser.uid);
-        const userSnapshot = await getDoc(userRef);
-
-        if (userSnapshot.exists()) {
-          setUserData({
-            id: userSnapshot.id,
-            ...userSnapshot.data(),
-          });
-        } else {
-          const newUserData = {
-            displayName: firebaseUser.displayName || "",
-            email: firebaseUser.email || "",
-            photoURL: firebaseUser.photoURL || "",
-            weddingId: null,
-            role: null,
-            createdAt: serverTimestamp(),
-          };
-
-          await setDoc(userRef, newUserData);
-
-          setUserData({
-            id: firebaseUser.uid,
-            ...newUserData,
-          });
+        if (!firebaseUser) {
+          setUserData(null);
+          setLoading(false);
+          return;
         }
-      } catch (error) {
-        console.error("Error loading user data:", error);
-        setUserData(null);
-      } finally {
-        setLoading(false);
+
+        try {
+          const userRef = doc(
+            db,
+            "users",
+            firebaseUser.uid
+          );
+
+          const userSnapshot = await getDoc(userRef);
+
+          if (userSnapshot.exists()) {
+            setUserData({
+              id: userSnapshot.id,
+              ...userSnapshot.data(),
+            });
+          } else {
+            const newUserData = {
+              displayName:
+                firebaseUser.displayName || "",
+              email:
+                firebaseUser.email || "",
+              photoURL:
+                firebaseUser.photoURL || "",
+              createdAt: serverTimestamp(),
+            };
+
+            await setDoc(
+              userRef,
+              newUserData
+            );
+
+            setUserData({
+              id: firebaseUser.uid,
+              ...newUserData,
+            });
+          }
+        } catch (error) {
+          console.error(
+            "Error loading user data:",
+            error
+          );
+
+          setUserData(null);
+        } finally {
+          setLoading(false);
+        }
       }
-    });
+    );
 
     return unsubscribe;
   }, []);
 
   const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
+    const provider =
+      new GoogleAuthProvider();
 
-    const result = await signInWithPopup(auth, provider);
+    const result =
+      await signInWithPopup(
+        auth,
+        provider
+      );
 
     return result.user;
   };
@@ -87,29 +108,12 @@ export function AuthProvider({ children }) {
     await signOut(auth);
   };
 
-  const refreshUserData = async () => {
-    if (!auth.currentUser) {
-      return;
-    }
-
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    const userSnapshot = await getDoc(userRef);
-
-    if (userSnapshot.exists()) {
-      setUserData({
-        id: userSnapshot.id,
-        ...userSnapshot.data(),
-      });
-    }
-  };
-
   const value = {
     user,
     userData,
     loading,
     loginWithGoogle,
     logout,
-    refreshUserData,
   };
 
   return (
