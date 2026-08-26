@@ -6,8 +6,9 @@ import {
 } from "react";
 
 import {
+  GoogleAuthProvider,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from "firebase/auth";
 
@@ -17,6 +18,9 @@ import {
 
 const AuthContext =
   createContext(null);
+
+const googleProvider =
+  new GoogleAuthProvider();
 
 export function AuthProvider({
   children,
@@ -49,15 +53,11 @@ export function AuthProvider({
     return unsubscribe;
   }, []);
 
-  const login =
-    async (
-      email,
-      password
-    ) => {
-      return signInWithEmailAndPassword(
+  const loginWithGoogle =
+    async () => {
+      return signInWithPopup(
         auth,
-        email,
-        password
+        googleProvider
       );
     };
 
@@ -71,7 +71,7 @@ export function AuthProvider({
   const value = {
     user,
     loading,
-    login,
+    loginWithGoogle,
     logout,
   };
 

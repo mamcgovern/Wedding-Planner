@@ -1,13 +1,12 @@
 import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
   Navigate,
   useLocation,
   useNavigate,
 } from "react-router-dom";
+
+import {
+  useState,
+} from "react";
 
 import {
   useAuth,
@@ -16,7 +15,7 @@ import {
 function Login() {
   const {
     user,
-    login,
+    loginWithGoogle,
   } = useAuth();
 
   const navigate =
@@ -24,16 +23,6 @@ function Login() {
 
   const location =
     useLocation();
-
-  const [
-    email,
-    setEmail,
-  ] = useState("");
-
-  const [
-    password,
-    setPassword,
-  ] = useState("");
 
   const [
     loading,
@@ -49,13 +38,6 @@ function Login() {
     location.state?.from ||
     "/admin";
 
-  useEffect(() => {
-    setError("");
-  }, [
-    email,
-    password,
-  ]);
-
   if (user) {
     return (
       <Navigate
@@ -65,18 +47,13 @@ function Login() {
     );
   }
 
-  const handleSubmit =
-    async (event) => {
-      event.preventDefault();
-
+  const handleGoogleLogin =
+    async () => {
       setLoading(true);
       setError("");
 
       try {
-        await login(
-          email.trim(),
-          password
-        );
+        await loginWithGoogle();
 
         navigate(
           from,
@@ -86,12 +63,12 @@ function Login() {
         );
       } catch (firebaseError) {
         console.error(
-          "Login error:",
+          "Google login error:",
           firebaseError
         );
 
         setError(
-          "We couldn't sign you in. Check your email and password and try again."
+          "We couldn't sign you in with Google. Please try again."
         );
       } finally {
         setLoading(false);
@@ -110,69 +87,31 @@ function Login() {
         </h1>
 
         <p className="page-description">
-          Sign in to access planning
-          tools and edit wedding
-          information.
+          Sign in with Google to
+          access planning tools and
+          edit wedding information.
         </p>
 
-        <form
-          className="login-form"
-          onSubmit={
-            handleSubmit
+        {error && (
+          <p className="login-error">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="button"
+          className="primary-button google-login-button"
+          onClick={
+            handleGoogleLogin
+          }
+          disabled={
+            loading
           }
         >
-          <label className="form-field">
-            <span>
-              Email
-            </span>
-
-            <input
-              type="email"
-              value={email}
-              onChange={(event) =>
-                setEmail(
-                  event.target.value
-                )
-              }
-              autoComplete="email"
-              required
-            />
-          </label>
-
-          <label className="form-field">
-            <span>
-              Password
-            </span>
-
-            <input
-              type="password"
-              value={password}
-              onChange={(event) =>
-                setPassword(
-                  event.target.value
-                )
-              }
-              autoComplete="current-password"
-              required
-            />
-          </label>
-
-          {error && (
-            <p className="login-error">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            className="primary-button"
-            disabled={loading}
-          >
-            {loading
-              ? "Signing In..."
-              : "Sign In"}
-          </button>
-        </form>
+          {loading
+            ? "Signing In..."
+            : "Continue with Google"}
+        </button>
       </div>
     </main>
   );
