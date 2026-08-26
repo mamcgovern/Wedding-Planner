@@ -1,27 +1,19 @@
 import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-} from "firebase/auth";
-import {
-  getFirestore,
-} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyAs81kYRb5pjpJs8vRVuJv9VvF-1bnj23k",
+  authDomain: "wedding-planner-29900.firebaseapp.com",
+  projectId: "wedding-planner-29900",
+  storageBucket: "wedding-planner-29900.firebasestorage.app",
+  messagingSenderId: "788880817741",
+  appId: "1:788880817741:web:90447625fb12e86fa56604"
 };
 
-const app =
-  initializeApp(
-    firebaseConfig
-  );
+const app = initializeApp(firebaseConfig);
 
-export const auth =
-  getAuth(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
-export const db =
-  getFirestore(app);
+export default app;
