@@ -416,15 +416,15 @@ function Guests() {
 
           const matchesRsvp =
             rsvpFilter ===
-              "all" ||
+            "all" ||
             guest.rsvpStatus ===
-              rsvpFilter;
+            rsvpFilter;
 
           const matchesRehearsal =
             rehearsalFilter ===
-              "all" ||
+            "all" ||
             guest.rehearsalStatus ===
-              rehearsalFilter;
+            rehearsalFilter;
 
           const matchesFamilyVisibility =
             !managingFamilies ||
@@ -472,7 +472,7 @@ function Guests() {
         (guest) =>
           !guest.rsvpStatus ||
           guest.rsvpStatus ===
-            "pending"
+          "pending"
       ).length;
 
     const rehearsalAttending =
@@ -609,7 +609,7 @@ function Guests() {
 
       importOrder:
         typeof guest.importOrder ===
-        "number"
+          "number"
           ? guest.importOrder
           : null,
 
@@ -988,7 +988,7 @@ function Guests() {
             operations.slice(
               start,
               start +
-                chunkSize
+              chunkSize
             );
 
           const batch =
@@ -1248,7 +1248,7 @@ function Guests() {
 
       const allSelected =
         visibleIds.length >
-          0 &&
+        0 &&
         visibleIds.every(
           (id) =>
             selectedGuestIds.includes(
@@ -1734,47 +1734,47 @@ function Guests() {
 
           {households.length >
             0 && (
-            <div className="family-existing-list">
-              <span>
-                Existing families
-              </span>
+              <div className="family-existing-list">
+                <span>
+                  Existing families
+                </span>
 
-              <div>
-                {households.map(
-                  (household) => (
-                    <button
-                      key={
-                        household.id
-                      }
-                      type="button"
-                      onClick={() =>
-                        selectHousehold(
+                <div>
+                  {households.map(
+                    (household) => (
+                      <button
+                        key={
                           household.id
-                        )
-                      }
-                    >
-                      {
-                        household.name
-                      }
-
-                      <small>
-                        {
-                          household.count
                         }
-                      </small>
-                    </button>
-                  )
-                )}
+                        type="button"
+                        onClick={() =>
+                          selectHousehold(
+                            household.id
+                          )
+                        }
+                      >
+                        {
+                          household.name
+                        }
+
+                        <small>
+                          {
+                            household.count
+                          }
+                        </small>
+                      </button>
+                    )
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           <div className="family-action-tabs">
             <button
               type="button"
               className={
                 familyAction ===
-                "new"
+                  "new"
                   ? "active"
                   : ""
               }
@@ -1791,7 +1791,7 @@ function Guests() {
               type="button"
               className={
                 familyAction ===
-                "existing"
+                  "existing"
                   ? "active"
                   : ""
               }
@@ -1807,7 +1807,7 @@ function Guests() {
 
           <div className="family-manager-actions">
             {familyAction ===
-            "new" ? (
+              "new" ? (
               <label className="family-name-input">
                 <span>
                   Family / Household Name
@@ -1878,7 +1878,7 @@ function Guests() {
               disabled={
                 savingFamily ||
                 selectedGuestIds.length ===
-                  0
+                0
               }
             >
               {savingFamily ? (
@@ -1907,7 +1907,7 @@ function Guests() {
               disabled={
                 savingFamily ||
                 selectedGuestIds.length ===
-                  0
+                0
               }
             >
               <X size={16} />
@@ -2078,7 +2078,7 @@ function Guests() {
 
           <p>
             {managingFamilies &&
-            hideAssignedGuests
+              hideAssignedGuests
               ? "Everyone shown by your current filters has already been assigned to a family."
               : "Try changing your search or filters."}
           </p>
@@ -2094,7 +2094,7 @@ function Guests() {
                       type="checkbox"
                       checked={
                         filteredGuests.length >
-                          0 &&
+                        0 &&
                         filteredGuests.every(
                           (guest) =>
                             selectedGuestIds.includes(
@@ -2200,7 +2200,11 @@ function Guests() {
                         </div>
                       </td>
 
-                      <td>
+                      <td className="guest-rsvp-cell">
+                        <span className="guest-mobile-field-label">
+                          Family
+                        </span>
+
                         {guest.householdName ? (
                           <span className="family-badge">
                             {
@@ -2214,7 +2218,11 @@ function Guests() {
                         )}
                       </td>
 
-                      <td>
+                      <td className="guest-rsvp-cell">
+                        <span className="guest-mobile-field-label">
+                          Wedding
+                        </span>
+
                         <RsvpBadge
                           status={
                             guest.rsvpStatus
@@ -2222,7 +2230,11 @@ function Guests() {
                         />
                       </td>
 
-                      <td>
+                      <td className="guest-rsvp-cell">
+                        <span className="guest-mobile-field-label">
+                          Rehearsal
+                        </span>
+
                         <RsvpBadge
                           status={
                             guest.rehearsalStatus
@@ -2824,11 +2836,10 @@ function Guests() {
 
                               <td>
                                 <span
-                                  className={`csv-action-badge ${
-                                    willUpdate
+                                  className={`csv-action-badge ${willUpdate
                                       ? "update"
                                       : "new"
-                                  }`}
+                                    }`}
                                 >
                                   {willUpdate
                                     ? "Update"
@@ -2950,14 +2961,14 @@ function parseWeddingCsvRows(
       const weddingStatus =
         normalizeRsvpStatus(
           row[
-            "The Bergans Wedding"
+          "The Bergans Wedding"
           ]
         );
 
       const rehearsalStatus =
         normalizeRehearsalStatus(
           row[
-            "Rehearsal Dinner"
+          "Rehearsal Dinner"
           ]
         );
 
@@ -2970,9 +2981,9 @@ function parseWeddingCsvRows(
         const guestOfName =
           previousNamedGuest
             ? getGuestDisplayName(
-                previousNamedGuest,
-                false
-              )
+              previousNamedGuest,
+              false
+            )
             : "";
 
         const sourceKey =
@@ -3005,14 +3016,14 @@ function parseWeddingCsvRows(
           songRequest:
             cleanCsvValue(
               row[
-                "Any song requests?"
+              "Any song requests?"
               ]
             ),
 
           notes:
             cleanCsvValue(
               row[
-                "Leave a note for the couple."
+              "Leave a note for the couple."
               ]
             ),
 
@@ -3090,14 +3101,14 @@ function parseWeddingCsvRows(
         songRequest:
           cleanCsvValue(
             row[
-              "Any song requests?"
+            "Any song requests?"
             ]
           ),
 
         notes:
           cleanCsvValue(
             row[
-              "Leave a note for the couple."
+            "Leave a note for the couple."
             ]
           ),
 
@@ -3144,7 +3155,7 @@ function buildExistingGuestLookup(
         (guest) =>
           guest.sourceKey ||
           guest.sourceType ===
-            "csv" ||
+          "csv" ||
           guest.importedFrom
       )
       .sort(
@@ -3323,7 +3334,7 @@ function suggestHouseholdName(
       firstLastName &&
       secondLastName &&
       firstLastName.toLowerCase() ===
-        secondLastName.toLowerCase();
+      secondLastName.toLowerCase();
 
     /*
      * Maddie & Nick Bergan
@@ -3436,13 +3447,13 @@ function compareGuestOrder(
   ) {
     const firstOrder =
       typeof first.importOrder ===
-      "number"
+        "number"
         ? first.importOrder
         : Number.MAX_SAFE_INTEGER;
 
     const secondOrder =
       typeof second.importOrder ===
-      "number"
+        "number"
         ? second.importOrder
         : Number.MAX_SAFE_INTEGER;
 
@@ -3503,15 +3514,14 @@ function getGuestOrderLabel(
     return "RSVP list";
   }
 
-  return `RSVP list #${
-    guest.importOrder + 1
-  }`;
+  return `RSVP list #${guest.importOrder + 1
+    }`;
 }
 
 function generateHouseholdId() {
   if (
     typeof crypto !==
-      "undefined" &&
+    "undefined" &&
     crypto.randomUUID
   ) {
     return crypto.randomUUID();
@@ -3707,11 +3717,10 @@ function GuestStat({
 }) {
   return (
     <div
-      className={`guest-stat-card ${
-        type
+      className={`guest-stat-card ${type
           ? `guest-stat-${type}`
           : ""
-      }`}
+        }`}
     >
       <p>{label}</p>
 
@@ -3730,29 +3739,29 @@ function RsvpBadge({
     status === "na"
       ? "na"
       : normalizeRsvpStatus(
-          status
-        );
+        status
+      );
 
   const labels = compact
     ? {
-        attending: "Yes",
-        pending: "Pending",
-        declined: "No",
-        na: "N/A",
-      }
+      attending: "Yes",
+      pending: "Pending",
+      declined: "No",
+      na: "N/A",
+    }
     : {
-        attending:
-          "Attending",
+      attending:
+        "Attending",
 
-        pending:
-          "Awaiting RSVP",
+      pending:
+        "Awaiting RSVP",
 
-        declined:
-          "Declined",
+      declined:
+        "Declined",
 
-        na:
-          "N/A",
-      };
+      na:
+        "N/A",
+    };
 
   return (
     <span
@@ -3760,7 +3769,7 @@ function RsvpBadge({
     >
       {
         labels[
-          normalized
+        normalized
         ]
       }
     </span>

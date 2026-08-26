@@ -4,7 +4,12 @@
 @import "./dashboard.css";
 @import "./tasks.css";
 @import "./calendar.css";
-@import "./auth.css";
 @import "./pins.css";
 @import "./guests.css";
 @import "./seating-chart.css";
+@import "./budget.css";
+@import "./vendors.css";
+@import "./timeline.css";
+@import "./files.css";
+@import "./settings.css";
+@import "./auth.css";

@@ -1,54 +1,56 @@
 import {
   CalendarDays,
   CircleDollarSign,
-  ClipboardCheck,
-  Clock3,
   FileText,
   Heart,
-  Home,
-  Images,
+  LayoutDashboard,
+  ListTodo,
   LogOut,
+  Menu,
+  Pin,
   Settings,
   TableProperties,
-  UserRound,
   Users,
+  UserRoundCheck,
+  X,
 } from "lucide-react";
 
 import {
   NavLink,
-  useNavigate,
+  useLocation,
 } from "react-router-dom";
+
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import { useAuth } from "../../context/AuthContext";
 
-const navigationSections = [
-  {
-    label: null,
-    items: [
-      {
-        name: "Dashboard",
-        path: "/",
-        icon: Home,
-      },
-    ],
-  },
+const navigationGroups = [
   {
     label: "Planning",
     items: [
       {
-        name: "Tasks",
-        path: "/tasks",
-        icon: ClipboardCheck,
+        label: "Dashboard",
+        path: "/",
+        icon: LayoutDashboard,
+        end: true,
       },
       {
-        name: "Calendar",
+        label: "Tasks",
+        path: "/tasks",
+        icon: ListTodo,
+      },
+      {
+        label: "Calendar",
         path: "/calendar",
         icon: CalendarDays,
       },
       {
-        name: "Pins & Ideas",
+        label: "Pins",
         path: "/pins",
-        icon: Images,
+        icon: Pin,
       },
     ],
   },
@@ -56,29 +58,14 @@ const navigationSections = [
     label: "Guests",
     items: [
       {
-        name: "Guest List",
+        label: "Guest List",
         path: "/guests",
         icon: Users,
       },
       {
-        name: "Seating Chart",
+        label: "Seating Chart",
         path: "/seating-chart",
         icon: TableProperties,
-      },
-    ],
-  },
-  {
-    label: "Finances",
-    items: [
-      {
-        name: "Budget",
-        path: "/budget",
-        icon: CircleDollarSign,
-      },
-      {
-        name: "Vendors",
-        path: "/vendors",
-        icon: UserRound,
       },
     ],
   },
@@ -86,12 +73,22 @@ const navigationSections = [
     label: "Wedding",
     items: [
       {
-        name: "Timeline",
-        path: "/timeline",
-        icon: Clock3,
+        label: "Budget",
+        path: "/budget",
+        icon: CircleDollarSign,
       },
       {
-        name: "Files",
+        label: "Vendors",
+        path: "/vendors",
+        icon: UserRoundCheck,
+      },
+      {
+        label: "Timeline",
+        path: "/timeline",
+        icon: CalendarDays,
+      },
+      {
+        label: "Files",
         path: "/files",
         icon: FileText,
       },
@@ -100,131 +97,312 @@ const navigationSections = [
 ];
 
 function Sidebar() {
-  const navigate = useNavigate();
+  const { user, logout } =
+    useAuth();
 
-  const {
-    user,
-    userData,
-    logout,
-  } = useAuth();
+  const location =
+    useLocation();
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
+  const [
+    mobileOpen,
+    setMobileOpen,
+  ] = useState(false);
+
+  /*
+   * CLOSE MOBILE MENU
+   * AFTER NAVIGATION
+   */
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  /*
+   * PREVENT BACKGROUND
+   * SCROLL WHEN OPEN
+   */
+
+  useEffect(() => {
+    if (!mobileOpen) {
+      document.body.style.overflow =
+        "";
+
+      return;
+    }
+
+    document.body.style.overflow =
+      "hidden";
+
+    return () => {
+      document.body.style.overflow =
+        "";
+    };
+  }, [mobileOpen]);
+
+  const handleLogout =
+    async () => {
+      try {
+        await logout();
+      } catch (error) {
+        console.error(
+          "Error signing out:",
+          error
+        );
+      }
+    };
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-brand">
-        <Heart
-          className="sidebar-brand-icon"
-          size={20}
-          strokeWidth={1.6}
-        />
-
-        <div>
-          <p className="sidebar-brand-title">
-            Wedding Planner
-          </p>
-
-          <p className="sidebar-brand-subtitle">
-            Maddie & Nick
-          </p>
-        </div>
-      </div>
-
-      <nav className="sidebar-nav">
-        {navigationSections.map(
-          (section, index) => (
-            <div
-              className="sidebar-section"
-              key={section.label ?? index}
-            >
-              {section.label && (
-                <p className="sidebar-section-label">
-                  {section.label}
-                </p>
-              )}
-
-              <div className="sidebar-links">
-                {section.items.map((item) => {
-                  const Icon = item.icon;
-
-                  return (
-                    <NavLink
-                      key={item.path}
-                      to={item.path}
-                      end={item.path === "/"}
-                      className={({ isActive }) =>
-                        `sidebar-link${
-                          isActive ? " active" : ""
-                        }`
-                      }
-                    >
-                      <Icon
-                        size={18}
-                        strokeWidth={1.7}
-                      />
-
-                      <span>{item.name}</span>
-                    </NavLink>
-                  );
-                })}
-              </div>
-            </div>
-          )
-        )}
-      </nav>
-
-      <div className="sidebar-user">
-        <div className="sidebar-avatar">
-          {(userData?.displayName ||
-            user?.displayName ||
-            user?.email ||
-            "?")[0].toUpperCase()}
-        </div>
-
-        <div className="sidebar-user-info">
-          <strong>
-            {userData?.displayName ||
-              user?.displayName ||
-              "Account"}
-          </strong>
-
-          <span>{user?.email}</span>
-        </div>
-      </div>
-
-      <div className="sidebar-footer">
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            `sidebar-link${
-              isActive ? " active" : ""
-            }`
+    <>
+      <header className="mobile-app-header">
+        <button
+          type="button"
+          className="mobile-menu-button"
+          onClick={() =>
+            setMobileOpen(true)
+          }
+          aria-label="Open navigation"
+          aria-expanded={
+            mobileOpen
           }
         >
-          <Settings
-            size={18}
-            strokeWidth={1.7}
+          <Menu
+            size={21}
+          />
+        </button>
+
+        <NavLink
+          to="/"
+          className="mobile-app-brand"
+        >
+          <Heart
+            size={17}
+            fill="currentColor"
           />
 
-          <span>Settings</span>
+          <div>
+            <strong>
+              Wedding Planner
+            </strong>
+
+            <span>
+              Our wedding
+            </span>
+          </div>
         </NavLink>
 
-        <button
-          className="sidebar-link sidebar-button"
-          onClick={handleLogout}
-        >
-          <LogOut
-            size={18}
-            strokeWidth={1.7}
-          />
+        <div className="mobile-header-spacer" />
+      </header>
 
-          <span>Sign Out</span>
-        </button>
-      </div>
-    </aside>
+      {mobileOpen && (
+        <button
+          type="button"
+          className="sidebar-backdrop"
+          onClick={() =>
+            setMobileOpen(false)
+          }
+          aria-label="Close navigation"
+        />
+      )}
+
+      <aside
+        className={`sidebar ${
+          mobileOpen
+            ? "sidebar-mobile-open"
+            : ""
+        }`}
+      >
+        <div className="sidebar-header">
+          <NavLink
+            to="/"
+            className="sidebar-brand"
+          >
+            <div className="sidebar-brand-icon">
+              <Heart
+                size={19}
+                fill="currentColor"
+              />
+            </div>
+
+            <div className="sidebar-brand-text">
+              <strong>
+                Wedding Planner
+              </strong>
+
+              <span>
+                Planning together
+              </span>
+            </div>
+          </NavLink>
+
+          <button
+            type="button"
+            className="sidebar-mobile-close"
+            onClick={() =>
+              setMobileOpen(false)
+            }
+            aria-label="Close navigation"
+          >
+            <X
+              size={20}
+            />
+          </button>
+        </div>
+
+        <nav className="sidebar-navigation">
+          {navigationGroups.map(
+            (group) => (
+              <div
+                className="sidebar-nav-group"
+                key={
+                  group.label
+                }
+              >
+                <span className="sidebar-nav-label">
+                  {group.label}
+                </span>
+
+                <div className="sidebar-nav-items">
+                  {group.items.map(
+                    (item) => {
+                      const Icon =
+                        item.icon;
+
+                      return (
+                        <NavLink
+                          key={
+                            item.path
+                          }
+                          to={
+                            item.path
+                          }
+                          end={
+                            item.end
+                          }
+                          className={({
+                            isActive,
+                          }) =>
+                            `sidebar-nav-link ${
+                              isActive
+                                ? "active"
+                                : ""
+                            }`
+                          }
+                        >
+                          <span className="sidebar-nav-icon">
+                            <Icon
+                              size={17}
+                            />
+                          </span>
+
+                          <span>
+                            {
+                              item.label
+                            }
+                          </span>
+                        </NavLink>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+            )
+          )}
+        </nav>
+
+        <div className="sidebar-footer">
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `sidebar-nav-link sidebar-settings-link ${
+                isActive
+                  ? "active"
+                  : ""
+              }`
+            }
+          >
+            <span className="sidebar-nav-icon">
+              <Settings
+                size={17}
+              />
+            </span>
+
+            <span>
+              Settings
+            </span>
+          </NavLink>
+
+          <div className="sidebar-user">
+            <div className="sidebar-user-avatar">
+              {getInitial(
+                user
+              )}
+            </div>
+
+            <div className="sidebar-user-info">
+              <strong>
+                {getUserName(
+                  user
+                )}
+              </strong>
+
+              <span>
+                {user?.email ||
+                  ""}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              className="sidebar-logout-button"
+              onClick={
+                handleLogout
+              }
+              aria-label="Sign out"
+              title="Sign out"
+            >
+              <LogOut
+                size={16}
+              />
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+function getUserName(
+  user
+) {
+  if (
+    user?.displayName
+  ) {
+    return user.displayName;
+  }
+
+  if (
+    user?.email
+  ) {
+    return user.email.split(
+      "@"
+    )[0];
+  }
+
+  return "Planner";
+}
+
+function getInitial(
+  user
+) {
+  const name =
+    getUserName(user);
+
+  return (
+    name
+      ?.trim()
+      ?.charAt(0)
+      ?.toUpperCase() ||
+    "W"
   );
 }
 

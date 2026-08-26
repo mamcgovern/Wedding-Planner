@@ -691,6 +691,11 @@
   color: #9b5757;
 }
 
+.rsvp-na {
+  background: #eeeeec;
+  color: var(--text-light);
+}
+
 /* EMPTY / LOADING */
 
 .guest-loading {
@@ -981,6 +986,17 @@
   border-top: 1px solid var(--border);
 }
 
+/* FAMILY NAME SUGGESTION */
+
+.family-name-suggestion {
+  margin-top: 1px;
+
+  color: var(--text-light);
+
+  font-size: 0.62rem;
+  font-weight: 500;
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 1000px) {
@@ -998,15 +1014,27 @@
     width: 100%;
   }
 
-  .family-manager-actions .primary-button,
-  .family-manager-actions .remove-family-button {
+  .family-manager-actions
+    .primary-button,
+  .family-manager-actions
+    .remove-family-button {
     width: 100%;
   }
 }
 
+/* MOBILE */
+
 @media (max-width: 700px) {
+  .guests-page {
+    min-width: 0;
+  }
+
   .guests-page-header {
     flex-direction: column;
+
+    gap: 14px;
+
+    margin-bottom: 18px;
   }
 
   .guests-header-actions {
@@ -1017,17 +1045,75 @@
     flex: 1;
   }
 
+  /* STATS */
+
+  .guest-stats-grid {
+    gap: 8px;
+
+    margin-bottom: 14px;
+  }
+
+  .guest-stat-card {
+    padding: 12px;
+  }
+
+  .guest-stat-card p {
+    margin-bottom: 3px;
+
+    font-size: 0.55rem;
+
+    letter-spacing: 0.04em;
+  }
+
+  .guest-stat-card strong {
+    font-size: 1.35rem;
+  }
+
+  .guest-secondary-stat {
+    margin:
+      -3px
+      0
+      16px;
+  }
+
+  .guest-secondary-stat strong {
+    font-size: 1rem;
+  }
+
+  .guest-secondary-stat span {
+    font-size: 0.62rem;
+  }
+
+  /* TOOLBAR */
+
   .guest-toolbar {
     align-items: stretch;
     flex-direction: column;
+
+    gap: 8px;
+
+    margin-bottom: 12px;
   }
 
   .guest-search {
+    width: 100%;
     max-width: none;
   }
 
   .guest-toolbar-filters {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: 7px;
+  }
+
+  .guest-toolbar-filters
+    .select-wrap {
+    min-width: 0;
   }
 
   .guest-toolbar-filters
@@ -1036,24 +1122,354 @@
     width: 100%;
   }
 
+  /* FAMILY MANAGER */
+
+  .family-manager {
+    padding: 15px;
+
+    margin-bottom: 16px;
+
+    border-radius:
+      var(--radius-medium);
+  }
+
   .family-manager-heading {
     flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .family-manager-heading
+    p:last-child {
+    font-size: 0.68rem;
   }
 
   .family-selection-count {
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 5px;
 
     width: 100%;
+    min-width: 0;
+
+    padding: 8px 10px;
+  }
+
+  .family-selection-count strong {
+    font-size: 1.15rem;
+  }
+
+  .family-selection-count span {
+    font-size: 0.55rem;
   }
 
   .family-visibility-toggle {
     width: 100%;
   }
 
+  .family-existing-list > div {
+    gap: 5px;
+  }
+
+  .family-existing-list button {
+    padding: 6px 8px;
+
+    font-size: 0.62rem;
+  }
+
+  /* =====================================
+     MOBILE GUEST CARDS
+     ===================================== */
+
+  .guest-table-wrap {
+    overflow: visible;
+
+    background: transparent;
+
+    border: 0;
+    border-radius: 0;
+
+    box-shadow: none;
+  }
+
+  .guest-table {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .guest-table thead {
+    display: none;
+  }
+
+  .guest-table tbody {
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+  }
+
+  .guest-table tbody tr {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 12px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    box-shadow: var(--shadow-soft);
+  }
+
+  .guest-table tbody tr:hover {
+    background: var(--white);
+  }
+
+  .guest-table
+    tbody
+    tr.guest-row-selected {
+    background:
+      rgba(
+        195,
+        206,
+        193,
+        0.28
+      ) !important;
+
+    border-color: var(--sage);
+  }
+
+  .guest-table td {
+    display: block;
+
+    width: auto;
+
+    padding: 0;
+
+    border: 0;
+
+    font-size: 0.65rem;
+  }
+
+  /* CHECKBOX WHEN MANAGING FAMILIES */
+
+  .guest-table
+    td.guest-checkbox-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+
+    order: -2;
+  }
+
+  .guest-checkbox-column input {
+    width: 18px;
+    height: 18px;
+  }
+
+  /*
+   * NAME
+   * The name cell is the first normal
+   * cell, or second when the family
+   * checkbox is present.
+   */
+
+  .guest-table
+    tbody
+    tr
+    > td:has(
+      .guest-name-cell
+    ) {
+    flex: 1 1
+      calc(
+        100% - 40px
+      );
+
+    min-width: 0;
+
+    order: -1;
+  }
+
+  .guest-name-cell {
+    min-width: 0;
+
+    gap: 8px;
+  }
+
+  .guest-avatar {
+    width: 34px;
+    height: 34px;
+
+    font-size: 0.68rem;
+  }
+
+  .guest-name-cell
+    > div:last-child {
+    min-width: 0;
+
+    gap: 1px;
+  }
+
+  .guest-name-cell strong {
+    overflow: hidden;
+
+    max-width: 100%;
+
+    font-size: 0.76rem;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .guest-name-cell span {
+    max-width: 100%;
+
+    font-size: 0.56rem;
+  }
+
+  .guest-import-order {
+    font-size: 0.49rem !important;
+  }
+
+  .unnamed-guest-label {
+    font-size: 0.52rem !important;
+  }
+
+  /* FAMILY */
+
+  .family-badge {
+    padding: 4px 7px;
+
+    font-size: 0.56rem;
+
+    white-space: normal;
+  }
+
+  .no-family-label {
+    font-size: 0.56rem;
+  }
+
+  /* RSVP */
+
+  .rsvp-badge {
+    padding: 4px 7px;
+
+    font-size: 0.56rem;
+  }
+
+  /*
+   * Song requests and notes can be
+   * very long. They remain available
+   * when editing the guest, but do not
+   * make the mobile list enormous.
+   */
+
+  .guest-table
+    td:has(
+      .guest-long-text
+    ) {
+    display: none;
+  }
+
+  /*
+   * Plain-text cells like "Guest Of"
+   * remain compact and wrap instead of
+   * widening the card.
+   */
+
+  .guest-table td {
+    max-width: 100%;
+
+    overflow-wrap: anywhere;
+  }
+
+  /* ACTIONS */
+
+  .guest-table
+    td:has(
+      .guest-actions
+    ) {
+    margin-left: auto;
+  }
+
+  .guest-actions {
+    gap: 3px;
+  }
+
+  .guest-actions
+    .icon-button {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* MODAL */
+
+  .guest-modal {
+    width: 100%;
+
+    max-height:
+      calc(
+        100vh - 30px
+      );
+
+    overflow-y: auto;
+  }
+
+  /* CSV IMPORT */
+
+  .csv-import-modal {
+    width: 100%;
+
+    max-height:
+      calc(
+        100vh - 24px
+      );
+
+    padding: 17px;
+  }
+
   .csv-sync-summary {
     grid-template-columns: 1fr;
+
+    gap: 6px;
+  }
+
+  .csv-sync-summary > div {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+
+    padding: 9px 10px;
+
+    text-align: left;
+  }
+
+  .csv-sync-summary strong {
+    font-size: 1rem;
+  }
+
+  .csv-preview-wrap {
+    max-width: 100%;
+  }
+
+  .csv-import-actions {
+    gap: 7px;
   }
 }
+
+/* SMALL PHONES */
 
 @media (max-width: 500px) {
   .guest-stats-grid {
@@ -1062,7 +1478,26 @@
   }
 
   .guests-header-actions {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 7px;
+  }
+
+  .guests-header-actions
+    .primary-button {
+    grid-column:
+      1 / -1;
+  }
+
+  .guests-header-actions button {
+    width: 100%;
+  }
+
+  .guest-toolbar-filters {
+    grid-template-columns:
+      1fr;
   }
 
   .guest-empty-actions {
@@ -1084,27 +1519,77 @@
   .family-action-tabs button {
     flex: 1;
   }
+
+  .guest-table tbody tr {
+    padding: 10px;
+
+    gap: 6px;
+  }
+
+  .guest-avatar {
+    width: 31px;
+    height: 31px;
+  }
+
+  .guest-name-cell strong {
+    font-size: 0.7rem;
+  }
+
+  .family-badge,
+  .rsvp-badge {
+    font-size: 0.53rem;
+  }
+
+  .csv-import-actions {
+    flex-direction: column-reverse;
+  }
+
+  .csv-import-actions button {
+    width: 100%;
+  }
+
+  .guest-rsvp-cell {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 3px;
+  }
+
+  .guest-mobile-field-label {
+    display: block;
+
+    color: var(--text-light);
+
+    font-size: 0.45rem;
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+
+    text-transform: uppercase;
+  }
 }
 
-.family-name-suggestion {
-  margin-top: 1px;
+/* VERY SMALL PHONES */
 
-  color: var(--text-light);
+@media (max-width: 360px) {
+  .guest-stat-card {
+    padding: 10px;
+  }
 
-  font-size: 0.62rem;
-  font-weight: 500;
+  .guest-stat-card p {
+    font-size: 0.49rem;
+  }
+
+  .guest-stat-card strong {
+    font-size: 1.2rem;
+  }
+
+  .guest-table tbody tr {
+    padding: 9px;
+  }
 }
 
-.rsvp-na {
-  background: #eeeeec;
-  color: var(--text-light);
-}
-
-.family-name-suggestion {
-  margin-top: 1px;
-
-  color: var(--text-light);
-
-  font-size: 0.62rem;
-  font-weight: 500;
+.guest-mobile-field-label {
+  display: none;
 }

@@ -1,0 +1,339 @@
+.settings-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+
+  margin-bottom: 22px;
+}
+
+.settings-page-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+.settings-page-error button {
+  display: flex;
+
+  padding: 2px;
+
+  background: transparent;
+  color: inherit;
+
+  border: 0;
+
+  cursor: pointer;
+}
+
+.settings-saved-message {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 16px;
+  padding: 10px 12px;
+
+  background: var(--sage-light);
+  color: var(--sage-dark);
+
+  border:
+    1px solid
+    rgba(
+      107,
+      112,
+      92,
+      0.18
+    );
+  border-radius: 9px;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+/* FORM */
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-card {
+  padding: 18px;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+
+  box-shadow: var(--shadow-soft);
+}
+
+.settings-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 17px;
+}
+
+.settings-card-heading h2 {
+  margin: 0;
+
+  font-size: 1rem;
+}
+
+.settings-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 37px;
+  height: 37px;
+
+  background: var(--sage-light);
+  color: var(--sage-dark);
+
+  border-radius: 10px;
+}
+
+/* INPUT ICON */
+
+.settings-input-icon {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.settings-input-icon:focus-within {
+  border-color: var(--sage-dark);
+}
+
+.settings-input-icon svg {
+  flex-shrink: 0;
+
+  margin-left: 10px;
+
+  color: var(--text-light);
+}
+
+.settings-input-icon input {
+  flex: 1;
+
+  min-width: 0;
+
+  border: 0 !important;
+  outline: 0;
+
+  background: transparent;
+}
+
+/* DATES */
+
+.settings-date-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, 1fr);
+  gap: 12px;
+}
+
+.settings-wedding-date-field {
+  padding: 10px;
+
+  background: var(--sage-light);
+
+  border-radius: 10px;
+}
+
+.settings-wedding-date-field
+  > span {
+  color: var(--sage-dark);
+}
+
+.settings-wedding-date-field
+  input {
+  background: var(--white);
+}
+
+.settings-section-help {
+  margin: 11px 0 0;
+
+  color: var(--text-light);
+
+  font-size: 0.6rem;
+  line-height: 1.5;
+}
+
+/* TIMES */
+
+.settings-time-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* WEBSITE */
+
+.settings-preview-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-top: 9px;
+
+  color: var(--sage-dark);
+
+  font-size: 0.62rem;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.settings-preview-link:hover {
+  text-decoration: underline;
+}
+
+/* INFO */
+
+.settings-info-card {
+  background:
+    linear-gradient(
+      135deg,
+      var(--white),
+      rgba(
+        195,
+        206,
+        193,
+        0.13
+      )
+    );
+}
+
+.settings-info-card
+  .settings-card-heading {
+  margin-bottom: 8px;
+}
+
+.settings-info-card > p {
+  max-width: 720px;
+
+  margin: 0;
+
+  color: var(--text-light);
+
+  font-size: 0.66rem;
+  line-height: 1.55;
+}
+
+/* SAVE BAR */
+
+.settings-save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 12px 14px;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  box-shadow: var(--shadow-soft);
+}
+
+.settings-save-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: var(--text-light);
+
+  font-size: 0.62rem;
+}
+
+.settings-save-status svg {
+  color: var(--sage-dark);
+}
+
+.settings-unsaved-dot {
+  width: 7px;
+  height: 7px;
+
+  flex-shrink: 0;
+
+  background: var(--blush-dark);
+
+  border-radius: 50%;
+}
+
+.settings-save-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* LOADING */
+
+.settings-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  min-height: 250px;
+
+  color: var(--text-light);
+}
+
+.settings-loading p {
+  margin: 0;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 750px) {
+  .settings-date-grid,
+  .settings-time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-wedding-date-field {
+    padding: 9px;
+  }
+}
+
+@media (max-width: 560px) {
+  .settings-save-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .settings-save-actions {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 420px) {
+  .settings-save-actions {
+    flex-direction: column-reverse;
+  }
+
+  .settings-save-actions
+    button {
+    width: 100%;
+  }
+}
