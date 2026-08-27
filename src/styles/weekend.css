@@ -1,0 +1,127 @@
+.weekend-page {
+  max-width: 1000px;
+}
+
+.weekend-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 18px;
+}
+
+.weekend-card {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  gap: 16px;
+
+  padding: 24px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.weekend-card:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    var(--cream);
+
+  border-color:
+    var(--sage);
+}
+
+.weekend-card-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    center;
+
+  flex: 0 0 auto;
+
+  width: 44px;
+
+  height: 44px;
+
+  background:
+    var(--blush-light);
+
+  color:
+    var(--blush-dark);
+
+  border-radius:
+    50%;
+}
+
+.weekend-card h2 {
+  margin-bottom: 7px;
+
+  font-size: 1.25rem;
+
+  font-weight: 400;
+}
+
+.weekend-card p {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.9rem;
+
+  line-height: 1.55;
+}
+
+.weekend-detail-page {
+  max-width: 900px;
+}
+
+.venue-summary-card {
+  max-width: 620px;
+}
+
+.venue-summary-card h2 {
+  margin-bottom: 8px;
+
+  font-size: 1.5rem;
+
+  font-weight: 400;
+}
+
+@media (
+  max-width: 700px
+) {
+  .weekend-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .weekend-card {
+    padding: 20px;
+  }
+}

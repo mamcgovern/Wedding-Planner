@@ -1,6 +1,56 @@
+import {
+  BedDouble,
+  CalendarDays,
+  MapPin,
+  Music2,
+  PartyPopper,
+} from "lucide-react";
+
+import {
+  Link,
+} from "react-router-dom";
+
+const weekendPages = [
+  {
+    title: "Weekend Events",
+    description:
+      "Rehearsal, dinner, wedding events, and other plans for the weekend.",
+    path: "/weekend/events",
+    icon: PartyPopper,
+  },
+  {
+    title: "Wedding Day Schedule",
+    description:
+      "A detailed wedding-day schedule for the wedding party.",
+    path: "/weekend/wedding-day",
+    icon: CalendarDays,
+  },
+  {
+    title: "Music",
+    description:
+      "Ceremony music, reception songs, and other wedding music.",
+    path: "/weekend/music",
+    icon: Music2,
+  },
+  {
+    title: "Venue",
+    description:
+      "Photos, directions, and helpful information about the wedding venue.",
+    path: "/weekend/venue",
+    icon: MapPin,
+  },
+  {
+    title: "Sleeping Arrangements",
+    description:
+      "Airbnb rooms, beds, and sleeping assignments for the wedding weekend.",
+    path: "/weekend/sleeping",
+    icon: BedDouble,
+  },
+];
+
 function Weekend() {
   return (
-    <main className="page">
+    <main className="page weekend-page">
       <p className="page-eyebrow">
         Wedding Weekend
       </p>
@@ -10,84 +60,49 @@ function Weekend() {
       </h1>
 
       <p className="page-description">
-        Weekend events, the wedding-day schedule,
-        music, venue information, and sleeping
-        arrangements will live here.
+        Everything the wedding party needs to know for
+        the wedding weekend, all in one place.
       </p>
 
-      <div className="home-grid">
-        <div className="content-card">
-          <p className="card-eyebrow">
-            Schedule
-          </p>
+      <div className="weekend-grid">
+        {weekendPages.map(
+          (item) => {
+            const Icon =
+              item.icon;
 
-          <h2>
-            Weekend Events
-          </h2>
+            return (
+              <Link
+                key={
+                  item.path
+                }
+                to={
+                  item.path
+                }
+                className="weekend-card"
+              >
+                <div className="weekend-card-icon">
+                  <Icon
+                    size={21}
+                  />
+                </div>
 
-          <p>
-            Rehearsal, dinner, wedding-day events,
-            and other weekend plans.
-          </p>
-        </div>
+                <div>
+                  <h2>
+                    {
+                      item.title
+                    }
+                  </h2>
 
-        <div className="content-card">
-          <p className="card-eyebrow">
-            Wedding Day
-          </p>
-
-          <h2>
-            Wedding Day Schedule
-          </h2>
-
-          <p>
-            A detailed schedule for the wedding
-            party.
-          </p>
-        </div>
-
-        <div className="content-card">
-          <p className="card-eyebrow">
-            Playlist
-          </p>
-
-          <h2>
-            Music
-          </h2>
-
-          <p>
-            Ceremony and reception music.
-          </p>
-        </div>
-
-        <div className="content-card">
-          <p className="card-eyebrow">
-            Location
-          </p>
-
-          <h2>
-            Venue
-          </h2>
-
-          <p>
-            Venue photos, information, and helpful
-            details.
-          </p>
-        </div>
-
-        <div className="content-card">
-          <p className="card-eyebrow">
-            Lodging
-          </p>
-
-          <h2>
-            Sleeping Arrangements
-          </h2>
-
-          <p>
-            Airbnb rooms and sleeping assignments.
-          </p>
-        </div>
+                  <p>
+                    {
+                      item.description
+                    }
+                  </p>
+                </div>
+              </Link>
+            );
+          }
+        )}
       </div>
     </main>
   );

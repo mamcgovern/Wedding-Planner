@@ -13,6 +13,12 @@ import ImportantDates from "./pages/ImportantDates";
 import Login from "./pages/Login";
 import Weekend from "./pages/Weekend";
 
+import Music from "./pages/weekend/Music";
+import SleepingArrangements from "./pages/weekend/SleepingArrangements";
+import Venue from "./pages/weekend/Venue";
+import WeddingDay from "./pages/weekend/WeddingDay";
+import WeekendEvents from "./pages/weekend/WeekendEvents";
+
 import Budget from "./pages/admin/Budget";
 import Calendar from "./pages/admin/Calendar";
 import Dashboard from "./pages/admin/Dashboard";
@@ -65,6 +71,41 @@ function App() {
           path="/weekend"
           element={
             <Weekend />
+          }
+        />
+
+        <Route
+          path="/weekend/events"
+          element={
+            <WeekendEvents />
+          }
+        />
+
+        <Route
+          path="/weekend/wedding-day"
+          element={
+            <WeddingDay />
+          }
+        />
+
+        <Route
+          path="/weekend/music"
+          element={
+            <Music />
+          }
+        />
+
+        <Route
+          path="/weekend/venue"
+          element={
+            <Venue />
+          }
+        />
+
+        <Route
+          path="/weekend/sleeping"
+          element={
+            <SleepingArrangements />
           }
         />
 
