@@ -48,23 +48,34 @@ const emptyEventForm = {
   visibility: "private",
 };
 
+const calendarViews = [
+  "month",
+  "week",
+  "day",
+];
+
 function Calendar() {
   const {
     user,
   } = useAuth();
 
   const today =
-    new Date();
+    startOfDay(
+      new Date()
+    );
 
   const [
-    currentMonth,
-    setCurrentMonth,
+    selectedDate,
+    setSelectedDate,
   ] = useState(
-    new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      1
-    )
+    today
+  );
+
+  const [
+    view,
+    setView,
+  ] = useState(
+    "month"
   );
 
   const [
@@ -100,7 +111,7 @@ function Calendar() {
   ] = useState("");
 
   /*
-   * LOAD ALL SCHEDULE ITEMS
+   * LOAD SCHEDULE ITEMS
    */
 
   useEffect(() => {
@@ -308,14 +319,13 @@ function Calendar() {
           );
         }
 
-        resetForm();
-
-        setCurrentMonth(
+        setSelectedDate(
           createLocalDate(
-            form.date,
-            true
+            form.date
           )
         );
+
+        resetForm();
       } catch (firebaseError) {
         console.error(
           "Error saving event:",
@@ -331,11 +341,18 @@ function Calendar() {
     };
 
   /*
-   * EDIT
+   * EDIT EVENT
    */
 
   const handleEdit =
     (item) => {
+      if (
+        item.type !==
+        "event"
+      ) {
+        return;
+      }
+
       setEditingId(
         item.id
       );
@@ -378,7 +395,7 @@ function Calendar() {
     };
 
   /*
-   * DELETE
+   * DELETE EVENT
    */
 
   const handleDelete =
@@ -456,63 +473,101 @@ function Calendar() {
         );
       } catch (firebaseError) {
         console.error(
-          "Error changing event visibility:",
+          "Error changing visibility:",
           firebaseError
         );
 
         setError(
-          "We couldn't change that event's visibility."
+          "We couldn't change that item's visibility."
         );
       }
     };
 
   /*
-   * MONTH NAVIGATION
+   * VIEW NAVIGATION
    */
 
-  const previousMonth =
+  const handlePrevious =
     () => {
-      setCurrentMonth(
-        (current) =>
-          new Date(
-            current.getFullYear(),
-            current.getMonth() -
-              1,
-            1
-          )
+      setSelectedDate(
+        (current) => {
+          if (
+            view ===
+            "month"
+          ) {
+            return new Date(
+              current.getFullYear(),
+              current.getMonth() -
+                1,
+              1
+            );
+          }
+
+          if (
+            view ===
+            "week"
+          ) {
+            return addDays(
+              current,
+              -7
+            );
+          }
+
+          return addDays(
+            current,
+            -1
+          );
+        }
       );
     };
 
-  const nextMonth =
+  const handleNext =
     () => {
-      setCurrentMonth(
-        (current) =>
-          new Date(
-            current.getFullYear(),
-            current.getMonth() +
-              1,
+      setSelectedDate(
+        (current) => {
+          if (
+            view ===
+            "month"
+          ) {
+            return new Date(
+              current.getFullYear(),
+              current.getMonth() +
+                1,
+              1
+            );
+          }
+
+          if (
+            view ===
+            "week"
+          ) {
+            return addDays(
+              current,
+              7
+            );
+          }
+
+          return addDays(
+            current,
             1
-          )
+          );
+        }
       );
     };
 
-  const goToToday =
+  const handleToday =
     () => {
-      const now =
-        new Date();
-
-      setCurrentMonth(
-        new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          1
+      setSelectedDate(
+        startOfDay(
+          new Date()
         )
       );
     };
 
-  const calendarDays =
-    buildCalendarDays(
-      currentMonth
+  const heading =
+    getCalendarHeading(
+      selectedDate,
+      view
     );
 
   return (
@@ -526,7 +581,7 @@ function Calendar() {
       </h1>
 
       <p className="page-description">
-        Manage wedding events and see planning tasks
+        Manage wedding events and view planning tasks
         and public wedding-party dates together.
       </p>
 
@@ -661,7 +716,7 @@ function Calendar() {
             />
           </label>
 
-          <label className="form-field event-location-field">
+          <label className="form-field">
             <span>
               Location
             </span>
@@ -739,60 +794,84 @@ function Calendar() {
 
       <section className="calendar-section">
         <div className="calendar-toolbar">
-          <div>
+          <div className="calendar-toolbar-title">
             <p className="card-eyebrow">
               Schedule
             </p>
 
             <h2>
-              {currentMonth.toLocaleDateString(
-                "en-US",
-                {
-                  month:
-                    "long",
-                  year:
-                    "numeric",
-                }
-              )}
+              {heading}
             </h2>
           </div>
 
-          <div className="calendar-toolbar-actions">
-            <button
-              type="button"
-              className="secondary-button calendar-today-button"
-              onClick={
-                goToToday
-              }
-            >
-              Today
-            </button>
+          <div className="calendar-controls">
+            <div className="calendar-view-switcher">
+              {calendarViews.map(
+                (option) => (
+                  <button
+                    key={
+                      option
+                    }
+                    type="button"
+                    className={`calendar-view-button ${
+                      view ===
+                      option
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      setView(
+                        option
+                      )
+                    }
+                  >
+                    {
+                      capitalize(
+                        option
+                      )
+                    }
+                  </button>
+                )
+              )}
+            </div>
 
-            <button
-              type="button"
-              className="icon-button"
-              onClick={
-                previousMonth
-              }
-              aria-label="Previous month"
-            >
-              <ChevronLeft
-                size={18}
-              />
-            </button>
+            <div className="calendar-navigation">
+              <button
+                type="button"
+                className="secondary-button calendar-today-button"
+                onClick={
+                  handleToday
+                }
+              >
+                Today
+              </button>
 
-            <button
-              type="button"
-              className="icon-button"
-              onClick={
-                nextMonth
-              }
-              aria-label="Next month"
-            >
-              <ChevronRight
-                size={18}
-              />
-            </button>
+              <button
+                type="button"
+                className="icon-button"
+                onClick={
+                  handlePrevious
+                }
+                aria-label="Previous"
+              >
+                <ChevronLeft
+                  size={18}
+                />
+              </button>
+
+              <button
+                type="button"
+                className="icon-button"
+                onClick={
+                  handleNext
+                }
+                aria-label="Next"
+              >
+                <ChevronRight
+                  size={18}
+                />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -800,69 +879,50 @@ function Calendar() {
           <div className="content-card">
             Loading calendar...
           </div>
+        ) : view ===
+          "month" ? (
+          <MonthView
+            selectedDate={
+              selectedDate
+            }
+            items={
+              items
+            }
+            onSelectDate={
+              setSelectedDate
+            }
+            onEdit={
+              handleEdit
+            }
+          />
+        ) : view ===
+          "week" ? (
+          <WeekView
+            selectedDate={
+              selectedDate
+            }
+            items={
+              items
+            }
+            onSelectDate={
+              setSelectedDate
+            }
+            onEdit={
+              handleEdit
+            }
+          />
         ) : (
-          <div className="calendar-wrapper">
-            <div className="calendar-weekdays">
-              {[
-                "Sun",
-                "Mon",
-                "Tue",
-                "Wed",
-                "Thu",
-                "Fri",
-                "Sat",
-              ].map(
-                (day) => (
-                  <div
-                    key={
-                      day
-                    }
-                  >
-                    {day}
-                  </div>
-                )
-              )}
-            </div>
-
-            <div className="calendar-grid">
-              {calendarDays.map(
-                (day) => {
-                  const dateKey =
-                    formatDateKey(
-                      day.date
-                    );
-
-                  const dayItems =
-                    items
-                      .filter(
-                        (item) =>
-                          item.date ===
-                          dateKey
-                      )
-                      .sort(
-                        compareScheduleItems
-                      );
-
-                  return (
-                    <CalendarDay
-                      key={
-                        dateKey
-                      }
-                      day={
-                        day
-                      }
-                      items={
-                        dayItems
-                      }
-                      onEdit={
-                        handleEdit
-                      }
-                    />
-                  );
-                }
-              )}
-            </div>
-          </div>
+          <DayView
+            selectedDate={
+              selectedDate
+            }
+            items={
+              items
+            }
+            onEdit={
+              handleEdit
+            }
+          />
         )}
       </section>
 
@@ -930,81 +990,467 @@ function Calendar() {
   );
 }
 
-function CalendarDay({
-  day,
+function MonthView({
+  selectedDate,
   items,
+  onSelectDate,
   onEdit,
 }) {
+  const calendarDays =
+    buildCalendarDays(
+      selectedDate
+    );
+
   return (
-    <div
-      className={`calendar-day ${
-        day.inCurrentMonth
-          ? ""
-          : "outside-month"
-      } ${
-        day.isToday
-          ? "today"
-          : ""
-      }`}
-    >
-      <div className="calendar-day-number">
-        {
-          day.date.getDate()
-        }
+    <div className="calendar-wrapper">
+      <div className="calendar-weekdays">
+        {[
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+        ].map(
+          (day) => (
+            <div
+              key={
+                day
+              }
+            >
+              {day}
+            </div>
+          )
+        )}
       </div>
 
-      <div className="calendar-day-items">
-        {items
-          .slice(0, 4)
-          .map(
-            (item) => (
-              <button
+      <div className="calendar-grid">
+        {calendarDays.map(
+          (day) => {
+            const dateKey =
+              formatDateKey(
+                day.date
+              );
+
+            const dayItems =
+              getItemsForDate(
+                items,
+                dateKey
+              );
+
+            return (
+              <div
                 key={
-                  item.id
+                  dateKey
                 }
-                type="button"
-                className={`calendar-item calendar-item-${item.type} ${
-                  item.visibility ===
-                  "public"
-                    ? "public"
-                    : "private"
+                className={`calendar-day ${
+                  day.inCurrentMonth
+                    ? ""
+                    : "outside-month"
+                } ${
+                  day.isToday
+                    ? "today"
+                    : ""
                 }`}
-                onClick={() => {
-                  if (
-                    item.type ===
-                    "event"
-                  ) {
-                    onEdit(
-                      item
-                    );
-                  }
-                }}
-                title={
-                  item.title
+                onDoubleClick={() =>
+                  onSelectDate(
+                    day.date
+                  )
                 }
               >
-                <span className="calendar-item-title">
-                  {
-                    item.title
+                <button
+                  type="button"
+                  className="calendar-day-number"
+                  onClick={() =>
+                    onSelectDate(
+                      day.date
+                    )
                   }
-                </span>
-              </button>
-            )
-          )}
+                >
+                  {
+                    day.date.getDate()
+                  }
+                </button>
 
-        {items.length >
-          4 && (
-          <span className="calendar-more">
-            +
-            {
-              items.length -
-              4
-            }{" "}
-            more
-          </span>
+                <div className="calendar-day-items">
+                  {dayItems
+                    .slice(0, 4)
+                    .map(
+                      (item) => (
+                        <CalendarItem
+                          key={
+                            item.id
+                          }
+                          item={
+                            item
+                          }
+                          onEdit={
+                            onEdit
+                          }
+                        />
+                      )
+                    )}
+
+                  {dayItems.length >
+                    4 && (
+                    <span className="calendar-more">
+                      +
+                      {
+                        dayItems.length -
+                        4
+                      }{" "}
+                      more
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          }
         )}
       </div>
     </div>
+  );
+}
+
+function WeekView({
+  selectedDate,
+  items,
+  onSelectDate,
+  onEdit,
+}) {
+  const weekDays =
+    getWeekDays(
+      selectedDate
+    );
+
+  return (
+    <div className="week-view">
+      {weekDays.map(
+        (date) => {
+          const dateKey =
+            formatDateKey(
+              date
+            );
+
+          const dayItems =
+            getItemsForDate(
+              items,
+              dateKey
+            );
+
+          const isToday =
+            sameDate(
+              date,
+              new Date()
+            );
+
+          return (
+            <article
+              key={
+                dateKey
+              }
+              className={`week-day-column ${
+                isToday
+                  ? "today"
+                  : ""
+              }`}
+            >
+              <button
+                type="button"
+                className="week-day-header"
+                onClick={() =>
+                  onSelectDate(
+                    date
+                  )
+                }
+              >
+                <span>
+                  {
+                    date.toLocaleDateString(
+                      "en-US",
+                      {
+                        weekday:
+                          "short",
+                      }
+                    )
+                  }
+                </span>
+
+                <strong>
+                  {
+                    date.getDate()
+                  }
+                </strong>
+              </button>
+
+              <div className="week-day-items">
+                {dayItems.length ===
+                0 ? (
+                  <span className="calendar-no-items">
+                    No items
+                  </span>
+                ) : (
+                  dayItems.map(
+                    (item) => (
+                      <WeekItem
+                        key={
+                          item.id
+                        }
+                        item={
+                          item
+                        }
+                        onEdit={
+                          onEdit
+                        }
+                      />
+                    )
+                  )
+                )}
+              </div>
+            </article>
+          );
+        }
+      )}
+    </div>
+  );
+}
+
+function DayView({
+  selectedDate,
+  items,
+  onEdit,
+}) {
+  const dateKey =
+    formatDateKey(
+      selectedDate
+    );
+
+  const dayItems =
+    getItemsForDate(
+      items,
+      dateKey
+    );
+
+  return (
+    <div className="day-view">
+      <div className="day-view-heading">
+        <span className="day-view-weekday">
+          {
+            selectedDate.toLocaleDateString(
+              "en-US",
+              {
+                weekday:
+                  "long",
+              }
+            )
+          }
+        </span>
+
+        <strong>
+          {
+            selectedDate.toLocaleDateString(
+              "en-US",
+              {
+                month:
+                  "long",
+
+                day:
+                  "numeric",
+              }
+            )
+          }
+        </strong>
+      </div>
+
+      {dayItems.length ===
+      0 ? (
+        <div className="day-view-empty">
+          <CalendarDays
+            size={22}
+          />
+
+          <p>
+            Nothing scheduled for this day.
+          </p>
+        </div>
+      ) : (
+        <div className="day-view-list">
+          {dayItems.map(
+            (item) => (
+              <DayItem
+                key={
+                  item.id
+                }
+                item={
+                  item
+                }
+                onEdit={
+                  onEdit
+                }
+              />
+            )
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CalendarItem({
+  item,
+  onEdit,
+}) {
+  return (
+    <button
+      type="button"
+      className={`calendar-item calendar-item-${item.type} ${
+        item.visibility ===
+        "public"
+          ? "public"
+          : "private"
+      }`}
+      onClick={() =>
+        onEdit(
+          item
+        )
+      }
+      title={
+        item.title
+      }
+    >
+      <span className="calendar-item-title">
+        {
+          item.title
+        }
+      </span>
+    </button>
+  );
+}
+
+function WeekItem({
+  item,
+  onEdit,
+}) {
+  return (
+    <button
+      type="button"
+      className={`week-item week-item-${item.type}`}
+      onClick={() =>
+        onEdit(
+          item
+        )
+      }
+    >
+      {item.startTime && (
+        <span className="week-item-time">
+          {
+            formatTime(
+              item.startTime
+            )
+          }
+        </span>
+      )}
+
+      <strong>
+        {
+          item.title
+        }
+      </strong>
+
+      <span
+        className={`week-item-visibility ${
+          item.visibility ===
+          "public"
+            ? "public"
+            : "private"
+        }`}
+      >
+        {item.visibility ===
+        "public"
+          ? "Public"
+          : "Private"}
+      </span>
+    </button>
+  );
+}
+
+function DayItem({
+  item,
+  onEdit,
+}) {
+  return (
+    <button
+      type="button"
+      className={`day-item day-item-${item.type}`}
+      onClick={() =>
+        onEdit(
+          item
+        )
+      }
+    >
+      <div className="day-item-time">
+        {item.startTime
+          ? formatTime(
+              item.startTime
+            )
+          : item.type ===
+              "task"
+            ? "Task"
+            : "All day"}
+      </div>
+
+      <div className="day-item-content">
+        <div className="day-item-title-row">
+          <strong>
+            {
+              item.title
+            }
+          </strong>
+
+          <span
+            className={`visibility-badge ${
+              item.visibility ===
+              "public"
+                ? "public"
+                : "private"
+            }`}
+          >
+            {item.visibility ===
+            "public"
+              ? "Public"
+              : "Private"}
+          </span>
+        </div>
+
+        {item.endTime && (
+          <span className="day-item-meta">
+            Ends{" "}
+            {
+              formatTime(
+                item.endTime
+              )
+            }
+          </span>
+        )}
+
+        {item.location && (
+          <span className="day-item-meta">
+            {
+              item.location
+            }
+          </span>
+        )}
+
+        {item.notes && (
+          <span className="day-item-notes">
+            {
+              item.notes
+            }
+          </span>
+        )}
+      </div>
+    </button>
   );
 }
 
@@ -1171,31 +1617,26 @@ function EventCard({
 }
 
 function buildCalendarDays(
-  month
+  selectedDate
 ) {
   const year =
-    month.getFullYear();
+    selectedDate.getFullYear();
 
-  const monthIndex =
-    month.getMonth();
+  const month =
+    selectedDate.getMonth();
 
   const firstDay =
     new Date(
       year,
-      monthIndex,
+      month,
       1
     );
 
   const startDate =
-    new Date(
-      year,
-      monthIndex,
-      1 -
-        firstDay.getDay()
+    addDays(
+      firstDay,
+      -firstDay.getDay()
     );
-
-  const today =
-    new Date();
 
   return Array.from(
     {
@@ -1203,11 +1644,9 @@ function buildCalendarDays(
     },
     (_, index) => {
       const date =
-        new Date(
-          startDate.getFullYear(),
-          startDate.getMonth(),
-          startDate.getDate() +
-            index
+        addDays(
+          startDate,
+          index
         );
 
       return {
@@ -1215,14 +1654,136 @@ function buildCalendarDays(
 
         inCurrentMonth:
           date.getMonth() ===
-          monthIndex,
+          month,
 
         isToday:
           sameDate(
             date,
-            today
+            new Date()
           ),
       };
+    }
+  );
+}
+
+function getWeekDays(
+  selectedDate
+) {
+  const start =
+    startOfWeek(
+      selectedDate
+    );
+
+  return Array.from(
+    {
+      length: 7,
+    },
+    (_, index) =>
+      addDays(
+        start,
+        index
+      )
+  );
+}
+
+function getItemsForDate(
+  items,
+  dateKey
+) {
+  return items
+    .filter(
+      (item) =>
+        item.date ===
+        dateKey
+    )
+    .sort(
+      compareScheduleItems
+    );
+}
+
+function getCalendarHeading(
+  date,
+  view
+) {
+  if (
+    view ===
+    "month"
+  ) {
+    return date.toLocaleDateString(
+      "en-US",
+      {
+        month:
+          "long",
+
+        year:
+          "numeric",
+      }
+    );
+  }
+
+  if (
+    view ===
+    "week"
+  ) {
+    const start =
+      startOfWeek(
+        date
+      );
+
+    const end =
+      addDays(
+        start,
+        6
+      );
+
+    if (
+      start.getMonth() ===
+        end.getMonth()
+    ) {
+      return `${start.toLocaleDateString(
+        "en-US",
+        {
+          month:
+            "long",
+        }
+      )} ${start.getDate()} - ${end.getDate()}, ${end.getFullYear()}`;
+    }
+
+    return `${start.toLocaleDateString(
+      "en-US",
+      {
+        month:
+          "short",
+        day:
+          "numeric",
+      }
+    )} - ${end.toLocaleDateString(
+      "en-US",
+      {
+        month:
+          "short",
+        day:
+          "numeric",
+        year:
+          "numeric",
+      }
+    )}`;
+  }
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      weekday:
+        "long",
+
+      month:
+        "long",
+
+      day:
+        "numeric",
+
+      year:
+        "numeric",
     }
   );
 }
@@ -1250,14 +1811,74 @@ function compareScheduleItems(
 
   const firstTime =
     first.startTime ||
-    "23:59";
+    (
+      first.type ===
+      "task"
+        ? "23:58"
+        : "23:59"
+    );
 
   const secondTime =
     second.startTime ||
-    "23:59";
+    (
+      second.type ===
+      "task"
+        ? "23:58"
+        : "23:59"
+    );
 
   return firstTime.localeCompare(
     secondTime
+  );
+}
+
+function startOfDay(
+  date
+) {
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+}
+
+function startOfWeek(
+  date
+) {
+  const cleanDate =
+    startOfDay(
+      date
+    );
+
+  return addDays(
+    cleanDate,
+    -cleanDate.getDay()
+  );
+}
+
+function addDays(
+  date,
+  amount
+) {
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate() +
+      amount
+  );
+}
+
+function sameDate(
+  first,
+  second
+) {
+  return (
+    first.getFullYear() ===
+      second.getFullYear() &&
+    first.getMonth() ===
+      second.getMonth() &&
+    first.getDate() ===
+      second.getDate()
   );
 }
 
@@ -1287,23 +1908,8 @@ function formatDateKey(
   return `${year}-${month}-${day}`;
 }
 
-function sameDate(
-  first,
-  second
-) {
-  return (
-    first.getFullYear() ===
-      second.getFullYear() &&
-    first.getMonth() ===
-      second.getMonth() &&
-    first.getDate() ===
-      second.getDate()
-  );
-}
-
 function createLocalDate(
-  value,
-  firstOfMonth = false
+  value
 ) {
   const [
     year,
@@ -1316,9 +1922,7 @@ function createLocalDate(
   return new Date(
     year,
     month - 1,
-    firstOfMonth
-      ? 1
-      : day
+    day
   );
 }
 
@@ -1402,6 +2006,15 @@ function formatTime(
       minute:
         "2-digit",
     }
+  );
+}
+
+function capitalize(
+  value
+) {
+  return (
+    value.charAt(0).toUpperCase() +
+    value.slice(1)
   );
 }
 
