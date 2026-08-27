@@ -1,0 +1,648 @@
+.venue-page {
+  width: 100%;
+}
+
+
+/*
+ * HERO
+ */
+
+.venue-hero {
+  position: relative;
+
+  min-height: 520px;
+
+  overflow: hidden;
+
+  background:
+    var(--sage-dark);
+}
+
+.venue-hero-image {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.venue-hero-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(
+        0,
+        0,
+        0,
+        0.12
+      ),
+      rgba(
+        0,
+        0,
+        0,
+        0.5
+      )
+    );
+}
+
+.venue-hero-content {
+  position: relative;
+
+  z-index: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  min-height: 520px;
+
+  padding:
+    70px 30px;
+
+  color:
+    var(--white);
+
+  text-align: center;
+}
+
+.venue-hero-eyebrow {
+  margin-bottom: 10px;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.72rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.15em;
+
+  text-transform:
+    uppercase;
+}
+
+.venue-hero-content h1 {
+  margin: 0;
+
+  font-size:
+    clamp(
+      3rem,
+      7vw,
+      5.8rem
+    );
+
+  font-weight: 400;
+
+  line-height: 0.95;
+
+  text-shadow:
+    0 3px 18px
+    rgba(
+      0,
+      0,
+      0,
+      0.24
+    );
+}
+
+.venue-hero-subtitle {
+  margin:
+    12px 0 0;
+
+  font-size: 1.2rem;
+
+  letter-spacing:
+    0.05em;
+}
+
+
+/*
+ * GENERAL SECTIONS
+ */
+
+.venue-section {
+  max-width: 1180px;
+
+  margin:
+    0 auto;
+
+  padding:
+    80px 32px;
+}
+
+.venue-section-heading {
+  max-width: 650px;
+
+  margin:
+    0 auto 38px;
+
+  text-align: center;
+}
+
+.venue-section-heading h2 {
+  margin:
+    4px 0 12px;
+
+  font-size:
+    clamp(
+      2rem,
+      4vw,
+      3rem
+    );
+
+  font-weight: 400;
+}
+
+.venue-section-heading > p:last-child {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.98rem;
+
+  line-height: 1.7;
+}
+
+
+/*
+ * FEATURE
+ */
+
+.venue-feature {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.05fr)
+    minmax(0, 0.95fr);
+
+  overflow: hidden;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.venue-feature-image {
+  min-height: 520px;
+}
+
+.venue-feature-image img {
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.venue-feature-content {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding:
+    48px;
+}
+
+.venue-feature-content h2 {
+  margin:
+    4px 0 14px;
+
+  font-size:
+    clamp(
+      1.8rem,
+      3vw,
+      2.5rem
+    );
+
+  font-weight: 400;
+}
+
+.venue-feature-description {
+  margin:
+    0 0 28px;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.7;
+}
+
+
+/*
+ * DETAILS
+ */
+
+.venue-detail-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 10px;
+
+  margin-bottom: 28px;
+}
+
+.venue-detail {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  padding:
+    15px;
+
+  background:
+    var(--cream);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-small);
+}
+
+.venue-detail span {
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.62rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+.venue-detail strong {
+  font-size: 0.95rem;
+
+  font-weight: 400;
+}
+
+.venue-directions-button {
+  align-self: flex-start;
+
+  gap: 7px;
+}
+
+
+/*
+ * GALLERY
+ */
+
+.venue-gallery-section {
+  padding-top: 30px;
+}
+
+.venue-gallery {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+}
+
+.venue-gallery-item {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 3 / 4;
+
+  min-width: 0;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  background:
+    var(--sage-light);
+
+  border-radius:
+    var(--radius-medium);
+}
+
+.venue-gallery-item img {
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  transition:
+    transform 0.4s ease;
+}
+
+.venue-gallery-item:hover img {
+  transform:
+    scale(1.025);
+}
+
+
+/*
+ * WEEKEND HOUSE
+ */
+
+.venue-weekend {
+  max-width: 900px;
+
+  margin:
+    35px auto 0;
+
+  padding:
+    70px 40px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--sage-light),
+      var(--blush-light)
+    );
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  text-align: center;
+}
+
+.venue-weekend-content {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  max-width: 650px;
+
+  margin:
+    0 auto;
+}
+
+.venue-weekend-content h2 {
+  margin:
+    5px 0 14px;
+
+  font-size:
+    clamp(
+      1.9rem,
+      3vw,
+      2.7rem
+    );
+
+  font-weight: 400;
+}
+
+.venue-weekend-content > p:last-of-type {
+  margin:
+    0 0 26px;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.98rem;
+
+  line-height: 1.75;
+}
+
+.venue-weekend-link {
+  display: inline-flex;
+}
+
+
+/*
+ * CLOSING
+ */
+
+.venue-closing {
+  padding:
+    100px 30px;
+
+  text-align: center;
+}
+
+.venue-closing-content {
+  max-width: 600px;
+
+  margin:
+    0 auto;
+}
+
+.venue-closing-content h2 {
+  margin:
+    5px 0 12px;
+
+  font-size:
+    clamp(
+      2rem,
+      4vw,
+      3.2rem
+    );
+
+  font-weight: 400;
+}
+
+.venue-closing-content > p:last-child {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 1rem;
+
+  line-height: 1.65;
+}
+
+
+/*
+ * TABLET
+ */
+
+@media (
+  max-width: 900px
+) {
+  .venue-feature {
+    grid-template-columns:
+      1fr;
+  }
+
+  .venue-feature-image {
+    min-height: 420px;
+  }
+
+  .venue-feature-content {
+    padding: 36px;
+  }
+
+  .venue-gallery {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .venue-weekend {
+    margin-left: 24px;
+
+    margin-right: 24px;
+
+    padding:
+      60px 32px;
+  }
+}
+
+
+/*
+ * MOBILE
+ */
+
+@media (
+  max-width: 600px
+) {
+  .venue-hero,
+  .venue-hero-content {
+    min-height: 430px;
+  }
+
+  .venue-hero-content {
+    padding:
+      50px 22px;
+  }
+
+  .venue-section {
+    padding:
+      60px 18px;
+  }
+
+  .venue-section-heading {
+    margin-bottom: 26px;
+  }
+
+  .venue-feature {
+    border-radius:
+      var(--radius-medium);
+  }
+
+  .venue-feature-image {
+    min-height: 300px;
+  }
+
+  .venue-feature-content {
+    padding: 25px;
+  }
+
+  .venue-detail-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .venue-directions-button {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+
+  /*
+   * GALLERY
+   */
+
+  .venue-gallery {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: 8px;
+  }
+
+  .venue-gallery-item {
+    aspect-ratio:
+      3 / 4;
+
+    border-radius:
+      var(--radius-small);
+  }
+
+
+  /*
+   * WEEKEND HOUSE
+   */
+
+  .venue-weekend {
+    margin:
+      10px 18px 0;
+
+    padding:
+      48px 24px;
+
+    border-radius:
+      var(--radius-medium);
+  }
+
+  .venue-weekend-link {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+
+  /*
+   * CLOSING
+   */
+
+  .venue-closing {
+    padding:
+      75px 22px;
+  }
+}

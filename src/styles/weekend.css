@@ -1,0 +1,964 @@
+.weekend-page {
+  max-width: 1000px;
+}
+
+.weekend-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 18px;
+}
+
+.weekend-card {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  gap: 16px;
+
+  padding: 24px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.weekend-card:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    var(--cream);
+
+  border-color:
+    var(--sage);
+}
+
+.weekend-card-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    center;
+
+  flex: 0 0 auto;
+
+  width: 44px;
+
+  height: 44px;
+
+  background:
+    var(--blush-light);
+
+  color:
+    var(--blush-dark);
+
+  border-radius:
+    50%;
+}
+
+.weekend-card h2 {
+  margin-bottom: 7px;
+
+  font-size: 1.25rem;
+
+  font-weight: 400;
+}
+
+.weekend-card p {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.9rem;
+
+  line-height: 1.55;
+}
+
+.weekend-detail-page {
+  max-width: 900px;
+}
+
+.venue-summary-card {
+  max-width: 620px;
+}
+
+.venue-summary-card h2 {
+  margin-bottom: 8px;
+
+  font-size: 1.5rem;
+
+  font-weight: 400;
+}
+
+
+/*
+ * WEEKEND EVENT CHECKBOX
+ */
+
+.form-checkbox-field {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  min-height: 44px;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.84rem;
+
+  color:
+    var(--text);
+}
+
+.form-checkbox-field input {
+  width: 16px;
+
+  height: 16px;
+
+  accent-color:
+    var(--sage-dark);
+}
+
+
+/*
+ * WEEKEND TIMELINE
+ */
+
+.weekend-timeline-page {
+  max-width: 900px;
+}
+
+.weekend-timeline {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 42px;
+}
+
+.weekend-timeline-day {
+  display: grid;
+
+  grid-template-columns:
+    160px
+    minmax(0, 1fr);
+
+  gap: 32px;
+}
+
+.weekend-day-heading {
+  position: sticky;
+
+  top: 100px;
+
+  align-self: start;
+}
+
+.weekend-day-heading p {
+  margin-bottom: 5px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.7rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.1em;
+
+  text-transform:
+    uppercase;
+}
+
+.weekend-day-heading h2 {
+  margin: 0;
+
+  font-size: 1.45rem;
+
+  font-weight: 400;
+}
+
+.weekend-day-events {
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.weekend-day-events::before {
+  position: absolute;
+
+  top: 18px;
+
+  bottom: 18px;
+
+  left: 8px;
+
+  width: 1px;
+
+  background:
+    var(--border);
+
+  content: "";
+}
+
+.weekend-timeline-event {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    18px
+    minmax(0, 1fr);
+
+  gap: 14px;
+}
+
+.weekend-timeline-marker {
+  position: relative;
+
+  z-index: 1;
+
+  display: flex;
+
+  justify-content:
+    center;
+
+  padding-top: 21px;
+}
+
+.weekend-timeline-marker span {
+  display: block;
+
+  width: 10px;
+
+  height: 10px;
+
+  background:
+    var(--blush-dark);
+
+  border:
+    3px solid
+    var(--ivory);
+
+  border-radius:
+    50%;
+
+  box-sizing:
+    content-box;
+}
+
+.weekend-timeline-event-body {
+  padding: 20px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.weekend-timeline-event-header {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  gap: 15px;
+
+  margin-bottom: 10px;
+}
+
+.weekend-timeline-time {
+  margin-bottom: 4px;
+
+  color:
+    var(--blush-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.76rem;
+
+  font-weight: 800;
+}
+
+.weekend-timeline-event-header h3 {
+  margin: 0;
+
+  font-size: 1.35rem;
+
+  font-weight: 400;
+}
+
+.weekend-timeline-detail {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 7px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.82rem;
+
+  font-weight: 600;
+}
+
+.weekend-timeline-notes {
+  margin:
+    10px 0 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.9rem;
+
+  line-height: 1.6;
+}
+
+
+/*
+ * PUBLIC SUBEVENTS
+ */
+
+.public-subevent-list {
+  display: flex;
+
+  flex-direction: column;
+
+  margin-top: 18px;
+
+  padding-top: 4px;
+
+  border-top:
+    1px solid
+    var(--border);
+}
+
+.public-subevent {
+  display: grid;
+
+  grid-template-columns:
+    125px
+    minmax(0, 1fr);
+
+  gap: 16px;
+
+  padding:
+    15px 0;
+
+  border-bottom:
+    1px solid
+    var(--border);
+}
+
+.public-subevent:last-child {
+  border-bottom: 0;
+
+  padding-bottom: 2px;
+}
+
+.public-subevent-time {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  gap: 6px;
+
+  padding-top: 2px;
+
+  color:
+    var(--blush-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.75rem;
+
+  font-weight: 700;
+}
+
+.public-subevent-time svg {
+  flex: 0 0 auto;
+}
+
+.public-subevent-content h4 {
+  margin:
+    0 0 5px;
+
+  font-size: 0.95rem;
+
+  font-weight: 600;
+}
+
+.public-subevent-location {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  margin-bottom: 5px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.75rem;
+}
+
+.public-subevent-content p {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.85rem;
+
+  line-height: 1.5;
+}
+
+.weekend-events-empty {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color:
+    var(--text-light);
+}
+
+.weekend-events-empty p {
+  margin: 0;
+}
+
+
+/*
+ * MUSIC
+ */
+
+.music-page {
+  max-width: 1100px;
+}
+
+.music-page-nav {
+  position: sticky;
+
+  top: 74px;
+
+  z-index: 20;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-bottom: 40px;
+
+  padding: 10px;
+
+  background:
+    rgba(
+      238,
+      233,
+      227,
+      0.94
+    );
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    999px;
+
+  backdrop-filter:
+    blur(10px);
+}
+
+.music-page-nav-link {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 34px;
+
+  padding:
+    0 13px;
+
+  background:
+    var(--white);
+
+  color:
+    var(--sage-dark);
+
+  border-radius:
+    999px;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  transition:
+    background 0.2s ease;
+}
+
+.music-page-nav-link:hover {
+  background:
+    var(--sage-light);
+}
+
+.music-page-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 54px;
+}
+
+.music-section,
+.music-special-section {
+  scroll-margin-top:
+    150px;
+}
+
+.music-section-heading,
+.music-special-heading {
+  margin-bottom: 16px;
+}
+
+.music-section-heading h2,
+.music-special-heading h2 {
+  margin-bottom: 7px;
+
+  font-size: 1.5rem;
+
+  font-weight: 400;
+}
+
+.music-special-heading p:last-child {
+  max-width: 650px;
+
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.6;
+}
+
+.music-embed-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 14px;
+}
+
+.music-embed-card {
+  min-width: 0;
+
+  padding: 14px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.music-embed-label {
+  margin-bottom: 8px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.66rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+.spotify-track-embed {
+  display: block;
+
+  width: 100%;
+
+  height: 152px;
+
+  border: 0;
+
+  border-radius: 12px;
+}
+
+.music-category-empty {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 18px;
+
+  background:
+    var(--white);
+
+  color:
+    var(--text-light);
+
+  border:
+    1px dashed
+    var(--border);
+
+  border-radius:
+    var(--radius-medium);
+}
+
+.music-fallback-card {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 14px;
+
+  min-width: 0;
+
+  padding: 17px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-medium);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.music-fallback-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    center;
+
+  width: 42px;
+
+  height: 42px;
+
+  background:
+    var(--blush-light);
+
+  color:
+    var(--blush-dark);
+
+  border-radius:
+    50%;
+}
+
+.music-card-section {
+  margin-bottom: 3px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.65rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+}
+
+.music-fallback-card h3 {
+  margin-bottom: 3px;
+
+  font-size: 1.05rem;
+
+  font-weight: 400;
+}
+
+.music-card-artist {
+  margin-bottom: 4px;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.84rem;
+}
+
+.music-no-spotify {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.72rem;
+}
+
+
+/*
+ * PLAYLIST
+ */
+
+.spotify-playlist-card {
+  overflow: hidden;
+
+  padding: 14px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.spotify-playlist-card iframe {
+  display: block;
+
+  width: 100%;
+
+  border: 0;
+
+  border-radius:
+    12px;
+}
+
+
+/*
+ * SONG REQUEST
+ */
+
+.music-request-form {
+  overflow: hidden;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.music-request-form iframe {
+  display: block;
+
+  width: 100%;
+
+  border: 0;
+}
+
+
+/*
+ * TABLET
+ */
+
+@media (
+  max-width: 750px
+) {
+  .weekend-timeline-day {
+    grid-template-columns:
+      1fr;
+
+    gap: 16px;
+  }
+
+  .weekend-day-heading {
+    position: static;
+  }
+
+  .music-embed-list {
+    grid-template-columns:
+      1fr;
+  }
+
+  .music-page-nav {
+    position: static;
+
+    border-radius:
+      var(--radius-medium);
+  }
+}
+
+
+/*
+ * MOBILE
+ */
+
+@media (
+  max-width: 700px
+) {
+  .weekend-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .weekend-card {
+    padding: 20px;
+  }
+}
+
+@media (
+  max-width: 550px
+) {
+  .weekend-timeline {
+    gap: 34px;
+  }
+
+  .weekend-day-events {
+    gap: 14px;
+  }
+
+  .weekend-timeline-event-body {
+    padding: 17px;
+  }
+
+  .public-subevent {
+    grid-template-columns:
+      1fr;
+
+    gap: 6px;
+  }
+
+  .music-page-nav {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .music-page-nav-link {
+    padding:
+      0 8px;
+
+    text-align: center;
+  }
+
+  .music-embed-card,
+  .spotify-playlist-card {
+    padding: 10px;
+  }
+}

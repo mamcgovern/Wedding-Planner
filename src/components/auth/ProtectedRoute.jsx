@@ -1,25 +1,93 @@
-import { Navigate } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
-import { useAuth } from "../../context/AuthContext";
+import {
+  LoaderCircle,
+} from "lucide-react";
 
-function ProtectedRoute({ children }) {
+import {
+  useAuth,
+} from "../../context/AuthContext";
+
+function ProtectedRoute({
+  children,
+}) {
   const {
     user,
+    isAdmin,
     loading,
   } = useAuth();
 
-  if (loading) {
+  const location =
+    useLocation();
+
+  /*
+   * WAIT UNTIL BOTH FIREBASE AUTH
+   * AND ADMIN AUTHORIZATION HAVE
+   * FINISHED LOADING.
+   */
+
+  if (
+    loading
+  ) {
     return (
-      <div className="app-loading">
-        <div className="loading-heart">♡</div>
-        <p>Loading your wedding planner...</p>
-      </div>
+      <main className="page protected-route-loading">
+        <LoaderCircle
+          size={28}
+          className="spinner"
+        />
+
+        <p>
+          Checking planning access...
+        </p>
+      </main>
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  /*
+   * NOT SIGNED IN
+   */
+
+  if (
+    !user
+  ) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          from:
+            location.pathname,
+        }}
+      />
+    );
   }
+
+  /*
+   * SIGNED IN, BUT NOT AN
+   * APPROVED WEDDING ADMIN
+   */
+
+  if (
+    !isAdmin
+  ) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          unauthorized:
+            true,
+        }}
+      />
+    );
+  }
+
+  /*
+   * APPROVED ADMIN
+   */
 
   return children;
 }

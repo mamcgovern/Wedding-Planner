@@ -12,17 +12,16 @@
   --white: #ffffff;
 
   --charcoal: #373737;
-  --black: #000000;
-
   --text: #373737;
   --text-light: #77736f;
-  --border: #dfd9d3;
 
-  --sidebar-width: 250px;
+  --border: #ded8d2;
 
   --radius-small: 8px;
   --radius-medium: 14px;
   --radius-large: 22px;
 
-  --shadow-soft: 0 8px 28px rgba(55, 55, 55, 0.06);
+  --shadow-soft:
+    0 8px 28px
+    rgba(55, 55, 55, 0.06);
 }
