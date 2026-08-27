@@ -4,6 +4,7 @@ import {
   Routes,
 } from "react-router-dom";
 
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import SiteLayout from "./components/layout/SiteLayout";
 
 import Attire from "./pages/Attire";
@@ -12,35 +13,58 @@ import Login from "./pages/Login";
 import Timeline from "./pages/Timeline";
 import Weekend from "./pages/Weekend";
 
+import Dashboard from "./pages/admin/Dashboard";
+
 function App() {
   return (
     <Routes>
       <Route
-        element={<SiteLayout />}
+        element={
+          <SiteLayout />
+        }
       >
         <Route
           path="/"
-          element={<Home />}
+          element={
+            <Home />
+          }
         />
 
         <Route
           path="/attire"
-          element={<Attire />}
+          element={
+            <Attire />
+          }
         />
 
         <Route
           path="/timeline"
-          element={<Timeline />}
+          element={
+            <Timeline />
+          }
         />
 
         <Route
           path="/weekend"
-          element={<Weekend />}
+          element={
+            <Weekend />
+          }
         />
 
         <Route
           path="/login"
-          element={<Login />}
+          element={
+            <Login />
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
       </Route>
 

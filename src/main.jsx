@@ -12,6 +12,10 @@ import {
 
 import App from "./App";
 
+import {
+  AuthProvider,
+} from "./context/AuthContext";
+
 import "./styles/index.css";
 
 createRoot(
@@ -19,7 +23,9 @@ createRoot(
 ).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 );
