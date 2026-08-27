@@ -8,9 +8,11 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import SiteLayout from "./components/layout/SiteLayout";
 
 import Attire from "./pages/Attire";
+import AttireAssignments from "./pages/AttireAssignments";
 import Home from "./pages/Home";
 import ImportantDates from "./pages/ImportantDates";
 import Login from "./pages/Login";
+import SelectedOutfits from "./pages/SelectedOutfits";
 import Weekend from "./pages/Weekend";
 
 import Music from "./pages/weekend/Music";
@@ -18,6 +20,7 @@ import SleepingArrangements from "./pages/weekend/SleepingArrangements";
 import Venue from "./pages/weekend/Venue";
 import WeekendTimeline from "./pages/weekend/WeekendTimeline";
 
+import AttireAdmin from "./pages/admin/AttireAdmin";
 import Budget from "./pages/admin/Budget";
 import Calendar from "./pages/admin/Calendar";
 import Dashboard from "./pages/admin/Dashboard";
@@ -58,6 +61,20 @@ function App() {
           path="/attire"
           element={
             <Attire />
+          }
+        />
+
+        <Route
+          path="/attire/assignments"
+          element={
+            <AttireAssignments />
+          }
+        />
+
+        <Route
+          path="/attire/selected"
+          element={
+            <SelectedOutfits />
           }
         />
 
@@ -153,6 +170,15 @@ function App() {
           element={
             <ProtectedPage>
               <Calendar />
+            </ProtectedPage>
+          }
+        />
+
+        <Route
+          path="/admin/attire"
+          element={
+            <ProtectedPage>
+              <AttireAdmin />
             </ProtectedPage>
           }
         />

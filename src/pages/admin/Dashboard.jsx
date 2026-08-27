@@ -6,6 +6,7 @@ import {
   MapPinned,
   Music2,
   Settings,
+  Shirt,
   Store,
   UsersRound,
 } from "lucide-react";
@@ -40,6 +41,19 @@ const planningTools = [
 
     icon:
       CalendarDays,
+  },
+  {
+    title:
+      "Attire",
+
+    description:
+      "Manage wedding-party outfits, colors, shoes, and attire assignments.",
+
+    path:
+      "/admin/attire",
+
+    icon:
+      Shirt,
   },
   {
     title:
@@ -174,15 +188,11 @@ function Dashboard() {
 
                 <div>
                   <h2>
-                    {
-                      tool.title
-                    }
+                    {tool.title}
                   </h2>
 
                   <p>
-                    {
-                      tool.description
-                    }
+                    {tool.description}
                   </p>
                 </div>
               </Link>
