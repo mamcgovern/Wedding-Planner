@@ -1,377 +1,422 @@
 import {
-    ExternalLink,
-    Shirt,
+  ExternalLink,
+  Shirt,
 } from "lucide-react";
 
 import {
-    collection,
-    onSnapshot,
+  collection,
+  onSnapshot,
 } from "firebase/firestore";
 
 import {
-    useEffect,
-    useMemo,
-    useState,
+  useEffect,
+  useMemo,
+  useState,
 } from "react";
 
 import {
-    db,
+  NavLink,
+} from "react-router-dom";
+
+import {
+  db,
 } from "../services/firebase";
 
 import {
-    WEDDING_ID,
+  WEDDING_ID,
 } from "../config/wedding";
 
 const groupOrder = [
-    "Bridesmaids",
-    "Groomsmen",
-    "Parents",
-    "Bride & Groom",
-    "Wedding Party",
-    "Other",
+  "Bridesmaids",
+  "Groomsmen",
+  "Parents",
+  "Bride & Groom",
+  "Wedding Party",
+  "Other",
 ];
 
 function SelectedOutfits() {
-    const [
-        selections,
-        setSelections,
-    ] = useState([]);
+  const [
+    selections,
+    setSelections,
+  ] = useState([]);
 
-    const [
-        loading,
-        setLoading,
-    ] = useState(true);
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
 
-    useEffect(() => {
-        const unsubscribe =
-            onSnapshot(
-                collection(
-                    db,
-                    "weddings",
-                    WEDDING_ID,
-                    "selectedOutfits"
-                ),
-                (snapshot) => {
-                    setSelections(
-                        snapshot.docs
-                            .map(
-                                (selectionDoc) => ({
-                                    id:
-                                        selectionDoc.id,
+  useEffect(() => {
+    const unsubscribe =
+      onSnapshot(
+        collection(
+          db,
+          "weddings",
+          WEDDING_ID,
+          "selectedOutfits"
+        ),
+        (snapshot) => {
+          setSelections(
+            snapshot.docs
+              .map(
+                (selectionDoc) => ({
+                  id:
+                    selectionDoc.id,
 
-                                    ...selectionDoc.data(),
-                                })
-                            )
-                            .filter(
-                                (selection) =>
-                                    selection.visible !==
-                                    false
-                            )
-                    );
+                  ...selectionDoc.data(),
+                })
+              )
+              .filter(
+                (selection) =>
+                  selection.visible !==
+                  false
+              )
+          );
 
-                    setLoading(false);
-                },
-                (firebaseError) => {
-                    console.error(
-                        "Error loading selected outfits:",
-                        firebaseError
-                    );
+          setLoading(false);
+        },
+        (firebaseError) => {
+          console.error(
+            "Error loading selected outfits:",
+            firebaseError
+          );
 
-                    setLoading(false);
-                }
+          setLoading(false);
+        }
+      );
+
+    return unsubscribe;
+  }, []);
+
+  const groupedSelections =
+    useMemo(
+      () => {
+        const grouped = {};
+
+        selections.forEach(
+          (selection) => {
+            const group =
+              selection.group ||
+              "Other";
+
+            if (
+              !grouped[
+                group
+              ]
+            ) {
+              grouped[
+                group
+              ] = [];
+            }
+
+            grouped[
+              group
+            ].push(
+              selection
             );
-
-        return unsubscribe;
-    }, []);
-
-    const groupedSelections =
-        useMemo(
-            () => {
-                const grouped = {};
-
-                selections.forEach(
-                    (selection) => {
-                        const group =
-                            selection.group ||
-                            "Other";
-
-                        if (
-                            !grouped[
-                            group
-                            ]
-                        ) {
-                            grouped[
-                                group
-                            ] = [];
-                        }
-
-                        grouped[
-                            group
-                        ].push(
-                            selection
-                        );
-                    }
-                );
-
-                Object.values(
-                    grouped
-                ).forEach(
-                    (groupSelections) => {
-                        groupSelections.sort(
-                            (first, second) =>
-                                String(
-                                    first.displayName ||
-                                    first.personName ||
-                                    ""
-                                ).localeCompare(
-                                    String(
-                                        second.displayName ||
-                                        second.personName ||
-                                        ""
-                                    )
-                                )
-                        );
-                    }
-                );
-
-                return grouped;
-            },
-            [selections]
+          }
         );
 
-    const groups =
-        Object.keys(
-            groupedSelections
-        ).sort(
-            compareGroups
+        Object.values(
+          grouped
+        ).forEach(
+          (groupSelections) => {
+            groupSelections.sort(
+              (first, second) =>
+                String(
+                  first.displayName ||
+                  first.personName ||
+                  ""
+                ).localeCompare(
+                  String(
+                    second.displayName ||
+                    second.personName ||
+                    ""
+                  )
+                )
+            );
+          }
         );
 
-    return (
-        <main className="page selected-outfits-page">
-            <section className="selected-outfits-intro">
-                <p className="page-eyebrow">
-                    Selected Outfits
-                </p>
-
-                <h1 className="page-title">
-                    What We're Wearing
-                </h1>
-
-                <p className="page-description">
-                    Take a look at what members of the wedding
-                    party have chosen to wear for the wedding.
-                </p>
-            </section>
-
-            {loading ? (
-                <div className="content-card">
-                    Loading selected outfits...
-                </div>
-            ) : groups.length ===
-                0 ? (
-                <div className="content-card selected-outfits-empty">
-                    <Shirt
-                        size={22}
-                    />
-
-                    <div>
-                        <strong>
-                            Nothing selected yet.
-                        </strong>
-
-                        <p>
-                            Outfits will appear here as everyone
-                            finalizes their choices.
-                        </p>
-                    </div>
-                </div>
-            ) : (
-                <div className="selected-outfit-groups">
-                    {groups.map(
-                        (group) => (
-                            <section
-                                className="selected-outfit-group"
-                                key={
-                                    group
-                                }
-                            >
-                                <div className="selected-outfit-group-heading">
-                                    <p className="card-eyebrow">
-                                        Wedding Party
-                                    </p>
-
-                                    <h2>
-                                        {group}
-                                    </h2>
-
-                                    {group ===
-                                        "Groomsmen" && (
-                                            <p>
-                                                The groomsmen will wear the same
-                                                suit with their assigned tie
-                                                colors.
-                                            </p>
-                                        )}
-                                </div>
-
-                                <div
-                                    className={`selected-outfit-grid ${getGridClass(
-                                        group
-                                    )}`}
-                                >
-                                    {groupedSelections[
-                                        group
-                                    ].map(
-                                        (selection) => (
-                                            <SelectedOutfitCard
-                                                key={
-                                                    selection.id
-                                                }
-                                                selection={
-                                                    selection
-                                                }
-                                            />
-                                        )
-                                    )}
-                                </div>
-                            </section>
-                        )
-                    )}
-                </div>
-            )}
-        </main>
+        return grouped;
+      },
+      [selections]
     );
+
+  const groups =
+    Object.keys(
+      groupedSelections
+    ).sort(
+      compareGroups
+    );
+
+  return (
+    <main className="page selected-outfits-page">
+      <AttireSubnav />
+
+      <section className="selected-outfits-intro">
+        <p className="page-eyebrow">
+          Selected Outfits
+        </p>
+
+        <h1 className="page-title">
+          What We're Wearing
+        </h1>
+
+        <p className="page-description">
+          Take a look at what members of the wedding
+          party have chosen to wear for the wedding.
+        </p>
+      </section>
+
+      {loading ? (
+        <div className="content-card">
+          Loading selected outfits...
+        </div>
+      ) : groups.length ===
+        0 ? (
+        <div className="content-card selected-outfits-empty">
+          <Shirt
+            size={22}
+          />
+
+          <div>
+            <strong>
+              Nothing selected yet.
+            </strong>
+
+            <p>
+              Outfits will appear here as everyone
+              finalizes their choices.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="selected-outfit-groups">
+          {groups.map(
+            (group) => (
+              <section
+                className="selected-outfit-group"
+                key={
+                  group
+                }
+              >
+                <div className="selected-outfit-group-heading">
+                  <p className="card-eyebrow">
+                    Wedding Party
+                  </p>
+
+                  <h2>
+                    {group}
+                  </h2>
+
+                  {group ===
+                    "Groomsmen" && (
+                    <p>
+                      The groomsmen will wear the same
+                      suit with their assigned tie
+                      colors.
+                    </p>
+                  )}
+                </div>
+
+                <div
+                  className={`selected-outfit-grid ${getGridClass(
+                    group
+                  )}`}
+                >
+                  {groupedSelections[
+                    group
+                  ].map(
+                    (selection) => (
+                      <SelectedOutfitCard
+                        key={
+                          selection.id
+                        }
+                        selection={
+                          selection
+                        }
+                      />
+                    )
+                  )}
+                </div>
+              </section>
+            )
+          )}
+        </div>
+      )}
+    </main>
+  );
+}
+
+function AttireSubnav() {
+  return (
+    <nav
+      className="attire-subnav"
+      aria-label="Attire pages"
+    >
+      <NavLink
+        to="/attire/assignments"
+        className={({
+          isActive,
+        }) =>
+          `attire-subnav-link ${
+            isActive
+              ? "active"
+              : ""
+          }`
+        }
+      >
+        Find Your Outfit
+      </NavLink>
+
+      <NavLink
+        to="/attire/selected"
+        className={({
+          isActive,
+        }) =>
+          `attire-subnav-link ${
+            isActive
+              ? "active"
+              : ""
+          }`
+        }
+      >
+        Selected Outfits
+      </NavLink>
+    </nav>
+  );
 }
 
 function SelectedOutfitCard({
-    selection,
+  selection,
 }) {
-    return (
-        <article className="selected-outfit-card">
-            <div className="selected-outfit-image">
-                {selection.imageUrl ? (
-                    <img
-                        src={
-                            selection.imageUrl
-                        }
-                        alt={
-                            selection.outfitName ||
-                            `${selection.displayName || selection.personName}'s outfit`
-                        }
-                        loading="lazy"
-                    />
-                ) : (
-                    <div className="selected-outfit-placeholder">
-                        <Shirt
-                            size={30}
-                        />
-                    </div>
-                )}
-            </div>
+  return (
+    <article className="selected-outfit-card">
+      <div className="selected-outfit-image">
+        {selection.imageUrl ? (
+          <img
+            src={
+              selection.imageUrl
+            }
+            alt={
+              selection.outfitName ||
+              `${selection.displayName || selection.personName}'s outfit`
+            }
+            loading="lazy"
+          />
+        ) : (
+          <div className="selected-outfit-placeholder">
+            <Shirt
+              size={30}
+            />
+          </div>
+        )}
+      </div>
 
-            <div className="selected-outfit-content">
-                {selection.color && (
-                    <p className="card-eyebrow">
-                        {selection.color}
-                    </p>
-                )}
+      <div className="selected-outfit-content">
+        {selection.color && (
+          <p className="card-eyebrow">
+            {selection.color}
+          </p>
+        )}
 
-                <h3>
-                    {selection.displayName ||
-                        selection.personName}
-                </h3>
+        <h3>
+          {selection.displayName ||
+            selection.personName}
+        </h3>
 
-                {selection.outfitName && (
-                    <p>
-                        {selection.outfitName}
-                    </p>
-                )}
+        {selection.outfitName && (
+          <p>
+            {selection.outfitName}
+          </p>
+        )}
 
-                {selection.purchaseUrl && (
-                    <a
-                        href={
-                            selection.purchaseUrl
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        View Outfit
+        {selection.purchaseUrl && (
+          <a
+            href={
+              selection.purchaseUrl
+            }
+            target="_blank"
+            rel="noreferrer"
+          >
+            View Outfit
 
-                        <ExternalLink
-                            size={13}
-                        />
-                    </a>
-                )}
-            </div>
-        </article>
-    );
+            <ExternalLink
+              size={13}
+            />
+          </a>
+        )}
+      </div>
+    </article>
+  );
 }
 
 function getGridClass(
-    group
+  group
 ) {
-    if (
-        group ===
-        "Bridesmaids" ||
-        group ===
-        "Groomsmen"
-    ) {
-        return "selected-outfit-grid-3";
-    }
+  if (
+    group ===
+      "Bridesmaids" ||
+    group ===
+      "Groomsmen"
+  ) {
+    return "selected-outfit-grid-3";
+  }
 
-    if (
-        group ===
-        "Parents"
-    ) {
-        return "selected-outfit-grid-4";
-    }
+  if (
+    group ===
+    "Parents"
+  ) {
+    return "selected-outfit-grid-4";
+  }
 
-    return "selected-outfit-grid-default";
+  return "selected-outfit-grid-default";
 }
 
 function compareGroups(
-    first,
-    second
+  first,
+  second
 ) {
-    const firstIndex =
-        groupOrder.indexOf(
-            first
-        );
-
-    const secondIndex =
-        groupOrder.indexOf(
-            second
-        );
-
-    if (
-        firstIndex ===
-        -1 &&
-        secondIndex ===
-        -1
-    ) {
-        return first.localeCompare(
-            second
-        );
-    }
-
-    if (
-        firstIndex ===
-        -1
-    ) {
-        return 1;
-    }
-
-    if (
-        secondIndex ===
-        -1
-    ) {
-        return -1;
-    }
-
-    return (
-        firstIndex -
-        secondIndex
+  const firstIndex =
+    groupOrder.indexOf(
+      first
     );
+
+  const secondIndex =
+    groupOrder.indexOf(
+      second
+    );
+
+  if (
+    firstIndex ===
+      -1 &&
+    secondIndex ===
+      -1
+  ) {
+    return first.localeCompare(
+      second
+    );
+  }
+
+  if (
+    firstIndex ===
+    -1
+  ) {
+    return 1;
+  }
+
+  if (
+    secondIndex ===
+    -1
+  ) {
+    return -1;
+  }
+
+  return (
+    firstIndex -
+    secondIndex
+  );
 }
 
 export default SelectedOutfits;

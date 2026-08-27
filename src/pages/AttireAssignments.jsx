@@ -16,6 +16,10 @@ import {
 } from "react";
 
 import {
+  NavLink,
+} from "react-router-dom";
+
+import {
   db,
 } from "../services/firebase";
 
@@ -261,6 +265,8 @@ function AttireAssignments() {
 
   return (
     <main className="page attire-assignments-page">
+      <AttireSubnav />
+
       <section className="attire-assignment-intro">
         <p className="page-eyebrow">
           Attire Assignments
@@ -451,6 +457,45 @@ function AttireAssignments() {
         </section>
       )}
     </main>
+  );
+}
+
+function AttireSubnav() {
+  return (
+    <nav
+      className="attire-subnav"
+      aria-label="Attire pages"
+    >
+      <NavLink
+        to="/attire/assignments"
+        className={({
+          isActive,
+        }) =>
+          `attire-subnav-link ${
+            isActive
+              ? "active"
+              : ""
+          }`
+        }
+      >
+        Find Your Outfit
+      </NavLink>
+
+      <NavLink
+        to="/attire/selected"
+        className={({
+          isActive,
+        }) =>
+          `attire-subnav-link ${
+            isActive
+              ? "active"
+              : ""
+          }`
+        }
+      >
+        Selected Outfits
+      </NavLink>
+    </nav>
   );
 }
 

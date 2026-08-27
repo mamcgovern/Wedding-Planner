@@ -1,4 +1,87 @@
 /*
+ * ATTIRE SUBNAV
+ */
+
+.attire-subnav {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  width: fit-content;
+
+  margin-bottom: 34px;
+
+  padding: 5px;
+
+  background:
+    var(--cream);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    999px;
+}
+
+.attire-subnav-link {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding:
+    8px 14px;
+
+  color:
+    var(--text-light);
+
+  border-radius:
+    999px;
+
+  text-decoration: none;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.attire-subnav-link:hover {
+  color:
+    var(--sage-dark);
+}
+
+.attire-subnav-link.active {
+  background:
+    var(--white);
+
+  color:
+    var(--sage-dark);
+
+  box-shadow:
+    0 2px 8px
+    rgba(
+      55,
+      55,
+      55,
+      0.07
+    );
+}
+
+
+/*
  * ATTIRE OVERVIEW
  */
 
@@ -454,7 +537,7 @@ p:not(.card-eyebrow) {
 .outfit-product-section-shoes
 .outfit-product-image {
   aspect-ratio:
-    2 / 3;
+    4 / 3;
 }
 
 .outfit-product-image img {
@@ -633,11 +716,6 @@ p:not(.card-eyebrow) {
   gap: 14px;
 }
 
-/*
- * Bridesmaids + Groomsmen
- * Three cards across
- */
-
 .selected-outfit-grid-3 {
   grid-template-columns:
     repeat(
@@ -646,11 +724,6 @@ p:not(.card-eyebrow) {
     );
 }
 
-/*
- * Parents
- * Four cards across
- */
-
 .selected-outfit-grid-4 {
   grid-template-columns:
     repeat(
@@ -658,10 +731,6 @@ p:not(.card-eyebrow) {
       minmax(0, 1fr)
     );
 }
-
-/*
- * Any additional groups
- */
 
 .selected-outfit-grid-default {
   grid-template-columns:
@@ -1257,6 +1326,31 @@ p:last-child {
 @media (
   max-width: 650px
 ) {
+  .attire-subnav {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    width: 100%;
+
+    border-radius:
+      var(--radius-medium);
+  }
+
+  .attire-subnav-link {
+    padding:
+      9px 7px;
+
+    border-radius:
+      var(--radius-small);
+
+    text-align: center;
+  }
+
   .attire-overview-grid {
     grid-template-columns:
       1fr;
