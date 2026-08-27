@@ -1,4 +1,5 @@
 import {
+  LogOut,
   Menu,
   X,
 } from "lucide-react";
@@ -13,7 +14,16 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import {
+  useAuth,
+} from "../../context/AuthContext";
+
 function Header() {
+  const {
+    user,
+    logout,
+  } = useAuth();
+
   const location =
     useLocation();
 
@@ -25,6 +35,18 @@ function Header() {
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
+
+  const handleLogout =
+    async () => {
+      try {
+        await logout();
+      } catch (error) {
+        console.error(
+          "Error signing out:",
+          error
+        );
+      }
+    };
 
   return (
     <>
@@ -97,12 +119,37 @@ function Header() {
               Weekend
             </NavLink>
 
-            <NavLink
-              to="/login"
-              className="site-admin-link"
-            >
-              Admin
-            </NavLink>
+            {user ? (
+              <>
+                <NavLink
+                  to="/admin"
+                  className="site-admin-link"
+                >
+                  Planning
+                </NavLink>
+
+                <button
+                  type="button"
+                  className="site-logout-button"
+                  onClick={
+                    handleLogout
+                  }
+                  aria-label="Sign out"
+                  title="Sign out"
+                >
+                  <LogOut
+                    size={16}
+                  />
+                </button>
+              </>
+            ) : (
+              <NavLink
+                to="/login"
+                className="site-admin-link"
+              >
+                Admin
+              </NavLink>
+            )}
           </nav>
 
           <button
@@ -183,12 +230,37 @@ function Header() {
             Weekend
           </NavLink>
 
-          <NavLink
-            to="/login"
-            className="mobile-nav-link mobile-admin-link"
-          >
-            Admin
-          </NavLink>
+          {user ? (
+            <>
+              <NavLink
+                to="/admin"
+                className="mobile-nav-link mobile-admin-link"
+              >
+                Planning
+              </NavLink>
+
+              <button
+                type="button"
+                className="mobile-nav-link mobile-logout-link"
+                onClick={
+                  handleLogout
+                }
+              >
+                <LogOut
+                  size={16}
+                />
+
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <NavLink
+              to="/login"
+              className="mobile-nav-link mobile-admin-link"
+            >
+              Admin
+            </NavLink>
+          )}
         </nav>
       )}
     </>
