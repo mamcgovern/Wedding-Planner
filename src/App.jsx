@@ -9,8 +9,8 @@ import SiteLayout from "./components/layout/SiteLayout";
 
 import Attire from "./pages/Attire";
 import Home from "./pages/Home";
+import ImportantDates from "./pages/ImportantDates";
 import Login from "./pages/Login";
-import Timeline from "./pages/Timeline";
 import Weekend from "./pages/Weekend";
 
 import Budget from "./pages/admin/Budget";
@@ -55,9 +55,9 @@ function App() {
         />
 
         <Route
-          path="/timeline"
+          path="/important-dates"
           element={
-            <Timeline />
+            <ImportantDates />
           }
         />
 

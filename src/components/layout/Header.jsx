@@ -119,7 +119,7 @@ function Header() {
             </NavLink>
 
             <NavLink
-              to="/timeline"
+              to="/important-dates"
               className={({
                 isActive,
               }) =>
@@ -130,7 +130,7 @@ function Header() {
                 }`
               }
             >
-              Timeline
+              Important Dates
             </NavLink>
 
             <NavLink
@@ -242,7 +242,7 @@ function Header() {
           </NavLink>
 
           <NavLink
-            to="/timeline"
+            to="/important-dates"
             className={({
               isActive,
             }) =>
@@ -253,7 +253,7 @@ function Header() {
               }`
             }
           >
-            Timeline
+            Important Dates
           </NavLink>
 
           <NavLink

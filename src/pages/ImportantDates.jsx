@@ -1,18 +1,17 @@
-function Timeline() {
+function ImportantDates() {
   return (
     <main className="page">
       <p className="page-eyebrow">
-        Important Dates
+        Wedding Party
       </p>
 
       <h1 className="page-title">
-        Timeline
+        Important Dates
       </h1>
 
       <p className="page-description">
-        Attire deadlines, RSVP dates, wedding
-        events, and other important wedding-party
-        reminders will go here.
+        Attire deadlines, RSVP dates, wedding events,
+        and other important reminders for the wedding party.
       </p>
 
       <div className="content-card">
@@ -22,4 +21,4 @@ function Timeline() {
   );
 }
 
-export default Timeline;
+export default ImportantDates;
