@@ -24,6 +24,7 @@ import AttireAdmin from "./pages/admin/AttireAdmin";
 import Budget from "./pages/admin/Budget";
 import Calendar from "./pages/admin/Calendar";
 import Dashboard from "./pages/admin/Dashboard";
+import Guests from "./pages/admin/Guests";
 import MusicAdmin from "./pages/admin/MusicAdmin";
 import Pins from "./pages/admin/Pins";
 import SeatingChart from "./pages/admin/SeatingChart";
@@ -202,6 +203,24 @@ function App() {
         />
 
         <Route
+          path="/admin/guests"
+          element={
+            <ProtectedPage>
+              <Guests />
+            </ProtectedPage>
+          }
+        />
+
+        <Route
+          path="/admin/seating-chart"
+          element={
+            <ProtectedPage>
+              <SeatingChart />
+            </ProtectedPage>
+          }
+        />
+
+        <Route
           path="/admin/budget"
           element={
             <ProtectedPage>
@@ -224,15 +243,6 @@ function App() {
           element={
             <ProtectedPage>
               <Pins />
-            </ProtectedPage>
-          }
-        />
-
-        <Route
-          path="/admin/seating-chart"
-          element={
-            <ProtectedPage>
-              <SeatingChart />
             </ProtectedPage>
           }
         />
