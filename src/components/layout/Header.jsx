@@ -18,11 +18,19 @@ import {
   useAuth,
 } from "../../context/AuthContext";
 
+import {
+  useWedding,
+} from "../../context/WeddingContext";
+
 function Header() {
   const {
     user,
     logout,
   } = useAuth();
+
+  const {
+    wedding,
+  } = useWedding();
 
   const location =
     useLocation();
@@ -34,7 +42,9 @@ function Header() {
 
   useEffect(() => {
     setMobileOpen(false);
-  }, [location.pathname]);
+  }, [
+    location.pathname,
+  ]);
 
   const handleLogout =
     async () => {
@@ -48,6 +58,17 @@ function Header() {
       }
     };
 
+  const coupleName =
+    buildCoupleName(
+      wedding.brideName,
+      wedding.groomName
+    );
+
+  const weddingDate =
+    formatWeddingDate(
+      wedding.weddingDate
+    );
+
   return (
     <>
       <header className="site-header">
@@ -57,11 +78,11 @@ function Header() {
             className="site-brand"
           >
             <span className="site-brand-main">
-              Maddie & Nick
+              {coupleName}
             </span>
 
             <span className="site-brand-subtitle">
-              April 24, 2027
+              {weddingDate}
             </span>
           </NavLink>
 
@@ -69,7 +90,9 @@ function Header() {
             <NavLink
               to="/"
               end
-              className={({ isActive }) =>
+              className={({
+                isActive,
+              }) =>
                 `site-nav-link ${
                   isActive
                     ? "active"
@@ -82,7 +105,9 @@ function Header() {
 
             <NavLink
               to="/attire"
-              className={({ isActive }) =>
+              className={({
+                isActive,
+              }) =>
                 `site-nav-link ${
                   isActive
                     ? "active"
@@ -95,7 +120,9 @@ function Header() {
 
             <NavLink
               to="/timeline"
-              className={({ isActive }) =>
+              className={({
+                isActive,
+              }) =>
                 `site-nav-link ${
                   isActive
                     ? "active"
@@ -108,7 +135,9 @@ function Header() {
 
             <NavLink
               to="/weekend"
-              className={({ isActive }) =>
+              className={({
+                isActive,
+              }) =>
                 `site-nav-link ${
                   isActive
                     ? "active"
@@ -167,9 +196,13 @@ function Header() {
             }
           >
             {mobileOpen ? (
-              <X size={22} />
+              <X
+                size={22}
+              />
             ) : (
-              <Menu size={22} />
+              <Menu
+                size={22}
+              />
             )}
           </button>
         </div>
@@ -180,7 +213,9 @@ function Header() {
           <NavLink
             to="/"
             end
-            className={({ isActive }) =>
+            className={({
+              isActive,
+            }) =>
               `mobile-nav-link ${
                 isActive
                   ? "active"
@@ -193,7 +228,9 @@ function Header() {
 
           <NavLink
             to="/attire"
-            className={({ isActive }) =>
+            className={({
+              isActive,
+            }) =>
               `mobile-nav-link ${
                 isActive
                   ? "active"
@@ -206,7 +243,9 @@ function Header() {
 
           <NavLink
             to="/timeline"
-            className={({ isActive }) =>
+            className={({
+              isActive,
+            }) =>
               `mobile-nav-link ${
                 isActive
                   ? "active"
@@ -219,7 +258,9 @@ function Header() {
 
           <NavLink
             to="/weekend"
-            className={({ isActive }) =>
+            className={({
+              isActive,
+            }) =>
               `mobile-nav-link ${
                 isActive
                   ? "active"
@@ -264,6 +305,80 @@ function Header() {
         </nav>
       )}
     </>
+  );
+}
+
+function buildCoupleName(
+  brideName,
+  groomName
+) {
+  const brideFirst =
+    getFirstName(
+      brideName
+    );
+
+  const groomFirst =
+    getFirstName(
+      groomName
+    );
+
+  if (
+    brideFirst &&
+    groomFirst
+  ) {
+    return `${brideFirst} & ${groomFirst}`;
+  }
+
+  if (brideFirst) {
+    return brideFirst;
+  }
+
+  if (groomFirst) {
+    return groomFirst;
+  }
+
+  return "Our Wedding";
+}
+
+function getFirstName(
+  value
+) {
+  return String(
+    value || ""
+  )
+    .trim()
+    .split(/\s+/)[0];
+}
+
+function formatWeddingDate(
+  value
+) {
+  if (!value) {
+    return "Wedding";
+  }
+
+  const [
+    year,
+    month,
+    day,
+  ] = value
+    .split("-")
+    .map(Number);
+
+  const date =
+    new Date(
+      year,
+      month - 1,
+      day
+    );
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }
   );
 }
 

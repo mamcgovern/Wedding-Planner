@@ -16,6 +16,10 @@ import {
   AuthProvider,
 } from "./context/AuthContext";
 
+import {
+  WeddingProvider,
+} from "./context/WeddingContext";
+
 import "./styles/index.css";
 
 createRoot(
@@ -24,7 +28,9 @@ createRoot(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <WeddingProvider>
+          <App />
+        </WeddingProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>

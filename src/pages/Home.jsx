@@ -1,4 +1,34 @@
+import {
+  useWedding,
+} from "../context/WeddingContext";
+
 function Home() {
+  const {
+    wedding,
+    loading,
+  } = useWedding();
+
+  const coupleName =
+    buildCoupleName(
+      wedding.brideName,
+      wedding.groomName
+    );
+
+  const weddingDate =
+    formatWeddingDate(
+      wedding.weddingDate
+    );
+
+  if (loading) {
+    return (
+      <main className="page">
+        <div className="content-card">
+          Loading wedding information...
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="page">
       <p className="page-eyebrow">
@@ -6,13 +36,31 @@ function Home() {
       </p>
 
       <h1 className="page-title">
-        Maddie & Nick
+        {coupleName}
       </h1>
 
       <p className="page-description">
-        Wedding party information, planning tools,
-        weekend details, attire, and everything else
-        will live here.
+        {weddingDate}
+
+        {wedding.venueName && (
+          <>
+            {" "}
+            at{" "}
+            {
+              wedding.venueName
+            }
+          </>
+        )}
+
+        {wedding.venueLocation && (
+          <>
+            {" "}
+            in{" "}
+            {
+              wedding.venueLocation
+            }
+          </>
+        )}
       </p>
 
       <div className="home-grid">
@@ -48,11 +96,11 @@ function Home() {
 
         <div className="content-card">
           <p className="card-eyebrow">
-            April 2027
+            Wedding Weekend
           </p>
 
           <h2>
-            Wedding Weekend
+            Weekend
           </h2>
 
           <p>
@@ -63,21 +111,100 @@ function Home() {
 
         <div className="content-card">
           <p className="card-eyebrow">
-            Private
+            Venue
           </p>
 
           <h2>
-            Planning
+            {
+              wedding.venueName ||
+              "Wedding Venue"
+            }
           </h2>
 
           <p>
-            Budget, vendors, calendar, seating chart,
-            tasks, and other admin tools will be
-            available after login.
+            {
+              wedding.venueLocation ||
+              "Venue details will appear here."
+            }
           </p>
         </div>
       </div>
     </main>
+  );
+}
+
+function buildCoupleName(
+  brideName,
+  groomName
+) {
+  const brideFirst =
+    getFirstName(
+      brideName
+    );
+
+  const groomFirst =
+    getFirstName(
+      groomName
+    );
+
+  if (
+    brideFirst &&
+    groomFirst
+  ) {
+    return `${brideFirst} & ${groomFirst}`;
+  }
+
+  if (brideFirst) {
+    return brideFirst;
+  }
+
+  if (groomFirst) {
+    return groomFirst;
+  }
+
+  return "Our Wedding";
+}
+
+function getFirstName(
+  value
+) {
+  return String(
+    value || ""
+  )
+    .trim()
+    .split(/\s+/)[0];
+}
+
+function formatWeddingDate(
+  value
+) {
+  if (!value) {
+    return "Wedding date coming soon";
+  }
+
+  const [
+    year,
+    month,
+    day,
+  ] = value
+    .split("-")
+    .map(Number);
+
+  const date =
+    new Date(
+      year,
+      month - 1,
+      day
+    );
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }
   );
 }
 

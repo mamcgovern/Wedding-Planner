@@ -1,0 +1,1 @@
+export const WEDDING_ID = "main-wedding";
