@@ -1,117 +1,174 @@
 import {
   CalendarDays,
   CircleDollarSign,
-  ListTodo,
-  Pin,
+  ListChecks,
+  MapPinned,
+  Music2,
+  Palette,
   Settings,
-  TableProperties,
-  UserRoundCheck,
+  Store,
+  UsersRound,
 } from "lucide-react";
 
 import {
   Link,
 } from "react-router-dom";
 
-const planningLinks = [
+const planningTools = [
   {
-    title: "Tasks",
+    title:
+      "Tasks",
+
     description:
-      "Manage planning tasks and public wedding-party deadlines.",
-    path: "/admin/tasks",
-    icon: ListTodo,
+      "Planning tasks, deadlines, and public wedding-party reminders.",
+
+    path:
+      "/admin/tasks",
+
+    icon:
+      ListChecks,
   },
   {
-    title: "Calendar",
+    title:
+      "Calendar",
+
     description:
-      "Manage tasks, events, and shared wedding-party dates.",
-    path: "/admin/calendar",
-    icon: CalendarDays,
+      "Events, schedules, subevents, and your wedding planning calendar.",
+
+    path:
+      "/admin/calendar",
+
+    icon:
+      CalendarDays,
   },
   {
-    title: "Budget",
+    title:
+      "Music",
+
     description:
-      "Track costs, payments, and balances.",
-    path: "/admin/budget",
-    icon: CircleDollarSign,
+      "Ceremony songs, special dances, and reception music.",
+
+    path:
+      "/admin/music",
+
+    icon:
+      Music2,
   },
   {
-    title: "Vendors",
+    title:
+      "Budget",
+
     description:
-      "Keep vendor information and notes together.",
-    path: "/admin/vendors",
-    icon: UserRoundCheck,
+      "Track wedding spending, estimates, and payments.",
+
+    path:
+      "/admin/budget",
+
+    icon:
+      CircleDollarSign,
   },
   {
-    title: "Pins",
+    title:
+      "Vendors",
+
     description:
-      "Save inspiration, links, and ideas.",
-    path: "/admin/pins",
-    icon: Pin,
+      "Keep vendor contact information and planning details together.",
+
+    path:
+      "/admin/vendors",
+
+    icon:
+      Store,
   },
   {
-    title: "Seating Chart",
+    title:
+      "Pins",
+
     description:
-      "Organize guests and table assignments.",
-    path: "/admin/seating-chart",
-    icon: TableProperties,
+      "Save inspiration, links, photos, and ideas for the wedding.",
+
+    path:
+      "/admin/pins",
+
+    icon:
+      MapPinned,
   },
   {
-    title: "Settings",
+    title:
+      "Seating Chart",
+
     description:
-      "Manage wedding details and website settings.",
-    path: "/admin/settings",
-    icon: Settings,
+      "Organize guests and build your reception seating arrangement.",
+
+    path:
+      "/admin/seating-chart",
+
+    icon:
+      UsersRound,
+  },
+  {
+    title:
+      "Settings",
+
+    description:
+      "Update wedding details used throughout the website.",
+
+    path:
+      "/admin/settings",
+
+    icon:
+      Settings,
   },
 ];
 
 function Dashboard() {
   return (
-    <main className="page">
+    <main className="page admin-dashboard">
       <p className="page-eyebrow">
-        Planning
+        Wedding Planner
       </p>
 
       <h1 className="page-title">
-        Admin Dashboard
+        Planning
       </h1>
 
       <p className="page-description">
-        Manage the private planning side of the
-        wedding website.
+        Manage the private planning side of the wedding
+        and the information shared with the wedding party.
       </p>
 
       <div className="admin-dashboard-grid">
-        {planningLinks.map(
-          (item) => {
+        {planningTools.map(
+          (tool) => {
             const Icon =
-              item.icon;
+              tool.icon;
 
             return (
               <Link
                 key={
-                  item.path
+                  tool.path
                 }
                 to={
-                  item.path
+                  tool.path
                 }
                 className="admin-dashboard-card"
               >
                 <div className="admin-dashboard-icon">
                   <Icon
-                    size={20}
+                    size={22}
                   />
                 </div>
 
                 <div>
                   <h2>
                     {
-                      item.title
+                      tool.title
                     }
                   </h2>
 
                   <p>
                     {
-                      item.description
+                      tool.description
                     }
                   </p>
                 </div>

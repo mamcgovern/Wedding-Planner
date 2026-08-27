@@ -21,6 +21,7 @@ import WeekendTimeline from "./pages/weekend/WeekendTimeline";
 import Budget from "./pages/admin/Budget";
 import Calendar from "./pages/admin/Calendar";
 import Dashboard from "./pages/admin/Dashboard";
+import MusicAdmin from "./pages/admin/MusicAdmin";
 import Pins from "./pages/admin/Pins";
 import SeatingChart from "./pages/admin/SeatingChart";
 import Settings from "./pages/admin/Settings";
@@ -151,6 +152,15 @@ function App() {
           element={
             <ProtectedPage>
               <Calendar />
+            </ProtectedPage>
+          }
+        />
+
+        <Route
+          path="/admin/music"
+          element={
+            <ProtectedPage>
+              <MusicAdmin />
             </ProtectedPage>
           }
         />

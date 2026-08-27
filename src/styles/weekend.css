@@ -1,178 +1,3 @@
-.form-checkbox-field {
-  display: flex;
-
-  align-items: center;
-
-  gap: 9px;
-
-  min-height: 44px;
-
-  font-family:
-    Arial,
-    sans-serif;
-
-  font-size: 0.84rem;
-
-  color:
-    var(--text);
-}
-
-.form-checkbox-field input {
-  width: 16px;
-
-  height: 16px;
-
-  accent-color:
-    var(--sage-dark);
-}
-
-.weekend-events-list {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 14px;
-}
-
-.weekend-event-card {
-  display: grid;
-
-  grid-template-columns:
-    140px
-    minmax(0, 1fr);
-
-  gap: 20px;
-
-  padding: 20px;
-
-  background:
-    var(--white);
-
-  border:
-    1px solid
-    var(--border);
-
-  border-radius:
-    var(--radius-large);
-
-  box-shadow:
-    var(--shadow-soft);
-}
-
-.weekend-event-date {
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content:
-    center;
-
-  padding: 16px;
-
-  background:
-    var(--blush-light);
-
-  color:
-    var(--blush-dark);
-
-  border-radius:
-    var(--radius-medium);
-}
-
-.weekend-event-date span {
-  font-family:
-    Arial,
-    sans-serif;
-
-  font-size: 0.7rem;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.06em;
-
-  text-transform:
-    uppercase;
-}
-
-.weekend-event-date strong {
-  margin-top: 4px;
-
-  font-size: 1.2rem;
-
-  font-weight: 400;
-}
-
-.weekend-event-content h2 {
-  margin-bottom: 10px;
-
-  font-size: 1.35rem;
-
-  font-weight: 400;
-}
-
-.weekend-event-detail {
-  display: flex;
-
-  align-items: center;
-
-  gap: 7px;
-
-  margin-bottom: 7px;
-
-  color:
-    var(--sage-dark);
-
-  font-family:
-    Arial,
-    sans-serif;
-
-  font-size: 0.84rem;
-
-  font-weight: 600;
-}
-
-.weekend-event-notes {
-  margin:
-    10px 0 0;
-
-  color:
-    var(--text-light);
-
-  line-height: 1.6;
-}
-
-.weekend-events-empty {
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  color:
-    var(--text-light);
-}
-
-.weekend-events-empty p {
-  margin: 0;
-}
-
-@media (
-  max-width: 650px
-) {
-  .weekend-event-card {
-    grid-template-columns:
-      1fr;
-
-    gap: 12px;
-  }
-
-  .weekend-event-date {
-    align-items:
-      flex-start;
-  }
-}
-
 .weekend-page {
   max-width: 1000px;
 }
@@ -669,6 +494,382 @@
 
 
 /*
+ * MUSIC
+ */
+
+.music-page {
+  max-width: 1100px;
+}
+
+.music-page-nav {
+  position: sticky;
+
+  top: 74px;
+
+  z-index: 20;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-bottom: 40px;
+
+  padding: 10px;
+
+  background:
+    rgba(
+      238,
+      233,
+      227,
+      0.94
+    );
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    999px;
+
+  backdrop-filter:
+    blur(10px);
+}
+
+.music-page-nav-link {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 34px;
+
+  padding:
+    0 13px;
+
+  background:
+    var(--white);
+
+  color:
+    var(--sage-dark);
+
+  border-radius:
+    999px;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  transition:
+    background 0.2s ease;
+}
+
+.music-page-nav-link:hover {
+  background:
+    var(--sage-light);
+}
+
+.music-page-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 54px;
+}
+
+.music-section,
+.music-special-section {
+  scroll-margin-top:
+    150px;
+}
+
+.music-section-heading,
+.music-special-heading {
+  margin-bottom: 16px;
+}
+
+.music-section-heading h2,
+.music-special-heading h2 {
+  margin-bottom: 7px;
+
+  font-size: 1.5rem;
+
+  font-weight: 400;
+}
+
+.music-special-heading p:last-child {
+  max-width: 650px;
+
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.6;
+}
+
+.music-embed-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 14px;
+}
+
+.music-embed-card {
+  min-width: 0;
+
+  padding: 14px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.music-embed-label {
+  margin-bottom: 8px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.66rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+.spotify-track-embed {
+  display: block;
+
+  width: 100%;
+
+  height: 152px;
+
+  border: 0;
+
+  border-radius: 12px;
+}
+
+.music-category-empty {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 18px;
+
+  background:
+    var(--white);
+
+  color:
+    var(--text-light);
+
+  border:
+    1px dashed
+    var(--border);
+
+  border-radius:
+    var(--radius-medium);
+}
+
+.music-fallback-card {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 14px;
+
+  min-width: 0;
+
+  padding: 17px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-medium);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.music-fallback-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    center;
+
+  width: 42px;
+
+  height: 42px;
+
+  background:
+    var(--blush-light);
+
+  color:
+    var(--blush-dark);
+
+  border-radius:
+    50%;
+}
+
+.music-card-section {
+  margin-bottom: 3px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.65rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+}
+
+.music-fallback-card h3 {
+  margin-bottom: 3px;
+
+  font-size: 1.05rem;
+
+  font-weight: 400;
+}
+
+.music-card-artist {
+  margin-bottom: 4px;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.84rem;
+}
+
+.music-no-spotify {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.72rem;
+}
+
+
+/*
+ * PLAYLIST
+ */
+
+.spotify-playlist-card {
+  overflow: hidden;
+
+  padding: 14px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.spotify-playlist-card iframe {
+  display: block;
+
+  width: 100%;
+
+  border: 0;
+
+  border-radius:
+    12px;
+}
+
+
+/*
+ * SONG REQUEST
+ */
+
+.music-request-form {
+  overflow: hidden;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.music-request-form iframe {
+  display: block;
+
+  width: 100%;
+
+  border: 0;
+}
+
+
+/*
  * TABLET
  */
 
@@ -684,6 +885,18 @@
 
   .weekend-day-heading {
     position: static;
+  }
+
+  .music-embed-list {
+    grid-template-columns:
+      1fr;
+  }
+
+  .music-page-nav {
+    position: static;
+
+    border-radius:
+      var(--radius-medium);
   }
 }
 
@@ -725,5 +938,27 @@
       1fr;
 
     gap: 6px;
+  }
+
+  .music-page-nav {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .music-page-nav-link {
+    padding:
+      0 8px;
+
+    text-align: center;
+  }
+
+  .music-embed-card,
+  .spotify-playlist-card {
+    padding: 10px;
   }
 }
