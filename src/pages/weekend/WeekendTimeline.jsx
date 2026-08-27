@@ -13,6 +13,8 @@ import {
 import {
   collection,
   onSnapshot,
+  query,
+  where,
 } from "firebase/firestore";
 
 import {
@@ -48,36 +50,51 @@ function WeekendTimeline() {
         "scheduleItems"
       );
 
+    const weekendEventsQuery =
+      query(
+        itemsRef,
+        where(
+          "visibility",
+          "==",
+          "public"
+        ),
+        where(
+          "type",
+          "==",
+          "event"
+        ),
+        where(
+          "showOnWeekend",
+          "==",
+          true
+        )
+      );
+
     const unsubscribe =
       onSnapshot(
-        itemsRef,
+        weekendEventsQuery,
         (snapshot) => {
           const loaded =
-            snapshot.docs
-              .map(
-                (itemDoc) => ({
-                  id:
-                    itemDoc.id,
+            snapshot.docs.map(
+              (itemDoc) => ({
+                id:
+                  itemDoc.id,
 
-                  ...itemDoc.data(),
-                })
-              )
-              .filter(
-                (item) =>
-                  item.type ===
-                    "event" &&
-                  item.visibility ===
-                    "public" &&
-                  item.showOnWeekend ===
-                    true
-              );
+                ...itemDoc.data(),
+              })
+            );
 
           setEvents(
             loaded
           );
 
-          setError("");
-          setLoading(false);
+          setError(
+            ""
+          );
+
+          setLoading(
+            false
+          );
         },
         (firebaseError) => {
           console.error(
@@ -89,7 +106,9 @@ function WeekendTimeline() {
             "We couldn't load the wedding weekend timeline."
           );
 
-          setLoading(false);
+          setLoading(
+            false
+          );
         }
       );
 
@@ -130,7 +149,9 @@ function WeekendTimeline() {
           {}
         );
       },
-      [events]
+      [
+        events,
+      ]
     );
 
   const dates =
@@ -503,13 +524,19 @@ function createLocalDate(
     year,
     month,
     day,
-  ] = value
-    .split("-")
-    .map(Number);
+  ] =
+    value
+      .split(
+        "-"
+      )
+      .map(
+        Number
+      );
 
   return new Date(
     year,
-    month - 1,
+    month -
+      1,
     day
   );
 }
@@ -548,16 +575,23 @@ function getMonthDay(
 function formatTime(
   value
 ) {
-  if (!value) {
+  if (
+    !value
+  ) {
     return "";
   }
 
   const [
     hour,
     minute,
-  ] = value
-    .split(":")
-    .map(Number);
+  ] =
+    value
+      .split(
+        ":"
+      )
+      .map(
+        Number
+      );
 
   const date =
     new Date();

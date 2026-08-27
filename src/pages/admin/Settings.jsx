@@ -84,6 +84,15 @@ function Settings() {
     setError,
   ] = useState("");
 
+  /*
+   * LOAD PRIVATE ADMIN SETTINGS
+   *
+   * The Settings page is protected, so it can read
+   * from the private root wedding document.
+   *
+   * Public pages do NOT read this document anymore.
+   */
+
   useEffect(() => {
     const weddingRef =
       doc(
@@ -151,9 +160,23 @@ function Settings() {
             setSavedSettings(
               loaded
             );
+          } else {
+            setSettings(
+              emptySettings
+            );
+
+            setSavedSettings(
+              emptySettings
+            );
           }
 
-          setLoading(false);
+          setError(
+            ""
+          );
+
+          setLoading(
+            false
+          );
         },
         (firebaseError) => {
           console.error(
@@ -165,7 +188,9 @@ function Settings() {
             "We couldn't load the wedding settings."
           );
 
-          setLoading(false);
+          setLoading(
+            false
+          );
         }
       );
 
@@ -180,27 +205,54 @@ function Settings() {
       savedSettings
     );
 
+  /*
+   * FORM CHANGES
+   */
+
   const handleChange =
     (event) => {
       const {
         name,
         value,
-      } = event.target;
+      } =
+        event.target;
 
       setSettings(
         (current) => ({
           ...current,
+
           [name]:
             value,
         })
       );
 
-      setSaved(false);
-      setError("");
+      setSaved(
+        false
+      );
+
+      setError(
+        ""
+      );
     };
 
+  /*
+   * SAVE
+   *
+   * We save two copies:
+   *
+   * 1. Private/admin root document
+   *    weddings/main-wedding
+   *
+   * 2. Public-safe website document
+   *    weddings/main-wedding/public/site
+   *
+   * Public pages only read #2.
+   */
+
   const handleSave =
-    async (event) => {
+    async (
+      event
+    ) => {
       event.preventDefault();
 
       if (
@@ -216,9 +268,17 @@ function Settings() {
         return;
       }
 
-      setSaving(true);
-      setSaved(false);
-      setError("");
+      setSaving(
+        true
+      );
+
+      setSaved(
+        false
+      );
+
+      setError(
+        ""
+      );
 
       try {
         const cleaned = {
@@ -253,26 +313,63 @@ function Settings() {
             settings.venueLocation.trim(),
         };
 
-        await setDoc(
+        const privateWeddingRef =
           doc(
             db,
             "weddings",
             WEDDING_ID
+          );
+
+        const publicWeddingRef =
+          doc(
+            db,
+            "weddings",
+            WEDDING_ID,
+            "public",
+            "site"
+          );
+
+        /*
+         * Save both documents together.
+         *
+         * If either write fails, the page reports an
+         * error rather than pretending everything
+         * synced correctly.
+         */
+
+        await Promise.all([
+          setDoc(
+            privateWeddingRef,
+            {
+              ...cleaned,
+
+              updatedAt:
+                serverTimestamp(),
+
+              updatedBy:
+                user?.uid ||
+                null,
+            },
+            {
+              merge:
+                true,
+            }
           ),
-          {
-            ...cleaned,
 
-            updatedAt:
-              serverTimestamp(),
+          setDoc(
+            publicWeddingRef,
+            {
+              ...cleaned,
 
-            updatedBy:
-              user?.uid ||
-              null,
-          },
-          {
-            merge: true,
-          }
-        );
+              updatedAt:
+                serverTimestamp(),
+            },
+            {
+              merge:
+                true,
+            }
+          ),
+        ]);
 
         setSettings(
           cleaned
@@ -282,7 +379,9 @@ function Settings() {
           cleaned
         );
 
-        setSaved(true);
+        setSaved(
+          true
+        );
       } catch (firebaseError) {
         console.error(
           "Error saving settings:",
@@ -293,11 +392,15 @@ function Settings() {
           "We couldn't save the wedding settings."
         );
       } finally {
-        setSaving(false);
+        setSaving(
+          false
+        );
       }
     };
 
-  if (loading) {
+  if (
+    loading
+  ) {
     return (
       <main className="page">
         <div className="content-card settings-loading">
@@ -323,9 +426,8 @@ function Settings() {
       </h1>
 
       <p className="page-description">
-        These details will eventually be reused
-        throughout the public website and private
-        planning pages.
+        These wedding details are used throughout the
+        public website and private planning pages.
       </p>
 
       <form

@@ -14,6 +14,8 @@ import {
 import {
   collection,
   onSnapshot,
+  query,
+  where,
 } from "firebase/firestore";
 
 import {
@@ -49,32 +51,41 @@ function ImportantDates() {
         "scheduleItems"
       );
 
+    const publicItemsQuery =
+      query(
+        itemsRef,
+        where(
+          "visibility",
+          "==",
+          "public"
+        )
+      );
+
     const unsubscribe =
       onSnapshot(
-        itemsRef,
+        publicItemsQuery,
         (snapshot) => {
           const loaded =
-            snapshot.docs
-              .map(
-                (itemDoc) => ({
-                  id:
-                    itemDoc.id,
+            snapshot.docs.map(
+              (itemDoc) => ({
+                id:
+                  itemDoc.id,
 
-                  ...itemDoc.data(),
-                })
-              )
-              .filter(
-                (item) =>
-                  item.visibility ===
-                  "public"
-              );
+                ...itemDoc.data(),
+              })
+            );
 
           setItems(
             loaded
           );
 
-          setError("");
-          setLoading(false);
+          setError(
+            ""
+          );
+
+          setLoading(
+            false
+          );
         },
         (firebaseError) => {
           console.error(
@@ -86,7 +97,9 @@ function ImportantDates() {
             "We couldn't load the important dates."
           );
 
-          setLoading(false);
+          setLoading(
+            false
+          );
         }
       );
 
@@ -104,7 +117,9 @@ function ImportantDates() {
           .sort(
             compareScheduleItems
           ),
-      [items]
+      [
+        items,
+      ]
     );
 
   return (
@@ -374,16 +389,23 @@ function formatDate(
 function formatTime(
   value
 ) {
-  if (!value) {
+  if (
+    !value
+  ) {
     return "";
   }
 
   const [
     hour,
     minute,
-  ] = value
-    .split(":")
-    .map(Number);
+  ] =
+    value
+      .split(
+        ":"
+      )
+      .map(
+        Number
+      );
 
   const date =
     new Date();
@@ -414,13 +436,19 @@ function createLocalDate(
     year,
     month,
     day,
-  ] = value
-    .split("-")
-    .map(Number);
+  ] =
+    value
+      .split(
+        "-"
+      )
+      .map(
+        Number
+      );
 
   return new Date(
     year,
-    month - 1,
+    month -
+      1,
     day
   );
 }

@@ -60,11 +60,21 @@ export function WeddingProvider({
   ] = useState("");
 
   useEffect(() => {
+    /*
+     * PUBLIC WEDDING INFORMATION
+     *
+     * This document contains only information that
+     * is safe for anyone visiting the public wedding
+     * website to read.
+     */
+
     const weddingRef =
       doc(
         db,
         "weddings",
-        WEDDING_ID
+        WEDDING_ID,
+        "public",
+        "site"
       );
 
     const unsubscribe =
@@ -124,20 +134,31 @@ export function WeddingProvider({
             );
           }
 
-          setError("");
-          setLoading(false);
+          setError(
+            ""
+          );
+
+          setLoading(
+            false
+          );
         },
         (firebaseError) => {
           console.error(
-            "Error loading wedding data:",
+            "Error loading public wedding data:",
             firebaseError
+          );
+
+          setWedding(
+            emptyWedding
           );
 
           setError(
             "We couldn't load the wedding information."
           );
 
-          setLoading(false);
+          setLoading(
+            false
+          );
         }
       );
 
@@ -160,7 +181,9 @@ export function WeddingProvider({
 
   return (
     <WeddingContext.Provider
-      value={value}
+      value={
+        value
+      }
     >
       {children}
     </WeddingContext.Provider>
@@ -173,7 +196,9 @@ export function useWedding() {
       WeddingContext
     );
 
-  if (!context) {
+  if (
+    !context
+  ) {
     throw new Error(
       "useWedding must be used inside WeddingProvider."
     );

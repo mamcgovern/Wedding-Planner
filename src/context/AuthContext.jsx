@@ -9,18 +9,25 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
-  signOut,
+  signOut as firebaseSignOut,
 } from "firebase/auth";
 
 import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
+
+import {
   auth,
+  db,
 } from "../services/firebase";
+
+import {
+  WEDDING_ID,
+} from "../config/wedding";
 
 const AuthContext =
   createContext(null);
-
-const googleProvider =
-  new GoogleAuthProvider();
 
 export function AuthProvider({
   children,
@@ -31,17 +38,143 @@ export function AuthProvider({
   ] = useState(null);
 
   const [
+    isAdmin,
+    setIsAdmin,
+  ] = useState(false);
+
+  const [
     loading,
     setLoading,
   ] = useState(true);
 
+  const [
+    authError,
+    setAuthError,
+  ] = useState("");
+
+  /*
+   * CHECK WHETHER A FIREBASE USER
+   * IS AN APPROVED WEDDING ADMIN.
+   */
+
+  const checkAdminAccess =
+    async (
+      firebaseUser
+    ) => {
+      if (
+        !firebaseUser
+      ) {
+        return false;
+      }
+
+      try {
+        const adminRef =
+          doc(
+            db,
+            "weddings",
+            WEDDING_ID,
+            "admins",
+            firebaseUser.uid
+          );
+
+        const adminSnapshot =
+          await getDoc(
+            adminRef
+          );
+
+        if (
+          !adminSnapshot.exists()
+        ) {
+          return false;
+        }
+
+        const adminData =
+          adminSnapshot.data();
+
+        return (
+          adminData.active ===
+          true
+        );
+      } catch (error) {
+        console.error(
+          "Error checking admin access:",
+          error
+        );
+
+        /*
+         * IMPORTANT:
+         * If we cannot verify admin access,
+         * access is denied.
+         *
+         * We never want an error to
+         * accidentally grant access.
+         */
+
+        return false;
+      }
+    };
+
+  /*
+   * LISTEN FOR AUTH CHANGES
+   */
+
   useEffect(() => {
+    let cancelled =
+      false;
+
     const unsubscribe =
       onAuthStateChanged(
         auth,
-        (currentUser) => {
+        async (
+          firebaseUser
+        ) => {
+          setLoading(
+            true
+          );
+
+          setAuthError(
+            ""
+          );
+
+          if (
+            !firebaseUser
+          ) {
+            if (
+              !cancelled
+            ) {
+              setUser(
+                null
+              );
+
+              setIsAdmin(
+                false
+              );
+
+              setLoading(
+                false
+              );
+            }
+
+            return;
+          }
+
+          const hasAdminAccess =
+            await checkAdminAccess(
+              firebaseUser
+            );
+
+          if (
+            cancelled
+          ) {
+            return;
+          }
+
           setUser(
-            currentUser
+            firebaseUser
+          );
+
+          setIsAdmin(
+            hasAdminAccess
           );
 
           setLoading(
@@ -50,32 +183,104 @@ export function AuthProvider({
         }
       );
 
-    return unsubscribe;
+    return () => {
+      cancelled =
+        true;
+
+      unsubscribe();
+    };
   }, []);
 
-  const loginWithGoogle =
-    () => {
-      return signInWithPopup(
-        auth,
-        googleProvider
+  /*
+   * GOOGLE SIGN IN
+   */
+
+  const signInWithGoogle =
+    async () => {
+      setAuthError(
+        ""
       );
+
+      const provider =
+        new GoogleAuthProvider();
+
+      provider.setCustomParameters({
+        prompt:
+          "select_account",
+      });
+
+      try {
+        const result =
+          await signInWithPopup(
+            auth,
+            provider
+          );
+
+        return result.user;
+      } catch (error) {
+        console.error(
+          "Google sign-in error:",
+          error
+        );
+
+        setAuthError(
+          "We couldn't sign you in with Google."
+        );
+
+        throw error;
+      }
     };
 
-  const logout =
-    () => {
-      return signOut(
-        auth
+  /*
+   * SIGN OUT
+   */
+
+  const signOut =
+    async () => {
+      setAuthError(
+        ""
       );
+
+      try {
+        await firebaseSignOut(
+          auth
+        );
+
+        setUser(
+          null
+        );
+
+        setIsAdmin(
+          false
+        );
+      } catch (error) {
+        console.error(
+          "Sign-out error:",
+          error
+        );
+
+        setAuthError(
+          "We couldn't sign you out."
+        );
+
+        throw error;
+      }
     };
+
+  const value = {
+    user,
+    isAdmin,
+    loading,
+    authError,
+    signInWithGoogle,
+    signOut,
+  };
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        loginWithGoogle,
-        logout,
-      }}
+      value={
+        value
+      }
     >
       {children}
     </AuthContext.Provider>
@@ -88,7 +293,9 @@ export function useAuth() {
       AuthContext
     );
 
-  if (!context) {
+  if (
+    !context
+  ) {
     throw new Error(
       "useAuth must be used inside AuthProvider."
     );
@@ -96,3 +303,5 @@ export function useAuth() {
 
   return context;
 }
+
+export default AuthContext;

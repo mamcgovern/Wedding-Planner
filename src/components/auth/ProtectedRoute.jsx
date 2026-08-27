@@ -4,6 +4,10 @@ import {
 } from "react-router-dom";
 
 import {
+  LoaderCircle,
+} from "lucide-react";
+
+import {
   useAuth,
 } from "../../context/AuthContext";
 
@@ -12,23 +16,43 @@ function ProtectedRoute({
 }) {
   const {
     user,
+    isAdmin,
     loading,
   } = useAuth();
 
   const location =
     useLocation();
 
-  if (loading) {
+  /*
+   * WAIT UNTIL BOTH FIREBASE AUTH
+   * AND ADMIN AUTHORIZATION HAVE
+   * FINISHED LOADING.
+   */
+
+  if (
+    loading
+  ) {
     return (
-      <main className="page">
-        <div className="content-card">
-          Loading...
-        </div>
+      <main className="page protected-route-loading">
+        <LoaderCircle
+          size={28}
+          className="spinner"
+        />
+
+        <p>
+          Checking planning access...
+        </p>
       </main>
     );
   }
 
-  if (!user) {
+  /*
+   * NOT SIGNED IN
+   */
+
+  if (
+    !user
+  ) {
     return (
       <Navigate
         to="/login"
@@ -40,6 +64,30 @@ function ProtectedRoute({
       />
     );
   }
+
+  /*
+   * SIGNED IN, BUT NOT AN
+   * APPROVED WEDDING ADMIN
+   */
+
+  if (
+    !isAdmin
+  ) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          unauthorized:
+            true,
+        }}
+      />
+    );
+  }
+
+  /*
+   * APPROVED ADMIN
+   */
 
   return children;
 }

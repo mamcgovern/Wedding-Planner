@@ -25,7 +25,8 @@ import {
 function Header() {
   const {
     user,
-    logout,
+    isAdmin,
+    signOut,
   } = useAuth();
 
   const {
@@ -49,7 +50,7 @@ function Header() {
   const handleLogout =
     async () => {
       try {
-        await logout();
+        await signOut();
       } catch (error) {
         console.error(
           "Error signing out:",
@@ -148,13 +149,36 @@ function Header() {
               Weekend
             </NavLink>
 
-            {user ? (
+            {user && isAdmin ? (
               <>
                 <NavLink
                   to="/admin"
                   className="site-admin-link"
                 >
                   Planning
+                </NavLink>
+
+                <button
+                  type="button"
+                  className="site-logout-button"
+                  onClick={
+                    handleLogout
+                  }
+                  aria-label="Sign out"
+                  title="Sign out"
+                >
+                  <LogOut
+                    size={16}
+                  />
+                </button>
+              </>
+            ) : user ? (
+              <>
+                <NavLink
+                  to="/login"
+                  className="site-admin-link"
+                >
+                  Access
                 </NavLink>
 
                 <button
@@ -271,13 +295,36 @@ function Header() {
             Weekend
           </NavLink>
 
-          {user ? (
+          {user && isAdmin ? (
             <>
               <NavLink
                 to="/admin"
                 className="mobile-nav-link mobile-admin-link"
               >
                 Planning
+              </NavLink>
+
+              <button
+                type="button"
+                className="mobile-nav-link mobile-logout-link"
+                onClick={
+                  handleLogout
+                }
+              >
+                <LogOut
+                  size={16}
+                />
+
+                Sign Out
+              </button>
+            </>
+          ) : user ? (
+            <>
+              <NavLink
+                to="/login"
+                className="mobile-nav-link mobile-admin-link"
+              >
+                Access
               </NavLink>
 
               <button
@@ -329,11 +376,15 @@ function buildCoupleName(
     return `${brideFirst} & ${groomFirst}`;
   }
 
-  if (brideFirst) {
+  if (
+    brideFirst
+  ) {
     return brideFirst;
   }
 
-  if (groomFirst) {
+  if (
+    groomFirst
+  ) {
     return groomFirst;
   }
 
@@ -344,16 +395,21 @@ function getFirstName(
   value
 ) {
   return String(
-    value || ""
+    value ||
+    ""
   )
     .trim()
-    .split(/\s+/)[0];
+    .split(
+      /\s+/
+    )[0];
 }
 
 function formatWeddingDate(
   value
 ) {
-  if (!value) {
+  if (
+    !value
+  ) {
     return "Wedding";
   }
 
@@ -361,23 +417,34 @@ function formatWeddingDate(
     year,
     month,
     day,
-  ] = value
-    .split("-")
-    .map(Number);
+  ] =
+    value
+      .split(
+        "-"
+      )
+      .map(
+        Number
+      );
 
   const date =
     new Date(
       year,
-      month - 1,
+      month -
+        1,
       day
     );
 
   return date.toLocaleDateString(
     "en-US",
     {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+      month:
+        "long",
+
+      day:
+        "numeric",
+
+      year:
+        "numeric",
     }
   );
 }
