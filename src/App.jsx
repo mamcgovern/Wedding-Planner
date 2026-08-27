@@ -16,8 +16,7 @@ import Weekend from "./pages/Weekend";
 import Music from "./pages/weekend/Music";
 import SleepingArrangements from "./pages/weekend/SleepingArrangements";
 import Venue from "./pages/weekend/Venue";
-import WeddingDay from "./pages/weekend/WeddingDay";
-import WeekendEvents from "./pages/weekend/WeekendEvents";
+import WeekendTimeline from "./pages/weekend/WeekendTimeline";
 
 import Budget from "./pages/admin/Budget";
 import Calendar from "./pages/admin/Calendar";
@@ -75,16 +74,29 @@ function App() {
         />
 
         <Route
+          path="/weekend/timeline"
+          element={
+            <WeekendTimeline />
+          }
+        />
+
+        <Route
           path="/weekend/events"
           element={
-            <WeekendEvents />
+            <Navigate
+              to="/weekend/timeline"
+              replace
+            />
           }
         />
 
         <Route
           path="/weekend/wedding-day"
           element={
-            <WeddingDay />
+            <Navigate
+              to="/weekend/timeline"
+              replace
+            />
           }
         />
 

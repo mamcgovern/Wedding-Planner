@@ -1,3 +1,178 @@
+.form-checkbox-field {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  min-height: 44px;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.84rem;
+
+  color:
+    var(--text);
+}
+
+.form-checkbox-field input {
+  width: 16px;
+
+  height: 16px;
+
+  accent-color:
+    var(--sage-dark);
+}
+
+.weekend-events-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.weekend-event-card {
+  display: grid;
+
+  grid-template-columns:
+    140px
+    minmax(0, 1fr);
+
+  gap: 20px;
+
+  padding: 20px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.weekend-event-date {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content:
+    center;
+
+  padding: 16px;
+
+  background:
+    var(--blush-light);
+
+  color:
+    var(--blush-dark);
+
+  border-radius:
+    var(--radius-medium);
+}
+
+.weekend-event-date span {
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.7rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.06em;
+
+  text-transform:
+    uppercase;
+}
+
+.weekend-event-date strong {
+  margin-top: 4px;
+
+  font-size: 1.2rem;
+
+  font-weight: 400;
+}
+
+.weekend-event-content h2 {
+  margin-bottom: 10px;
+
+  font-size: 1.35rem;
+
+  font-weight: 400;
+}
+
+.weekend-event-detail {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 7px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.84rem;
+
+  font-weight: 600;
+}
+
+.weekend-event-notes {
+  margin:
+    10px 0 0;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.6;
+}
+
+.weekend-events-empty {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color:
+    var(--text-light);
+}
+
+.weekend-events-empty p {
+  margin: 0;
+}
+
+@media (
+  max-width: 650px
+) {
+  .weekend-event-card {
+    grid-template-columns:
+      1fr;
+
+    gap: 12px;
+  }
+
+  .weekend-event-date {
+    align-items:
+      flex-start;
+  }
+}
+
 .weekend-page {
   max-width: 1000px;
 }
@@ -113,6 +288,410 @@
   font-weight: 400;
 }
 
+
+/*
+ * WEEKEND EVENT CHECKBOX
+ */
+
+.form-checkbox-field {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  min-height: 44px;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.84rem;
+
+  color:
+    var(--text);
+}
+
+.form-checkbox-field input {
+  width: 16px;
+
+  height: 16px;
+
+  accent-color:
+    var(--sage-dark);
+}
+
+
+/*
+ * WEEKEND TIMELINE
+ */
+
+.weekend-timeline-page {
+  max-width: 900px;
+}
+
+.weekend-timeline {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 42px;
+}
+
+.weekend-timeline-day {
+  display: grid;
+
+  grid-template-columns:
+    160px
+    minmax(0, 1fr);
+
+  gap: 32px;
+}
+
+.weekend-day-heading {
+  position: sticky;
+
+  top: 100px;
+
+  align-self: start;
+}
+
+.weekend-day-heading p {
+  margin-bottom: 5px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.7rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.1em;
+
+  text-transform:
+    uppercase;
+}
+
+.weekend-day-heading h2 {
+  margin: 0;
+
+  font-size: 1.45rem;
+
+  font-weight: 400;
+}
+
+.weekend-day-events {
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.weekend-day-events::before {
+  position: absolute;
+
+  top: 18px;
+
+  bottom: 18px;
+
+  left: 8px;
+
+  width: 1px;
+
+  background:
+    var(--border);
+
+  content: "";
+}
+
+.weekend-timeline-event {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    18px
+    minmax(0, 1fr);
+
+  gap: 14px;
+}
+
+.weekend-timeline-marker {
+  position: relative;
+
+  z-index: 1;
+
+  display: flex;
+
+  justify-content:
+    center;
+
+  padding-top: 21px;
+}
+
+.weekend-timeline-marker span {
+  display: block;
+
+  width: 10px;
+
+  height: 10px;
+
+  background:
+    var(--blush-dark);
+
+  border:
+    3px solid
+    var(--ivory);
+
+  border-radius:
+    50%;
+
+  box-sizing:
+    content-box;
+}
+
+.weekend-timeline-event-body {
+  padding: 20px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.weekend-timeline-event-header {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  gap: 15px;
+
+  margin-bottom: 10px;
+}
+
+.weekend-timeline-time {
+  margin-bottom: 4px;
+
+  color:
+    var(--blush-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.76rem;
+
+  font-weight: 800;
+}
+
+.weekend-timeline-event-header h3 {
+  margin: 0;
+
+  font-size: 1.35rem;
+
+  font-weight: 400;
+}
+
+.weekend-timeline-detail {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 7px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.82rem;
+
+  font-weight: 600;
+}
+
+.weekend-timeline-notes {
+  margin:
+    10px 0 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.9rem;
+
+  line-height: 1.6;
+}
+
+
+/*
+ * PUBLIC SUBEVENTS
+ */
+
+.public-subevent-list {
+  display: flex;
+
+  flex-direction: column;
+
+  margin-top: 18px;
+
+  padding-top: 4px;
+
+  border-top:
+    1px solid
+    var(--border);
+}
+
+.public-subevent {
+  display: grid;
+
+  grid-template-columns:
+    125px
+    minmax(0, 1fr);
+
+  gap: 16px;
+
+  padding:
+    15px 0;
+
+  border-bottom:
+    1px solid
+    var(--border);
+}
+
+.public-subevent:last-child {
+  border-bottom: 0;
+
+  padding-bottom: 2px;
+}
+
+.public-subevent-time {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  gap: 6px;
+
+  padding-top: 2px;
+
+  color:
+    var(--blush-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.75rem;
+
+  font-weight: 700;
+}
+
+.public-subevent-time svg {
+  flex: 0 0 auto;
+}
+
+.public-subevent-content h4 {
+  margin:
+    0 0 5px;
+
+  font-size: 0.95rem;
+
+  font-weight: 600;
+}
+
+.public-subevent-location {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  margin-bottom: 5px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.75rem;
+}
+
+.public-subevent-content p {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.85rem;
+
+  line-height: 1.5;
+}
+
+.weekend-events-empty {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color:
+    var(--text-light);
+}
+
+.weekend-events-empty p {
+  margin: 0;
+}
+
+
+/*
+ * TABLET
+ */
+
+@media (
+  max-width: 750px
+) {
+  .weekend-timeline-day {
+    grid-template-columns:
+      1fr;
+
+    gap: 16px;
+  }
+
+  .weekend-day-heading {
+    position: static;
+  }
+}
+
+
+/*
+ * MOBILE
+ */
+
 @media (
   max-width: 700px
 ) {
@@ -123,5 +702,28 @@
 
   .weekend-card {
     padding: 20px;
+  }
+}
+
+@media (
+  max-width: 550px
+) {
+  .weekend-timeline {
+    gap: 34px;
+  }
+
+  .weekend-day-events {
+    gap: 14px;
+  }
+
+  .weekend-timeline-event-body {
+    padding: 17px;
+  }
+
+  .public-subevent {
+    grid-template-columns:
+      1fr;
+
+    gap: 6px;
   }
 }

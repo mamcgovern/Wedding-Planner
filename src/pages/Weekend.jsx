@@ -1,9 +1,8 @@
 import {
   BedDouble,
-  CalendarDays,
   MapPin,
   Music2,
-  PartyPopper,
+  Rows3,
 } from "lucide-react";
 
 import {
@@ -12,39 +11,56 @@ import {
 
 const weekendPages = [
   {
-    title: "Weekend Events",
+    title:
+      "Weekend Timeline",
+
     description:
-      "Rehearsal, dinner, wedding events, and other plans for the weekend.",
-    path: "/weekend/events",
-    icon: PartyPopper,
+      "Rehearsal plans, wedding-day details, and the full schedule for the weekend.",
+
+    path:
+      "/weekend/timeline",
+
+    icon:
+      Rows3,
   },
   {
-    title: "Wedding Day Schedule",
-    description:
-      "A detailed wedding-day schedule for the wedding party.",
-    path: "/weekend/wedding-day",
-    icon: CalendarDays,
-  },
-  {
-    title: "Music",
+    title:
+      "Music",
+
     description:
       "Ceremony music, reception songs, and other wedding music.",
-    path: "/weekend/music",
-    icon: Music2,
+
+    path:
+      "/weekend/music",
+
+    icon:
+      Music2,
   },
   {
-    title: "Venue",
+    title:
+      "Venue",
+
     description:
       "Photos, directions, and helpful information about the wedding venue.",
-    path: "/weekend/venue",
-    icon: MapPin,
+
+    path:
+      "/weekend/venue",
+
+    icon:
+      MapPin,
   },
   {
-    title: "Sleeping Arrangements",
+    title:
+      "Sleeping Arrangements",
+
     description:
-      "Airbnb rooms, beds, and sleeping assignments for the wedding weekend.",
-    path: "/weekend/sleeping",
-    icon: BedDouble,
+      "Rooms, beds, and sleeping assignments for the wedding weekend.",
+
+    path:
+      "/weekend/sleeping",
+
+    icon:
+      BedDouble,
   },
 ];
 

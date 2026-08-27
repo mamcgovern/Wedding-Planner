@@ -5,13 +5,19 @@ import {
 } from "react";
 
 import {
+  ArrowDown,
+  ArrowUp,
   CalendarDays,
   ChevronLeft,
   ChevronRight,
   CirclePlus,
+  Clock3,
   Eye,
   EyeOff,
+  ListTree,
+  MapPin,
   Pencil,
+  Plus,
   Trash2,
   X,
 } from "lucide-react";
@@ -38,6 +44,14 @@ import {
   useAuth,
 } from "../../context/AuthContext";
 
+const emptySubevent = {
+  title: "",
+  startTime: "",
+  endTime: "",
+  location: "",
+  notes: "",
+};
+
 const emptyEventForm = {
   title: "",
   date: "",
@@ -46,6 +60,8 @@ const emptyEventForm = {
   location: "",
   notes: "",
   visibility: "private",
+  showOnWeekend: false,
+  subevents: [],
 };
 
 const calendarViews = [
@@ -111,7 +127,7 @@ function Calendar() {
   ] = useState("");
 
   /*
-   * LOAD SCHEDULE ITEMS
+   * LOAD SCHEDULE
    */
 
   useEffect(() => {
@@ -164,10 +180,6 @@ function Calendar() {
     return unsubscribe;
   }, []);
 
-  /*
-   * EVENTS ONLY
-   */
-
   const events =
     useMemo(
       () =>
@@ -180,7 +192,7 @@ function Calendar() {
     );
 
   /*
-   * FORM
+   * EVENT FORM
    */
 
   const handleChange =
@@ -202,11 +214,25 @@ function Calendar() {
       setError("");
     };
 
+  const handleWeekendChange =
+    (event) => {
+      setForm(
+        (current) => ({
+          ...current,
+
+          showOnWeekend:
+            event.target.checked,
+        })
+      );
+    };
+
   const resetForm =
     () => {
-      setForm(
-        emptyEventForm
-      );
+      setForm({
+        ...emptyEventForm,
+
+        subevents: [],
+      });
 
       setEditingId(
         null
@@ -214,6 +240,143 @@ function Calendar() {
 
       setError("");
     };
+
+  /*
+   * SUBEVENTS
+   */
+
+  const addSubevent =
+    () => {
+      setForm(
+        (current) => ({
+          ...current,
+
+          subevents: [
+            ...current.subevents,
+
+            {
+              ...emptySubevent,
+
+              id:
+                createSubeventId(),
+            },
+          ],
+        })
+      );
+    };
+
+  const updateSubevent =
+    (
+      subeventId,
+      field,
+      value
+    ) => {
+      setForm(
+        (current) => ({
+          ...current,
+
+          subevents:
+            current.subevents.map(
+              (subevent) =>
+                subevent.id ===
+                subeventId
+                  ? {
+                      ...subevent,
+
+                      [field]:
+                        value,
+                    }
+                  : subevent
+            ),
+        })
+      );
+    };
+
+  const deleteSubevent =
+    (subeventId) => {
+      setForm(
+        (current) => ({
+          ...current,
+
+          subevents:
+            current.subevents.filter(
+              (subevent) =>
+                subevent.id !==
+                subeventId
+            ),
+        })
+      );
+    };
+
+  const moveSubevent =
+    (
+      subeventId,
+      direction
+    ) => {
+      setForm(
+        (current) => {
+          const currentIndex =
+            current.subevents.findIndex(
+              (subevent) =>
+                subevent.id ===
+                subeventId
+            );
+
+          if (
+            currentIndex ===
+            -1
+          ) {
+            return current;
+          }
+
+          const nextIndex =
+            direction ===
+            "up"
+              ? currentIndex -
+                1
+              : currentIndex +
+                1;
+
+          if (
+            nextIndex <
+              0 ||
+            nextIndex >=
+              current.subevents.length
+          ) {
+            return current;
+          }
+
+          const reordered = [
+            ...current.subevents,
+          ];
+
+          const [
+            movedItem,
+          ] =
+            reordered.splice(
+              currentIndex,
+              1
+            );
+
+          reordered.splice(
+            nextIndex,
+            0,
+            movedItem
+          );
+
+          return {
+            ...current,
+
+            subevents:
+              reordered,
+          };
+        }
+      );
+    };
+
+  /*
+   * SAVE EVENT
+   */
 
   const handleSubmit =
     async (event) => {
@@ -251,10 +414,67 @@ function Calendar() {
         return;
       }
 
+      for (
+        const subevent
+        of form.subevents
+      ) {
+        if (
+          !subevent.title.trim()
+        ) {
+          setError(
+            "Each schedule item needs a title."
+          );
+
+          return;
+        }
+
+        if (
+          subevent.startTime &&
+          subevent.endTime &&
+          subevent.endTime <
+            subevent.startTime
+        ) {
+          setError(
+            `"${subevent.title}" ends before it starts.`
+          );
+
+          return;
+        }
+      }
+
       setSaving(true);
       setError("");
 
       try {
+        const cleanedSubevents =
+          form.subevents.map(
+            (
+              subevent,
+              index
+            ) => ({
+              id:
+                subevent.id,
+
+              title:
+                subevent.title.trim(),
+
+              startTime:
+                subevent.startTime,
+
+              endTime:
+                subevent.endTime,
+
+              location:
+                subevent.location.trim(),
+
+              notes:
+                subevent.notes.trim(),
+
+              order:
+                index,
+            })
+          );
+
         const eventData = {
           type:
             "event",
@@ -278,6 +498,12 @@ function Calendar() {
 
           visibility:
             form.visibility,
+
+          showOnWeekend:
+            form.showOnWeekend,
+
+          subevents:
+            cleanedSubevents,
 
           updatedAt:
             serverTimestamp(),
@@ -385,6 +611,65 @@ function Calendar() {
         visibility:
           item.visibility ||
           "private",
+
+        showOnWeekend:
+          item.showOnWeekend ||
+          false,
+
+        subevents:
+          Array.isArray(
+            item.subevents
+          )
+            ? [...item.subevents]
+                .sort(
+                  (
+                    first,
+                    second
+                  ) =>
+                    (
+                      first.order ??
+                      0
+                    ) -
+                    (
+                      second.order ??
+                      0
+                    )
+                )
+                .map(
+                  (
+                    subevent,
+                    index
+                  ) => ({
+                    id:
+                      subevent.id ||
+                      createSubeventId(),
+
+                    title:
+                      subevent.title ||
+                      "",
+
+                    startTime:
+                      subevent.startTime ||
+                      "",
+
+                    endTime:
+                      subevent.endTime ||
+                      "",
+
+                    location:
+                      subevent.location ||
+                      "",
+
+                    notes:
+                      subevent.notes ||
+                      "",
+
+                    order:
+                      subevent.order ??
+                      index,
+                  })
+                )
+            : [],
       });
 
       window.scrollTo({
@@ -484,7 +769,7 @@ function Calendar() {
     };
 
   /*
-   * VIEW NAVIGATION
+   * CALENDAR NAVIGATION
    */
 
   const handlePrevious =
@@ -581,8 +866,9 @@ function Calendar() {
       </h1>
 
       <p className="page-description">
-        Manage wedding events and view planning tasks
-        and public wedding-party dates together.
+        Manage wedding events and view planning tasks,
+        wedding-party dates, and detailed event
+        schedules together.
       </p>
 
       <section className="content-card event-editor">
@@ -637,7 +923,7 @@ function Calendar() {
               onChange={
                 handleChange
               }
-              placeholder="Wedding rehearsal"
+              placeholder="Wedding Day"
             />
           </label>
 
@@ -752,6 +1038,91 @@ function Calendar() {
             />
           </label>
 
+          <label className="form-checkbox-field event-weekend-field">
+            <input
+              type="checkbox"
+              checked={
+                form.showOnWeekend
+              }
+              onChange={
+                handleWeekendChange
+              }
+            />
+
+            <span>
+              Show on Wedding Weekend page
+            </span>
+          </label>
+
+          <div className="subevent-editor">
+            <div className="subevent-editor-heading">
+              <div>
+                <p className="card-eyebrow">
+                  Event Schedule
+                </p>
+
+                <h3>
+                  Subevents
+                </h3>
+
+                <p>
+                  Add the individual parts of this
+                  event in the order they happen.
+                </p>
+              </div>
+            </div>
+
+            {form.subevents.length ===
+            0 ? (
+              <div className="subevent-empty">
+                <ListTree
+                  size={20}
+                />
+
+                <span>
+                  No subevents yet. This event can stay
+                  as a single calendar event, or you can
+                  add a detailed schedule.
+                </span>
+              </div>
+            ) : (
+              <div className="subevent-list">
+                {form.subevents.map(
+                  (
+                    subevent,
+                    index
+                  ) => (
+                    <SubeventEditor
+                      key={
+                        subevent.id
+                      }
+                      subevent={
+                        subevent
+                      }
+                      index={
+                        index
+                      }
+                      total={
+                        form
+                          .subevents
+                          .length
+                      }
+                      onChange={
+                        updateSubevent
+                      }
+                      onDelete={
+                        deleteSubevent
+                      }
+                      onMove={
+                        moveSubevent
+                      }
+                    />
+                  )
+                )}
+              </div>
+            )}
+          </div>
+
           {error && (
             <div className="calendar-error">
               {error}
@@ -759,6 +1130,21 @@ function Calendar() {
           )}
 
           <div className="event-form-actions">
+
+            <button
+                type="button"
+                className="secondary-button"
+                onClick={
+                  addSubevent
+                }
+              >
+                <Plus
+                  size={16}
+                />
+
+                Add Subevent
+              </button>
+              
             {editingId && (
               <button
                 type="button"
@@ -990,6 +1376,186 @@ function Calendar() {
   );
 }
 
+function SubeventEditor({
+  subevent,
+  index,
+  total,
+  onChange,
+  onDelete,
+  onMove,
+}) {
+  return (
+    <div className="subevent-card">
+      <div className="subevent-card-top">
+        <div className="subevent-number">
+          {index + 1}
+        </div>
+
+        <div className="subevent-order-buttons">
+          <button
+            type="button"
+            className="icon-button"
+            disabled={
+              index === 0
+            }
+            onClick={() =>
+              onMove(
+                subevent.id,
+                "up"
+              )
+            }
+            aria-label="Move subevent up"
+          >
+            <ArrowUp
+              size={15}
+            />
+          </button>
+
+          <button
+            type="button"
+            className="icon-button"
+            disabled={
+              index ===
+              total - 1
+            }
+            onClick={() =>
+              onMove(
+                subevent.id,
+                "down"
+              )
+            }
+            aria-label="Move subevent down"
+          >
+            <ArrowDown
+              size={15}
+            />
+          </button>
+
+          <button
+            type="button"
+            className="icon-button danger"
+            onClick={() =>
+              onDelete(
+                subevent.id
+              )
+            }
+            aria-label="Delete subevent"
+          >
+            <Trash2
+              size={15}
+            />
+          </button>
+        </div>
+      </div>
+
+      <div className="subevent-fields">
+        <label className="form-field subevent-title-field">
+          <span>
+            Name
+          </span>
+
+          <input
+            type="text"
+            value={
+              subevent.title
+            }
+            onChange={(event) =>
+              onChange(
+                subevent.id,
+                "title",
+                event.target.value
+              )
+            }
+            placeholder="Ceremony"
+          />
+        </label>
+
+        <label className="form-field">
+          <span>
+            Start
+          </span>
+
+          <input
+            type="time"
+            value={
+              subevent.startTime
+            }
+            onChange={(event) =>
+              onChange(
+                subevent.id,
+                "startTime",
+                event.target.value
+              )
+            }
+          />
+        </label>
+
+        <label className="form-field">
+          <span>
+            End
+          </span>
+
+          <input
+            type="time"
+            value={
+              subevent.endTime
+            }
+            onChange={(event) =>
+              onChange(
+                subevent.id,
+                "endTime",
+                event.target.value
+              )
+            }
+          />
+        </label>
+
+        <label className="form-field subevent-location-field">
+          <span>
+            Location
+          </span>
+
+          <input
+            type="text"
+            value={
+              subevent.location
+            }
+            onChange={(event) =>
+              onChange(
+                subevent.id,
+                "location",
+                event.target.value
+              )
+            }
+            placeholder="Optional"
+          />
+        </label>
+
+        <label className="form-field subevent-notes-field">
+          <span>
+            Notes
+          </span>
+
+          <textarea
+            rows={2}
+            value={
+              subevent.notes
+            }
+            onChange={(event) =>
+              onChange(
+                subevent.id,
+                "notes",
+                event.target.value
+              )
+            }
+            placeholder="Optional details"
+          />
+        </label>
+      </div>
+    </div>
+  );
+}
+
 function MonthView({
   selectedDate,
   items,
@@ -1053,11 +1619,6 @@ function MonthView({
                     ? "today"
                     : ""
                 }`}
-                onDoubleClick={() =>
-                  onSelectDate(
-                    day.date
-                  )
-                }
               >
                 <button
                   type="button"
@@ -1277,22 +1838,161 @@ function DayView({
       ) : (
         <div className="day-view-list">
           {dayItems.map(
-            (item) => (
-              <DayItem
-                key={
-                  item.id
-                }
-                item={
-                  item
-                }
-                onEdit={
-                  onEdit
-                }
-              />
-            )
+            (item) =>
+              item.type ===
+                "event" &&
+              Array.isArray(
+                item.subevents
+              ) &&
+              item.subevents
+                .length >
+                0 ? (
+                <DayEventWithSubevents
+                  key={
+                    item.id
+                  }
+                  item={
+                    item
+                  }
+                  onEdit={
+                    onEdit
+                  }
+                />
+              ) : (
+                <DayItem
+                  key={
+                    item.id
+                  }
+                  item={
+                    item
+                  }
+                  onEdit={
+                    onEdit
+                  }
+                />
+              )
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function DayEventWithSubevents({
+  item,
+  onEdit,
+}) {
+  const subevents =
+    [...item.subevents].sort(
+      (
+        first,
+        second
+      ) =>
+        (
+          first.order ??
+          0
+        ) -
+        (
+          second.order ??
+          0
+        )
+    );
+
+  return (
+    <div className="day-parent-event">
+      <button
+        type="button"
+        className="day-parent-event-heading"
+        onClick={() =>
+          onEdit(
+            item
+          )
+        }
+      >
+        <div>
+          <span className="day-parent-label">
+            Event
+          </span>
+
+          <strong>
+            {
+              item.title
+            }
+          </strong>
+        </div>
+
+        <span className="subevent-count-badge">
+          {
+            subevents.length
+          }{" "}
+          {
+            subevents.length ===
+            1
+              ? "item"
+              : "items"
+          }
+        </span>
+      </button>
+
+      <div className="day-subevent-list">
+        {subevents.map(
+          (subevent) => (
+            <div
+              key={
+                subevent.id
+              }
+              className="day-subevent"
+            >
+              <div className="day-subevent-time">
+                {subevent.startTime
+                  ? formatTime(
+                      subevent.startTime
+                    )
+                  : "Any time"}
+              </div>
+
+              <div className="day-subevent-content">
+                <strong>
+                  {
+                    subevent.title
+                  }
+                </strong>
+
+                {subevent.endTime && (
+                  <span>
+                    Ends{" "}
+                    {
+                      formatTime(
+                        subevent.endTime
+                      )
+                    }
+                  </span>
+                )}
+
+                {subevent.location && (
+                  <span className="day-subevent-detail">
+                    <MapPin
+                      size={13}
+                    />
+
+                    {
+                      subevent.location
+                    }
+                  </span>
+                )}
+
+                {subevent.notes && (
+                  <p>
+                    {
+                      subevent.notes
+                    }
+                  </p>
+                )}
+              </div>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 }
@@ -1301,6 +2001,13 @@ function CalendarItem({
   item,
   onEdit,
 }) {
+  const subeventCount =
+    Array.isArray(
+      item.subevents
+    )
+      ? item.subevents.length
+      : 0;
+
   return (
     <button
       type="button"
@@ -1324,6 +2031,15 @@ function CalendarItem({
           item.title
         }
       </span>
+
+      {subeventCount >
+        0 && (
+        <span className="calendar-item-subevents">
+          {
+            subeventCount
+          }
+        </span>
+      )}
     </button>
   );
 }
@@ -1332,6 +2048,13 @@ function WeekItem({
   item,
   onEdit,
 }) {
+  const subeventCount =
+    Array.isArray(
+      item.subevents
+    )
+      ? item.subevents.length
+      : 0;
+
   return (
     <button
       type="button"
@@ -1357,6 +2080,25 @@ function WeekItem({
           item.title
         }
       </strong>
+
+      {subeventCount >
+        0 && (
+        <span className="week-item-subevent-count">
+          <ListTree
+            size={11}
+          />
+
+          {
+            subeventCount
+          }{" "}
+          {
+            subeventCount ===
+            1
+              ? "item"
+              : "items"
+          }
+        </span>
+      )}
 
       <span
         className={`week-item-visibility ${
@@ -1464,6 +2206,13 @@ function EventCard({
     item.visibility ===
     "public";
 
+  const subeventCount =
+    Array.isArray(
+      item.subevents
+    )
+      ? item.subevents.length
+      : 0;
+
   return (
     <article className="calendar-event-card">
       <div className="calendar-event-date">
@@ -1511,6 +2260,31 @@ function EventCard({
               ? "Public"
               : "Private"}
           </span>
+
+          {item.showOnWeekend && (
+            <span className="weekend-badge">
+              Wedding Weekend
+            </span>
+          )}
+
+          {subeventCount >
+            0 && (
+            <span className="subevent-count-badge">
+              <ListTree
+                size={12}
+              />
+
+              {
+                subeventCount
+              }{" "}
+              {
+                subeventCount ===
+                1
+                  ? "item"
+                  : "items"
+              }
+            </span>
+          )}
         </div>
 
         <p className="calendar-event-meta">
@@ -2007,6 +2781,20 @@ function formatTime(
         "2-digit",
     }
   );
+}
+
+function createSubeventId() {
+  if (
+    typeof crypto !==
+      "undefined" &&
+    crypto.randomUUID
+  ) {
+    return crypto.randomUUID();
+  }
+
+  return `subevent-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2)}`;
 }
 
 function capitalize(
