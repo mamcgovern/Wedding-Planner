@@ -1,0 +1,1340 @@
+/*
+ * PUBLIC PAGE
+ */
+
+.sleeping-page {
+  width: 100%;
+}
+
+
+/*
+ * INTRO
+ */
+
+.sleeping-intro {
+  padding:
+    80px 28px 50px;
+
+  text-align: center;
+}
+
+.sleeping-intro-inner {
+  max-width: 760px;
+
+  margin:
+    0 auto;
+}
+
+.sleeping-intro h1 {
+  margin:
+    5px 0 15px;
+
+  font-size:
+    clamp(
+      2.6rem,
+      6vw,
+      4.6rem
+    );
+
+  font-weight: 400;
+}
+
+.sleeping-intro-description {
+  max-width: 650px;
+
+  margin:
+    0 auto;
+
+  color:
+    var(--text-light);
+
+  font-size: 1rem;
+
+  line-height: 1.7;
+}
+
+
+/*
+ * PROGRESS
+ */
+
+.sleeping-progress {
+  margin-top: 30px;
+
+  padding: 22px;
+
+  background:
+    var(--blush-light);
+
+  border:
+    1px solid
+    var(--blush);
+
+  border-radius:
+    var(--radius-large);
+
+  text-align: left;
+}
+
+.sleeping-progress-label {
+  display: inline-flex;
+
+  margin-bottom: 8px;
+
+  padding:
+    4px 9px;
+
+  background:
+    var(--white);
+
+  color:
+    var(--blush-dark);
+
+  border-radius:
+    999px;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.65rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+}
+
+.sleeping-progress > p {
+  margin:
+    0 0 14px;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.6;
+}
+
+.sleeping-progress-contact {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  gap: 10px;
+
+  padding-top: 14px;
+
+  color:
+    var(--sage-dark);
+
+  border-top:
+    1px solid
+    var(--blush);
+}
+
+.sleeping-progress-contact svg {
+  flex: 0 0 auto;
+
+  margin-top: 2px;
+}
+
+.sleeping-progress-contact p {
+  margin: 0;
+
+  line-height: 1.55;
+}
+
+
+/*
+ * MAIN HOUSE
+ */
+
+.sleeping-main {
+  max-width: 1100px;
+
+  margin:
+    0 auto;
+
+  padding:
+    30px 28px 80px;
+}
+
+.sleeping-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+
+  max-width: 680px;
+
+  margin:
+    0 auto 36px;
+}
+
+.sleeping-summary-item {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  padding:
+    22px 16px;
+
+  background:
+    var(--sage-light);
+
+  border:
+    1px solid
+    var(--sage);
+
+  border-radius:
+    var(--radius-medium);
+}
+
+.sleeping-summary-number {
+  font-size: 2rem;
+
+  line-height: 1;
+
+  color:
+    var(--sage-dark);
+}
+
+.sleeping-summary-label {
+  margin-top: 6px;
+
+  color:
+    var(--text-light);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.7rem;
+
+  font-weight: 700;
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+}
+
+
+/*
+ * ROOM GRID
+ */
+
+.sleeping-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 16px;
+}
+
+.sleeping-card {
+  padding: 24px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.sleeping-card-common {
+  background:
+    linear-gradient(
+      135deg,
+      var(--white),
+      var(--sage-light)
+    );
+}
+
+.sleeping-card-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding-bottom: 16px;
+
+  border-bottom:
+    1px solid
+    var(--border);
+}
+
+.sleeping-room-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 42px;
+
+  height: 42px;
+
+  flex: 0 0 auto;
+
+  background:
+    var(--blush-light);
+
+  color:
+    var(--blush-dark);
+
+  border-radius:
+    50%;
+}
+
+.sleeping-room-label {
+  margin:
+    0 0 2px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.62rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+.sleeping-card h2 {
+  margin: 0;
+
+  font-size: 1.3rem;
+
+  font-weight: 400;
+}
+
+
+/*
+ * ASSIGNMENTS
+ */
+
+.sleeping-assignments {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.sleeping-assignment {
+  display: grid;
+
+  grid-template-columns:
+    minmax(
+      110px,
+      0.8fr
+    )
+    minmax(
+      0,
+      1.2fr
+    );
+
+  gap: 14px;
+
+  padding:
+    14px 0;
+
+  border-bottom:
+    1px solid
+    var(--border);
+}
+
+.sleeping-assignment:last-child {
+  border-bottom: 0;
+}
+
+.sleeping-assignment-bed {
+  color:
+    var(--text-light);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.76rem;
+
+  font-weight: 700;
+}
+
+.sleeping-assignment-people {
+  font-size: 0.95rem;
+
+  font-weight: 600;
+}
+
+.sleeping-card-note {
+  margin:
+    10px 0 0;
+
+  padding:
+    12px 14px;
+
+  background:
+    var(--cream);
+
+  color:
+    var(--text-light);
+
+  border-radius:
+    var(--radius-small);
+
+  font-size: 0.82rem;
+
+  line-height: 1.5;
+}
+
+
+/*
+ * ADDITIONAL SPACE
+ */
+
+.sleeping-notes {
+  padding:
+    80px 28px;
+
+  background:
+    var(--sage-light);
+}
+
+.sleeping-notes-inner {
+  max-width: 720px;
+
+  margin:
+    0 auto;
+
+  text-align: center;
+}
+
+.sleeping-notes-icon,
+.sleeping-hotel-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 50px;
+
+  height: 50px;
+
+  margin:
+    0 auto 14px;
+
+  background:
+    var(--white);
+
+  color:
+    var(--sage-dark);
+
+  border-radius:
+    50%;
+}
+
+.sleeping-notes-inner h2 {
+  margin:
+    5px 0 18px;
+
+  font-size:
+    clamp(
+      2rem,
+      4vw,
+      2.8rem
+    );
+
+  font-weight: 400;
+}
+
+.sleeping-note-paragraphs {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.sleeping-note-paragraphs p {
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.7;
+}
+
+
+/*
+ * HOTEL
+ */
+
+.sleeping-hotel {
+  padding:
+    90px 28px;
+}
+
+.sleeping-hotel-inner {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(320px, 0.8fr);
+
+  gap: 30px;
+
+  max-width: 1050px;
+
+  margin:
+    0 auto;
+}
+
+.sleeping-hotel-content {
+  padding:
+    36px;
+
+  background:
+    var(--white);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.sleeping-hotel-icon {
+  margin:
+    0 0 14px;
+}
+
+.sleeping-hotel-content h2 {
+  margin:
+    5px 0 18px;
+
+  font-size:
+    clamp(
+      1.9rem,
+      4vw,
+      2.7rem
+    );
+
+  font-weight: 400;
+}
+
+.sleeping-hotel-address {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  gap: 8px;
+
+  width: fit-content;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.82rem;
+
+  font-weight: 600;
+
+  line-height: 1.5;
+}
+
+.sleeping-hotel-address svg {
+  flex:
+    0 0 auto;
+
+  margin-top: 2px;
+}
+
+.sleeping-hotel-distance {
+  margin:
+    12px 0 24px;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.85rem;
+}
+
+.sleeping-hotel-reserve {
+  margin:
+    0 0 18px;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.6;
+}
+
+.sleeping-hotel-reserve a {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  color:
+    var(--sage-dark);
+
+  font-weight: 700;
+}
+
+.sleeping-hotel-block {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  padding:
+    15px;
+
+  background:
+    var(--blush-light);
+
+  border-radius:
+    var(--radius-small);
+}
+
+.sleeping-hotel-block span {
+  color:
+    var(--blush-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.62rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+.sleeping-hotel-block strong {
+  font-size: 1.05rem;
+
+  font-weight: 400;
+}
+
+
+/*
+ * HOTEL DETAILS
+ */
+
+.sleeping-hotel-details {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+}
+
+.sleeping-hotel-detail {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  min-height: 145px;
+
+  padding: 22px;
+
+  background:
+    var(--cream);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-medium);
+}
+
+.sleeping-hotel-detail span {
+  margin-bottom: 6px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.62rem;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+.sleeping-hotel-detail strong {
+  font-size: 1rem;
+
+  font-weight: 500;
+}
+
+.sleeping-hotel-detail p {
+  margin:
+    4px 0 0;
+
+  color:
+    var(--text-light);
+
+  font-size: 0.82rem;
+}
+
+
+/*
+ * ADMIN
+ */
+
+.sleeping-admin-page {
+  max-width: 1050px;
+}
+
+.sleeping-admin-heading {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  gap: 25px;
+}
+
+.sleeping-admin-heading
+.page-description {
+  margin-bottom: 0;
+}
+
+.sleeping-admin-save,
+.sleeping-admin-bottom-save {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.sleeping-admin-save {
+  flex: 0 0 auto;
+}
+
+.sleeping-admin-save
+.primary-button,
+.sleeping-admin-bottom-save
+.primary-button {
+  gap: 6px;
+}
+
+.sleeping-save-status {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  color:
+    var(--sage-dark);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.76rem;
+
+  font-weight: 700;
+}
+
+.sleeping-admin-error {
+  margin-top: 20px;
+
+  padding: 12px;
+
+  background:
+    #f8e5e5;
+
+  color:
+    #923c3c;
+
+  border-radius:
+    var(--radius-small);
+}
+
+.sleeping-admin-section {
+  margin-top: 24px;
+}
+
+.sleeping-admin-section-title {
+  margin-bottom: 20px;
+}
+
+.sleeping-admin-section-title h2 {
+  margin: 0;
+
+  font-size: 1.4rem;
+
+  font-weight: 400;
+}
+
+.sleeping-admin-form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 16px;
+}
+
+.sleeping-admin-wide {
+  grid-column:
+    1 / -1;
+}
+
+.sleeping-summary-admin-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 16px;
+}
+
+
+/*
+ * ADMIN ROOMS
+ */
+
+.sleeping-admin-rooms {
+  margin-top: 36px;
+}
+
+.sleeping-admin-list-heading {
+  display: flex;
+
+  align-items:
+    flex-end;
+
+  justify-content:
+    space-between;
+
+  gap: 20px;
+
+  margin-bottom: 14px;
+}
+
+.sleeping-admin-list-heading h2 {
+  margin: 0;
+
+  font-size: 1.45rem;
+
+  font-weight: 400;
+}
+
+.sleeping-admin-list-heading
+.secondary-button {
+  gap: 6px;
+}
+
+.sleeping-admin-room-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.sleeping-admin-room {
+  padding: 20px;
+}
+
+.sleeping-admin-room-header {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 20px;
+
+  padding-bottom: 14px;
+
+  border-bottom:
+    1px solid
+    var(--border);
+}
+
+.sleeping-admin-room-order {
+  display: flex;
+
+  gap: 4px;
+}
+
+.sleeping-admin-room-order
+.icon-button {
+  width: 30px;
+
+  height: 30px;
+}
+
+.sleeping-admin-room-order
+.icon-button:disabled {
+  opacity: 0.3;
+
+  cursor:
+    not-allowed;
+}
+
+.sleeping-admin-room-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color:
+    var(--sage-dark);
+}
+
+.sleeping-admin-room-title strong {
+  color:
+    var(--text);
+
+  font-size: 1rem;
+}
+
+
+/*
+ * ADMIN ASSIGNMENTS
+ */
+
+.sleeping-admin-assignments {
+  margin-top: 22px;
+
+  padding-top: 18px;
+
+  border-top:
+    1px solid
+    var(--border);
+}
+
+.sleeping-admin-assignment-heading {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  gap: 16px;
+
+  margin-bottom: 12px;
+}
+
+.sleeping-admin-assignment-heading h3 {
+  margin: 0;
+
+  font-size: 1rem;
+
+  font-weight: 500;
+}
+
+.sleeping-admin-assignment-heading
+.secondary-button {
+  gap: 5px;
+}
+
+.sleeping-admin-assignment-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.sleeping-admin-assignment-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 0.8fr)
+    minmax(0, 1.2fr)
+    auto;
+
+  align-items: flex-end;
+
+  gap: 10px;
+
+  padding: 12px;
+
+  background:
+    var(--cream);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-small);
+}
+
+.sleeping-assignment-delete {
+  margin-bottom: 2px;
+}
+
+.sleeping-admin-empty {
+  padding: 15px;
+
+  background:
+    var(--cream);
+
+  color:
+    var(--text-light);
+
+  border:
+    1px dashed
+    var(--border);
+
+  border-radius:
+    var(--radius-small);
+
+  font-size: 0.8rem;
+}
+
+
+/*
+ * ADMIN PARAGRAPHS
+ */
+
+.sleeping-admin-paragraph-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+.sleeping-admin-paragraph {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  align-items:
+    flex-start;
+
+  gap: 8px;
+}
+
+.sleeping-admin-paragraph textarea {
+  width: 100%;
+
+  padding: 12px;
+
+  resize: vertical;
+
+  background:
+    var(--white);
+
+  color:
+    var(--text);
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-small);
+
+  font: inherit;
+}
+
+.sleeping-add-paragraph {
+  align-self:
+    flex-start;
+
+  gap: 5px;
+}
+
+.sleeping-admin-bottom-save {
+  justify-content:
+    flex-end;
+
+  margin-top: 30px;
+
+  padding-top: 20px;
+
+  border-top:
+    1px solid
+    var(--border);
+}
+
+
+/*
+ * TABLET
+ */
+
+@media (
+  max-width: 800px
+) {
+  .sleeping-hotel-inner {
+    grid-template-columns:
+      1fr;
+  }
+
+  .sleeping-admin-heading {
+    flex-direction:
+      column;
+  }
+}
+
+
+/*
+ * MOBILE
+ */
+
+@media (
+  max-width: 650px
+) {
+  .sleeping-intro {
+    padding:
+      60px 18px 35px;
+  }
+
+  .sleeping-progress {
+    padding: 18px;
+  }
+
+  .sleeping-main {
+    padding:
+      25px 18px 60px;
+  }
+
+  .sleeping-summary {
+    gap: 8px;
+  }
+
+  .sleeping-summary-item {
+    padding:
+      18px 8px;
+  }
+
+  .sleeping-summary-number {
+    font-size: 1.6rem;
+  }
+
+  .sleeping-summary-label {
+    font-size: 0.56rem;
+  }
+
+  .sleeping-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .sleeping-card {
+    padding: 20px;
+  }
+
+  .sleeping-assignment {
+    grid-template-columns:
+      1fr;
+
+    gap: 4px;
+  }
+
+  .sleeping-notes {
+    padding:
+      60px 20px;
+  }
+
+  .sleeping-hotel {
+    padding:
+      65px 18px;
+  }
+
+  .sleeping-hotel-content {
+    padding: 25px;
+  }
+
+  .sleeping-hotel-details {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .sleeping-hotel-detail {
+    min-height: 125px;
+
+    padding: 17px;
+  }
+
+
+  /*
+   * ADMIN
+   */
+
+  .sleeping-admin-save {
+    width: 100%;
+
+    justify-content:
+      space-between;
+  }
+
+  .sleeping-admin-form-grid,
+  .sleeping-summary-admin-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .sleeping-admin-wide {
+    grid-column:
+      auto;
+  }
+
+  .sleeping-admin-list-heading {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .sleeping-admin-list-heading
+  .secondary-button {
+    width: 100%;
+  }
+
+  .sleeping-admin-room-header {
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      auto;
+  }
+
+  .sleeping-admin-room-order {
+    flex-direction:
+      column;
+  }
+
+  .sleeping-admin-assignment-heading {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .sleeping-admin-assignment-heading
+  .secondary-button {
+    width: 100%;
+  }
+
+  .sleeping-admin-assignment-row {
+    grid-template-columns:
+      1fr;
+  }
+
+  .sleeping-assignment-delete {
+    width: 100%;
+
+    margin-bottom: 0;
+  }
+
+  .sleeping-admin-bottom-save {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .sleeping-admin-bottom-save
+  .primary-button {
+    width: 100%;
+  }
+}
+
+@media (
+  max-width: 430px
+) {
+  .sleeping-hotel-details {
+    grid-template-columns:
+      1fr;
+  }
+}

@@ -25,6 +25,7 @@ import MusicAdmin from "./pages/admin/MusicAdmin";
 import Pins from "./pages/admin/Pins";
 import SeatingChart from "./pages/admin/SeatingChart";
 import Settings from "./pages/admin/Settings";
+import SleepingAdmin from "./pages/admin/SleepingAdmin";
 import Tasks from "./pages/admin/Tasks";
 import Vendors from "./pages/admin/Vendors";
 
@@ -161,6 +162,15 @@ function App() {
           element={
             <ProtectedPage>
               <MusicAdmin />
+            </ProtectedPage>
+          }
+        />
+
+        <Route
+          path="/admin/sleeping"
+          element={
+            <ProtectedPage>
+              <SleepingAdmin />
             </ProtectedPage>
           }
         />

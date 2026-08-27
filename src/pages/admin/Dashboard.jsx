@@ -1,10 +1,10 @@
 import {
+  BedDouble,
   CalendarDays,
   CircleDollarSign,
   ListChecks,
   MapPinned,
   Music2,
-  Palette,
   Settings,
   Store,
   UsersRound,
@@ -46,13 +46,26 @@ const planningTools = [
       "Music",
 
     description:
-      "Ceremony songs, special dances, and reception music.",
+      "Prelude music, ceremony songs, special dances, and reception music.",
 
     path:
       "/admin/music",
 
     icon:
       Music2,
+  },
+  {
+    title:
+      "Sleeping Arrangements",
+
+    description:
+      "Manage rooms, sleeping spaces, assignments, and hotel information.",
+
+    path:
+      "/admin/sleeping",
+
+    icon:
+      BedDouble,
   },
   {
     title:
