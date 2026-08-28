@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   CheckCircle2,
   Search,
 } from "lucide-react";
@@ -16,7 +17,7 @@ const attirePages = [
       "Find Your Outfit",
 
     description:
-      "Search your name to find your assigned color, outfit requirements, dress or suit options, shoes, and purchase information.",
+      "Search your name to see your assigned color, outfit requirements, dress or suit options, shoes, and purchase information.",
 
     path:
       "/attire/assignments",
@@ -32,7 +33,7 @@ const attirePages = [
       "What We're Wearing",
 
     description:
-      "See the outfits members of the wedding party have selected as everyone finalizes what they will wear.",
+      "See the dresses, suits, and other outfit pieces the wedding party has selected as everyone gets ready for the big day.",
 
     path:
       "/attire/selected",
@@ -45,7 +46,7 @@ const attirePages = [
 function Attire() {
   return (
     <main className="page attire-overview-page">
-      <div className="attire-overview-heading">
+      <header className="attire-overview-heading">
         <p className="page-eyebrow">
           Wedding Party
         </p>
@@ -55,11 +56,12 @@ function Attire() {
         </h1>
 
         <p className="page-description">
-          Find everything you need to know about
-          wedding-day outfits, assigned colors, purchase
-          options, and what everyone has chosen to wear.
+          Everything you need for wedding-day attire,
+          including assigned colors, outfit requirements,
+          purchase information, and what everyone has
+          chosen to wear.
         </p>
-      </div>
+      </header>
 
       <div className="attire-overview-grid">
         {attirePages.map(
@@ -83,7 +85,7 @@ function Attire() {
                   />
                 </div>
 
-                <div>
+                <div className="attire-overview-card__content">
                   <p className="card-eyebrow">
                     {
                       item.eyebrow
@@ -103,7 +105,11 @@ function Attire() {
                   </p>
 
                   <span className="attire-overview-link">
-                    View Page →
+                    View Page
+
+                    <ArrowRight
+                      size={16}
+                    />
                   </span>
                 </div>
               </Link>
@@ -111,6 +117,22 @@ function Attire() {
           }
         )}
       </div>
+
+      <section className="attire-overview-note">
+        <p className="card-eyebrow">
+          A Quick Note
+        </p>
+
+        <h2>
+          Questions About Your Outfit?
+        </h2>
+
+        <p>
+          If anything about your assigned attire is
+          unclear, reach out before ordering so we can
+          make sure everything works together.
+        </p>
+      </section>
     </main>
   );
 }

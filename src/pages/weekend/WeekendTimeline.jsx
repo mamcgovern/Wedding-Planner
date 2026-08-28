@@ -8,6 +8,7 @@ import {
   CalendarDays,
   Clock3,
   MapPin,
+  Sparkles,
 } from "lucide-react";
 
 import {
@@ -159,21 +160,54 @@ function WeekendTimeline() {
       groupedEvents
     ).sort();
 
+  const eventCount =
+    events.length;
+
   return (
     <main className="page weekend-detail-page weekend-timeline-page">
-      <p className="page-eyebrow">
-        Wedding Weekend
-      </p>
+      <header className="weekend-timeline-intro">
+        <p className="page-eyebrow">
+          Wedding Weekend
+        </p>
 
-      <h1 className="page-title">
-        Weekend Timeline
-      </h1>
+        <h1 className="page-title">
+          Weekend Timeline
+        </h1>
 
-      <p className="page-description">
-        The schedule for the wedding weekend, including
-        rehearsal plans, wedding-day details, and other
-        events the wedding party needs to know.
-      </p>
+        <p className="page-description">
+          Rehearsal plans, wedding-day details, and
+          everything happening throughout the weekend.
+        </p>
+
+        {!loading &&
+          !error &&
+          dates.length >
+            0 && (
+            <div className="weekend-timeline-summary">
+              <CalendarDays
+                size={18}
+              />
+
+              <span>
+                {dates.length ===
+                1
+                  ? "1 day"
+                  : `${dates.length} days`}
+              </span>
+
+              <span className="weekend-timeline-summary-dot">
+                •
+              </span>
+
+              <span>
+                {eventCount ===
+                1
+                  ? "1 event"
+                  : `${eventCount} events`}
+              </span>
+            </div>
+          )}
+      </header>
 
       {loading ? (
         <div className="content-card">
@@ -190,15 +224,24 @@ function WeekendTimeline() {
             size={22}
           />
 
-          <p>
-            The wedding weekend timeline hasn't been
-            posted yet.
-          </p>
+          <div>
+            <h2>
+              Timeline Coming Soon
+            </h2>
+
+            <p>
+              The wedding weekend timeline hasn't been
+              posted yet.
+            </p>
+          </div>
         </div>
       ) : (
         <div className="weekend-timeline">
           {dates.map(
-            (date) => (
+            (
+              date,
+              index
+            ) => (
               <TimelineDay
                 key={
                   date
@@ -210,6 +253,9 @@ function WeekendTimeline() {
                   groupedEvents[
                     date
                   ]
+                }
+                dayNumber={
+                  index + 1
                 }
               />
             )
@@ -223,10 +269,15 @@ function WeekendTimeline() {
 function TimelineDay({
   date,
   events,
+  dayNumber,
 }) {
   return (
     <section className="weekend-timeline-day">
       <div className="weekend-day-heading">
+        <span className="weekend-day-number">
+          Day {dayNumber}
+        </span>
+
         <p>
           {
             getWeekday(
@@ -274,8 +325,18 @@ function TimelineEvent({
         )
       : [];
 
+  const hasSubevents =
+    subevents.length >
+    0;
+
   return (
-    <article className="weekend-timeline-event">
+    <article
+      className={`weekend-timeline-event ${
+        hasSubevents
+          ? "weekend-timeline-event-featured"
+          : ""
+      }`}
+    >
       <div className="weekend-timeline-marker">
         <span />
       </div>
@@ -283,26 +344,44 @@ function TimelineEvent({
       <div className="weekend-timeline-event-body">
         <div className="weekend-timeline-event-header">
           <div>
-            {event.startTime && (
-              <p className="weekend-timeline-time">
-                {
-                  formatTime(
-                    event.startTime
-                  )
-                }
+            <div className="weekend-timeline-event-meta">
+              {event.startTime && (
+                <p className="weekend-timeline-time">
+                  <Clock3
+                    size={14}
+                  />
 
-                {event.endTime && (
-                  <>
-                    {" - "}
+                  <span>
                     {
                       formatTime(
-                        event.endTime
+                        event.startTime
                       )
                     }
-                  </>
-                )}
-              </p>
-            )}
+
+                    {event.endTime && (
+                      <>
+                        {" - "}
+                        {
+                          formatTime(
+                            event.endTime
+                          )
+                        }
+                      </>
+                    )}
+                  </span>
+                </p>
+              )}
+
+              {hasSubevents && (
+                <span className="weekend-timeline-featured-label">
+                  <Sparkles
+                    size={13}
+                  />
+
+                  Full Schedule
+                </span>
+              )}
+            </div>
 
             <h3>
               {
@@ -334,8 +413,7 @@ function TimelineEvent({
           </p>
         )}
 
-        {subevents.length >
-          0 && (
+        {hasSubevents && (
           <div className="public-subevent-list">
             {subevents.map(
               (
@@ -526,17 +604,12 @@ function createLocalDate(
     day,
   ] =
     value
-      .split(
-        "-"
-      )
-      .map(
-        Number
-      );
+      .split("-")
+      .map(Number);
 
   return new Date(
     year,
-    month -
-      1,
+    month - 1,
     day
   );
 }
@@ -586,12 +659,8 @@ function formatTime(
     minute,
   ] =
     value
-      .split(
-        ":"
-      )
-      .map(
-        Number
-      );
+      .split(":")
+      .map(Number);
 
   const date =
     new Date();

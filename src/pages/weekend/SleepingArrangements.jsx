@@ -5,6 +5,7 @@ import {
   Hotel,
   MapPin,
   Phone,
+  Users,
 } from "lucide-react";
 
 import {
@@ -55,75 +56,146 @@ const defaultSleepingData = {
 
   areas: [
     {
-      id: "master-bedroom",
-      name: "Master Bedroom",
-      type: "Bedroom",
-      note: "",
+      id:
+        "master-bedroom",
+
+      name:
+        "Master Bedroom",
+
+      type:
+        "Bedroom",
+
+      note:
+        "",
+
       assignments: [
         {
-          id: "master-king",
-          bed: "King Bed",
-          people: "Maddie & Nick",
+          id:
+            "master-king",
+
+          bed:
+            "King Bed",
+
+          people:
+            "Maddie & Nick",
         },
       ],
     },
     {
-      id: "bedroom-two",
-      name: "Bedroom Two",
-      type: "Bedroom",
-      note: "",
+      id:
+        "bedroom-two",
+
+      name:
+        "Bedroom Two",
+
+      type:
+        "Bedroom",
+
+      note:
+        "",
+
       assignments: [
         {
-          id: "bedroom-two-one",
-          bed: "Queen Bed",
-          people: "Sydni & Colin",
+          id:
+            "bedroom-two-one",
+
+          bed:
+            "Queen Bed",
+
+          people:
+            "Sydni & Colin",
         },
         {
-          id: "bedroom-two-two",
-          bed: "Queen Bed",
-          people: "Nathan & Skyler",
+          id:
+            "bedroom-two-two",
+
+          bed:
+            "Queen Bed",
+
+          people:
+            "Nathan & Skyler",
         },
       ],
     },
     {
-      id: "bedroom-three",
-      name: "Bedroom Three",
-      type: "Bedroom",
-      note: "",
+      id:
+        "bedroom-three",
+
+      name:
+        "Bedroom Three",
+
+      type:
+        "Bedroom",
+
+      note:
+        "",
+
       assignments: [
         {
-          id: "bedroom-three-one",
-          bed: "Queen Bed",
-          people: "Lizzy & Kurt",
+          id:
+            "bedroom-three-one",
+
+          bed:
+            "Queen Bed",
+
+          people:
+            "Lizzy & Kurt",
         },
         {
-          id: "bedroom-three-two",
-          bed: "Queen Bed",
-          people: "Kay & Bee",
+          id:
+            "bedroom-three-two",
+
+          bed:
+            "Queen Bed",
+
+          people:
+            "Kay & Bee",
         },
         {
-          id: "bedroom-three-floor",
-          bed: "Floor",
-          people: "Toph",
+          id:
+            "bedroom-three-floor",
+
+          bed:
+            "Floor",
+
+          people:
+            "Toph",
         },
       ],
     },
     {
-      id: "living-room",
-      name: "Living Room",
-      type: "Common Area",
+      id:
+        "living-room",
+
+      name:
+        "Living Room",
+
+      type:
+        "Common Area",
+
       note:
         "Additional air mattresses can be set up as needed.",
+
       assignments: [
         {
-          id: "living-room-couch",
-          bed: "Couch",
-          people: "TBD",
+          id:
+            "living-room-couch",
+
+          bed:
+            "Couch",
+
+          people:
+            "TBD",
         },
         {
-          id: "living-room-pullout",
-          bed: "Pull-Out Bed",
-          people: "TBD",
+          id:
+            "living-room-pullout",
+
+          bed:
+            "Pull-Out Bed",
+
+          people:
+            "TBD",
         },
       ],
     },
@@ -235,7 +307,9 @@ function SleepingArrangements() {
             });
           }
 
-          setLoading(false);
+          setLoading(
+            false
+          );
         },
         (firebaseError) => {
           console.error(
@@ -243,14 +317,18 @@ function SleepingArrangements() {
             firebaseError
           );
 
-          setLoading(false);
+          setLoading(
+            false
+          );
         }
       );
 
     return unsubscribe;
   }, []);
 
-  if (loading) {
+  if (
+    loading
+  ) {
     return (
       <main className="page sleeping-page">
         <div className="content-card">
@@ -264,8 +342,16 @@ function SleepingArrangements() {
     <main className="sleeping-page">
       <section className="sleeping-intro">
         <div className="sleeping-intro-inner">
+          <div className="sleeping-intro-icon">
+            <BedDouble
+              size={24}
+            />
+          </div>
+
           <p className="page-eyebrow">
-            {data.weekendDates}
+            {
+              data.weekendDates
+            }
           </p>
 
           <h1>
@@ -273,29 +359,46 @@ function SleepingArrangements() {
           </h1>
 
           <p className="sleeping-intro-description">
-            {data.intro}
+            {
+              data.intro
+            }
           </p>
 
           <div className="sleeping-progress">
-            <span className="sleeping-progress-label">
-              {data.progressLabel}
-            </span>
-
-            <p>
-              {data.progressMessage}
-            </p>
-
-            <div className="sleeping-progress-contact">
-              <BedDouble
-                size={18}
-              />
+            <div className="sleeping-progress-heading">
+              <span className="sleeping-progress-label">
+                {
+                  data.progressLabel
+                }
+              </span>
 
               <p>
-                <strong>
-                  {data.contactHeading}
-                </strong>{" "}
-                {data.contactMessage}
+                {
+                  data.progressMessage
+                }
               </p>
+            </div>
+
+            <div className="sleeping-progress-contact">
+              <div className="sleeping-progress-contact-icon">
+                <Users
+                  size={19}
+                />
+              </div>
+
+              <div>
+                <strong>
+                  {
+                    data.contactHeading
+                  }
+                </strong>
+
+                <p>
+                  {
+                    data.contactMessage
+                  }
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -325,6 +428,22 @@ function SleepingArrangements() {
           />
         </div>
 
+        <div className="sleeping-section-heading">
+          <p className="page-eyebrow">
+            Venue House
+          </p>
+
+          <h2>
+            Where Everyone Is Sleeping
+          </h2>
+
+          <p>
+            Find your room and sleeping space below.
+            Assignments may still change as plans are
+            finalized.
+          </p>
+        </div>
+
         <div className="sleeping-grid">
           {data.areas.map(
             (area) => (
@@ -350,11 +469,15 @@ function SleepingArrangements() {
           </div>
 
           <p className="page-eyebrow">
-            {data.additionalSpaceEyebrow}
+            {
+              data.additionalSpaceEyebrow
+            }
           </p>
 
           <h2>
-            {data.additionalSpaceTitle}
+            {
+              data.additionalSpaceTitle
+            }
           </h2>
 
           <div className="sleeping-note-paragraphs">
@@ -395,11 +518,15 @@ function SummaryItem({
   return (
     <div className="sleeping-summary-item">
       <span className="sleeping-summary-number">
-        {number}
+        {
+          number
+        }
       </span>
 
       <span className="sleeping-summary-label">
-        {label}
+        {
+          label
+        }
       </span>
     </div>
   );
@@ -435,11 +562,15 @@ function SleepingArea({
 
         <div>
           <p className="sleeping-room-label">
-            {area.type}
+            {
+              area.type
+            }
           </p>
 
           <h2>
-            {area.name}
+            {
+              area.name
+            }
           </h2>
         </div>
       </div>
@@ -454,12 +585,24 @@ function SleepingArea({
               }
             >
               <span className="sleeping-assignment-bed">
-                {assignment.bed}
+                {
+                  assignment.bed
+                }
               </span>
 
-              <span className="sleeping-assignment-people">
-                {assignment.people ||
-                  "TBD"}
+              <span
+                className={`sleeping-assignment-people ${
+                  !assignment.people ||
+                  assignment.people ===
+                    "TBD"
+                    ? "sleeping-assignment-tbd"
+                    : ""
+                }`}
+              >
+                {
+                  assignment.people ||
+                  "TBD"
+                }
               </span>
             </div>
           )
@@ -468,7 +611,9 @@ function SleepingArea({
 
       {area.note && (
         <p className="sleeping-card-note">
-          {area.note}
+          {
+            area.note
+          }
         </p>
       )}
     </article>
@@ -480,20 +625,39 @@ function HotelSection({
 }) {
   return (
     <section className="sleeping-hotel">
+      <div className="sleeping-hotel-heading">
+        <div className="sleeping-hotel-icon">
+          <Hotel
+            size={24}
+          />
+        </div>
+
+        <p className="page-eyebrow">
+          {
+            hotel.eyebrow
+          }
+        </p>
+
+        <h2>
+          Hotel Option
+        </h2>
+
+        <p>
+          If you would rather have your own room, we also
+          have a hotel block available nearby.
+        </p>
+      </div>
+
       <div className="sleeping-hotel-inner">
         <div className="sleeping-hotel-content">
-          <div className="sleeping-hotel-icon">
-            <Hotel
-              size={24}
-            />
-          </div>
-
-          <p className="page-eyebrow">
-            {hotel.eyebrow}
+          <p className="card-eyebrow">
+            Wedding Room Block
           </p>
 
           <h2>
-            {hotel.name}
+            {
+              hotel.name
+            }
           </h2>
 
           {hotel.mapsUrl ? (
@@ -510,11 +674,15 @@ function HotelSection({
               />
 
               <span>
-                {hotel.addressLine1}
+                {
+                  hotel.addressLine1
+                }
 
                 <br />
 
-                {hotel.addressLine2}
+                {
+                  hotel.addressLine2
+                }
               </span>
 
               <ExternalLink
@@ -528,41 +696,55 @@ function HotelSection({
               />
 
               <span>
-                {hotel.addressLine1}
+                {
+                  hotel.addressLine1
+                }
 
                 <br />
 
-                {hotel.addressLine2}
+                {
+                  hotel.addressLine2
+                }
               </span>
             </div>
           )}
 
           <p className="sleeping-hotel-distance">
-            {hotel.distance}
+            {
+              hotel.distance
+            }
           </p>
 
-          <p className="sleeping-hotel-reserve">
-            To reserve, call the hotel at{" "}
-            <a
-              href={`tel:${hotel.phoneLink}`}
-            >
-              <Phone
-                size={14}
-              />
+          <div className="sleeping-hotel-reservation">
+            <p className="sleeping-hotel-reserve">
+              To reserve, call the hotel at{" "}
 
-              {hotel.phone}
-            </a>{" "}
-            and ask for a room under our block:
-          </p>
+              <a
+                href={`tel:${hotel.phoneLink}`}
+              >
+                <Phone
+                  size={14}
+                />
 
-          <div className="sleeping-hotel-block">
-            <span>
-              Room Block
-            </span>
+                {
+                  hotel.phone
+                }
+              </a>{" "}
 
-            <strong>
-              {hotel.blockName}
-            </strong>
+              and ask for a room under our block.
+            </p>
+
+            <div className="sleeping-hotel-block">
+              <span>
+                Room Block
+              </span>
+
+              <strong>
+                {
+                  hotel.blockName
+                }
+              </strong>
+            </div>
           </div>
         </div>
 
@@ -617,16 +799,22 @@ function HotelDetail({
   return (
     <div className="sleeping-hotel-detail">
       <span>
-        {label}
+        {
+          label
+        }
       </span>
 
       <strong>
-        {value}
+        {
+          value
+        }
       </strong>
 
       {detail && (
         <p>
-          {detail}
+          {
+            detail
+          }
         </p>
       )}
     </div>

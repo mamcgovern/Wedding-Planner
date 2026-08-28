@@ -395,27 +395,99 @@
  */
 
 .important-dates-page {
-  max-width: 900px;
+  max-width: 950px;
+}
+
+.important-dates-intro {
+  max-width: 760px;
+
+  margin-bottom: 38px;
+}
+
+.important-dates-intro
+.page-description {
+  margin-bottom: 18px;
+}
+
+.important-dates-summary {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding:
+    9px 13px;
+
+  background:
+    var(--sage-light);
+
+  color:
+    var(--sage-dark);
+
+  border:
+    1px solid
+    rgba(
+      107,
+      112,
+      92,
+      0.12
+    );
+
+  border-radius:
+    999px;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.important-dates-status {
+  color:
+    var(--text-light);
 }
 
 .important-dates-list {
+  position: relative;
+
   display: flex;
 
   flex-direction: column;
 
-  gap: 14px;
+  gap: 18px;
+}
+
+.important-dates-list::before {
+  content: "";
+
+  position: absolute;
+
+  top: 18px;
+  bottom: 18px;
+
+  left: 43px;
+
+  width: 1px;
+
+  background:
+    var(--border);
 }
 
 .important-date-card {
+  position: relative;
+
   display: grid;
 
   grid-template-columns:
-    82px
+    86px
     minmax(0, 1fr);
 
-  gap: 20px;
+  gap: 22px;
 
-  padding: 20px;
+  padding: 24px;
 
   background:
     var(--white);
@@ -429,9 +501,35 @@
 
   box-shadow:
     var(--shadow-soft);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.important-date-card:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    var(--sage);
+
+  box-shadow:
+    0 12px 34px
+    rgba(
+      55,
+      55,
+      55,
+      0.08
+    );
 }
 
 .important-date-date {
+  position: relative;
+
+  z-index: 1;
+
   display: flex;
 
   flex-direction: column;
@@ -443,7 +541,7 @@
 
   align-self: start;
 
-  min-height: 78px;
+  min-height: 82px;
 
   width: 100%;
 
@@ -454,6 +552,15 @@
 
   color:
     var(--sage-dark);
+
+  border:
+    1px solid
+    rgba(
+      107,
+      112,
+      92,
+      0.1
+    );
 
   border-radius:
     var(--radius-medium);
@@ -466,6 +573,14 @@
 
   color:
     var(--blush-dark);
+
+  border-color:
+    rgba(
+      215,
+      164,
+      154,
+      0.14
+    );
 }
 
 .important-date-month {
@@ -473,18 +588,18 @@
     Arial,
     sans-serif;
 
-  font-size: 0.68rem;
+  font-size: 0.67rem;
 
   font-weight: 800;
 
   letter-spacing:
-    0.08em;
+    0.1em;
 }
 
 .important-date-date strong {
-  margin-top: 2px;
+  margin-top: 3px;
 
-  font-size: 1.8rem;
+  font-size: 1.9rem;
 
   font-weight: 400;
 
@@ -493,18 +608,46 @@
 
 .important-date-content {
   min-width: 0;
+
+  padding:
+    3px 0;
+}
+
+.important-date-heading-row {
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  gap: 18px;
+}
+
+.important-date-heading-row
+> div {
+  min-width: 0;
 }
 
 .important-date-content h2 {
-  margin-bottom: 4px;
+  margin:
+    4px 0 6px;
 
-  font-size: 1.3rem;
+  font-size:
+    clamp(
+      1.4rem,
+      3vw,
+      1.75rem
+    );
 
   font-weight: 400;
+
+  line-height: 1.15;
 }
 
 .important-date-full-date {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 
   color:
     var(--blush-dark);
@@ -513,7 +656,7 @@
     Arial,
     sans-serif;
 
-  font-size: 0.78rem;
+  font-size: 0.76rem;
 
   font-weight: 700;
 }
@@ -526,7 +669,7 @@
   gap:
     8px 18px;
 
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .important-date-detail {
@@ -549,16 +692,20 @@
 }
 
 .important-date-detail svg {
-  flex: 0 0 auto;
+  flex:
+    0 0 auto;
 }
 
 .important-date-notes {
-  margin-bottom: 8px;
+  max-width: 680px;
+
+  margin:
+    0 0 8px;
 
   color:
     var(--text-light);
 
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .important-date-completed {
@@ -568,16 +715,48 @@
 
   gap: 5px;
 
+  flex:
+    0 0 auto;
+
+  padding:
+    6px 9px;
+
+  background:
+    var(--sage-light);
+
   color:
     var(--sage-dark);
+
+  border-radius:
+    999px;
 
   font-family:
     Arial,
     sans-serif;
 
-  font-size: 0.72rem;
+  font-size: 0.68rem;
 
   font-weight: 700;
+}
+
+.important-date-completed-card {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.72
+    );
+}
+
+.important-date-past:not(
+  .important-date-completed-card
+) {
+  opacity: 0.72;
+}
+
+.important-date-past:hover {
+  opacity: 1;
 }
 
 .important-dates-empty {
@@ -585,15 +764,63 @@
 
   align-items: center;
 
-  gap: 12px;
+  gap: 16px;
+
+  padding: 28px;
 
   color:
     var(--text-light);
 }
 
+.important-dates-empty__icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex:
+    0 0 auto;
+
+  width: 50px;
+
+  height: 50px;
+
+  background:
+    var(--sage-light);
+
+  color:
+    var(--sage-dark);
+
+  border-radius:
+    50%;
+}
+
+.important-dates-empty h2 {
+  margin:
+    0 0 4px;
+
+  color:
+    var(--text);
+
+  font-size: 1.3rem;
+
+  font-weight: 400;
+}
+
 .important-dates-empty p {
   margin: 0;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.6;
 }
+
+
+/*
+ * RESPONSIVE
+ */
 
 @media (
   max-width: 700px
@@ -636,22 +863,41 @@
       flex-end;
   }
 
+  .important-dates-intro {
+    margin-bottom: 28px;
+  }
+
+  .important-dates-list {
+    gap: 14px;
+  }
+
+  .important-dates-list::before {
+    left: 34px;
+  }
+
   .important-date-card {
     grid-template-columns:
-      66px
+      68px
       minmax(0, 1fr);
 
     gap: 14px;
 
-    padding: 16px;
+    padding: 17px;
   }
 
   .important-date-date {
-    min-height: 68px;
+    min-height: 70px;
+
+    padding:
+      8px 5px;
   }
 
   .important-date-date strong {
-    font-size: 1.5rem;
+    font-size: 1.55rem;
+  }
+
+  .important-date-content h2 {
+    font-size: 1.3rem;
   }
 
   .important-date-details {
@@ -659,5 +905,54 @@
       column;
 
     gap: 6px;
+  }
+
+  .important-date-heading-row {
+    flex-direction:
+      column;
+
+    gap: 8px;
+  }
+
+  .important-date-completed {
+    align-self:
+      flex-start;
+  }
+}
+
+@media (
+  max-width: 430px
+) {
+  .important-date-card {
+    grid-template-columns:
+      60px
+      minmax(0, 1fr);
+
+    gap: 12px;
+
+    padding: 14px;
+  }
+
+  .important-dates-list::before {
+    left: 30px;
+  }
+
+  .important-date-date {
+    min-height: 62px;
+
+    border-radius:
+      var(--radius-small);
+  }
+
+  .important-date-month {
+    font-size: 0.6rem;
+  }
+
+  .important-date-date strong {
+    font-size: 1.4rem;
+  }
+
+  .important-date-full-date {
+    font-size: 0.7rem;
   }
 }

@@ -22,6 +22,40 @@ import {
   useWedding,
 } from "../../context/WeddingContext";
 
+const publicLinks = [
+  {
+    label:
+      "Home",
+
+    path:
+      "/",
+
+    end:
+      true,
+  },
+  {
+    label:
+      "Attire",
+
+    path:
+      "/attire",
+  },
+  {
+    label:
+      "Important Dates",
+
+    path:
+      "/important-dates",
+  },
+  {
+    label:
+      "Weekend",
+
+    path:
+      "/weekend",
+  },
+];
+
 function Header() {
   const {
     user,
@@ -42,15 +76,55 @@ function Header() {
   ] = useState(false);
 
   useEffect(() => {
-    setMobileOpen(false);
+    setMobileOpen(
+      false
+    );
   }, [
     location.pathname,
+  ]);
+
+  useEffect(() => {
+    if (
+      !mobileOpen
+    ) {
+      return undefined;
+    }
+
+    const handleEscape =
+      (event) => {
+        if (
+          event.key ===
+          "Escape"
+        ) {
+          setMobileOpen(
+            false
+          );
+        }
+      };
+
+    document.addEventListener(
+      "keydown",
+      handleEscape
+    );
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        handleEscape
+      );
+    };
+  }, [
+    mobileOpen,
   ]);
 
   const handleLogout =
     async () => {
       try {
         await signOut();
+
+        setMobileOpen(
+          false
+        );
       } catch (error) {
         console.error(
           "Error signing out:",
@@ -77,132 +151,121 @@ function Header() {
           <NavLink
             to="/"
             className="site-brand"
+            aria-label={`${coupleName} wedding home`}
           >
             <span className="site-brand-main">
-              {coupleName}
+              {
+                coupleName
+              }
             </span>
 
             <span className="site-brand-subtitle">
-              {weddingDate}
+              {
+                weddingDate
+              }
             </span>
           </NavLink>
 
-          <nav className="desktop-nav">
-            <NavLink
-              to="/"
-              end
-              className={({
-                isActive,
-              }) =>
-                `site-nav-link ${
-                  isActive
-                    ? "active"
-                    : ""
-                }`
-              }
-            >
-              Home
-            </NavLink>
+          <nav
+            className="desktop-nav"
+            aria-label="Main navigation"
+          >
+            <div className="desktop-public-nav">
+              {publicLinks.map(
+                (link) => (
+                  <NavLink
+                    key={
+                      link.path
+                    }
+                    to={
+                      link.path
+                    }
+                    end={
+                      link.end
+                    }
+                    className={({
+                      isActive,
+                    }) =>
+                      `site-nav-link ${
+                        isActive
+                          ? "active"
+                          : ""
+                      }`
+                    }
+                  >
+                    {
+                      link.label
+                    }
+                  </NavLink>
+                )
+              )}
+            </div>
 
-            <NavLink
-              to="/attire"
-              className={({
-                isActive,
-              }) =>
-                `site-nav-link ${
-                  isActive
-                    ? "active"
-                    : ""
-                }`
-              }
-            >
-              Attire
-            </NavLink>
+            <div className="desktop-admin-nav">
+              {user &&
+              isAdmin ? (
+                <>
+                  <NavLink
+                    to="/admin"
+                    className={({
+                      isActive,
+                    }) =>
+                      `site-admin-link ${
+                        isActive
+                          ? "active"
+                          : ""
+                      }`
+                    }
+                  >
+                    Planning
+                  </NavLink>
 
-            <NavLink
-              to="/important-dates"
-              className={({
-                isActive,
-              }) =>
-                `site-nav-link ${
-                  isActive
-                    ? "active"
-                    : ""
-                }`
-              }
-            >
-              Important Dates
-            </NavLink>
+                  <button
+                    type="button"
+                    className="site-logout-button"
+                    onClick={
+                      handleLogout
+                    }
+                    aria-label="Sign out"
+                    title="Sign out"
+                  >
+                    <LogOut
+                      size={16}
+                    />
+                  </button>
+                </>
+              ) : user ? (
+                <>
+                  <NavLink
+                    to="/login"
+                    className="site-admin-link"
+                  >
+                    Access
+                  </NavLink>
 
-            <NavLink
-              to="/weekend"
-              className={({
-                isActive,
-              }) =>
-                `site-nav-link ${
-                  isActive
-                    ? "active"
-                    : ""
-                }`
-              }
-            >
-              Weekend
-            </NavLink>
-
-            {user && isAdmin ? (
-              <>
-                <NavLink
-                  to="/admin"
-                  className="site-admin-link"
-                >
-                  Planning
-                </NavLink>
-
-                <button
-                  type="button"
-                  className="site-logout-button"
-                  onClick={
-                    handleLogout
-                  }
-                  aria-label="Sign out"
-                  title="Sign out"
-                >
-                  <LogOut
-                    size={16}
-                  />
-                </button>
-              </>
-            ) : user ? (
-              <>
+                  <button
+                    type="button"
+                    className="site-logout-button"
+                    onClick={
+                      handleLogout
+                    }
+                    aria-label="Sign out"
+                    title="Sign out"
+                  >
+                    <LogOut
+                      size={16}
+                    />
+                  </button>
+                </>
+              ) : (
                 <NavLink
                   to="/login"
                   className="site-admin-link"
                 >
-                  Access
+                  Admin
                 </NavLink>
-
-                <button
-                  type="button"
-                  className="site-logout-button"
-                  onClick={
-                    handleLogout
-                  }
-                  aria-label="Sign out"
-                  title="Sign out"
-                >
-                  <LogOut
-                    size={16}
-                  />
-                </button>
-              </>
-            ) : (
-              <NavLink
-                to="/login"
-                className="site-admin-link"
-              >
-                Admin
-              </NavLink>
-            )}
+              )}
+            </div>
           </nav>
 
           <button
@@ -214,10 +277,15 @@ function Header() {
                   !current
               )
             }
-            aria-label="Toggle navigation"
+            aria-label={
+              mobileOpen
+                ? "Close navigation"
+                : "Open navigation"
+            }
             aria-expanded={
               mobileOpen
             }
+            aria-controls="mobile-navigation"
           >
             {mobileOpen ? (
               <X
@@ -233,123 +301,137 @@ function Header() {
       </header>
 
       {mobileOpen && (
-        <nav className="mobile-nav">
-          <NavLink
-            to="/"
-            end
-            className={({
-              isActive,
-            }) =>
-              `mobile-nav-link ${
-                isActive
-                  ? "active"
-                  : ""
-              }`
+        <>
+          <button
+            type="button"
+            className="mobile-nav-backdrop"
+            onClick={() =>
+              setMobileOpen(
+                false
+              )
             }
-          >
-            Home
-          </NavLink>
+            aria-label="Close navigation"
+          />
 
-          <NavLink
-            to="/attire"
-            className={({
-              isActive,
-            }) =>
-              `mobile-nav-link ${
-                isActive
-                  ? "active"
-                  : ""
-              }`
-            }
+          <nav
+            id="mobile-navigation"
+            className="mobile-nav"
+            aria-label="Mobile navigation"
           >
-            Attire
-          </NavLink>
+            <div className="mobile-nav-heading">
+              <span>
+                Wedding Menu
+              </span>
 
-          <NavLink
-            to="/important-dates"
-            className={({
-              isActive,
-            }) =>
-              `mobile-nav-link ${
-                isActive
-                  ? "active"
-                  : ""
-              }`
-            }
-          >
-            Important Dates
-          </NavLink>
+              <span>
+                {
+                  weddingDate
+                }
+              </span>
+            </div>
 
-          <NavLink
-            to="/weekend"
-            className={({
-              isActive,
-            }) =>
-              `mobile-nav-link ${
-                isActive
-                  ? "active"
-                  : ""
-              }`
-            }
-          >
-            Weekend
-          </NavLink>
+            <div className="mobile-public-links">
+              {publicLinks.map(
+                (link) => (
+                  <NavLink
+                    key={
+                      link.path
+                    }
+                    to={
+                      link.path
+                    }
+                    end={
+                      link.end
+                    }
+                    className={({
+                      isActive,
+                    }) =>
+                      `mobile-nav-link ${
+                        isActive
+                          ? "active"
+                          : ""
+                      }`
+                    }
+                  >
+                    {
+                      link.label
+                    }
+                  </NavLink>
+                )
+              )}
+            </div>
 
-          {user && isAdmin ? (
-            <>
-              <NavLink
-                to="/admin"
-                className="mobile-nav-link mobile-admin-link"
-              >
+            <div className="mobile-admin-section">
+              <p className="mobile-admin-label">
                 Planning
-              </NavLink>
+              </p>
 
-              <button
-                type="button"
-                className="mobile-nav-link mobile-logout-link"
-                onClick={
-                  handleLogout
-                }
-              >
-                <LogOut
-                  size={16}
-                />
+              {user &&
+              isAdmin ? (
+                <>
+                  <NavLink
+                    to="/admin"
+                    className={({
+                      isActive,
+                    }) =>
+                      `mobile-nav-link mobile-admin-link ${
+                        isActive
+                          ? "active"
+                          : ""
+                      }`
+                    }
+                  >
+                    Planning Dashboard
+                  </NavLink>
 
-                Sign Out
-              </button>
-            </>
-          ) : user ? (
-            <>
-              <NavLink
-                to="/login"
-                className="mobile-nav-link mobile-admin-link"
-              >
-                Access
-              </NavLink>
+                  <button
+                    type="button"
+                    className="mobile-nav-link mobile-logout-link"
+                    onClick={
+                      handleLogout
+                    }
+                  >
+                    <LogOut
+                      size={16}
+                    />
 
-              <button
-                type="button"
-                className="mobile-nav-link mobile-logout-link"
-                onClick={
-                  handleLogout
-                }
-              >
-                <LogOut
-                  size={16}
-                />
+                    Sign Out
+                  </button>
+                </>
+              ) : user ? (
+                <>
+                  <NavLink
+                    to="/login"
+                    className="mobile-nav-link mobile-admin-link"
+                  >
+                    Access
+                  </NavLink>
 
-                Sign Out
-              </button>
-            </>
-          ) : (
-            <NavLink
-              to="/login"
-              className="mobile-nav-link mobile-admin-link"
-            >
-              Admin
-            </NavLink>
-          )}
-        </nav>
+                  <button
+                    type="button"
+                    className="mobile-nav-link mobile-logout-link"
+                    onClick={
+                      handleLogout
+                    }
+                  >
+                    <LogOut
+                      size={16}
+                    />
+
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <NavLink
+                  to="/login"
+                  className="mobile-nav-link mobile-admin-link"
+                >
+                  Admin Login
+                </NavLink>
+              )}
+            </div>
+          </nav>
+        </>
       )}
     </>
   );
@@ -373,19 +455,19 @@ function buildCoupleName(
     brideFirst &&
     groomFirst
   ) {
-    return `${brideFirst} & ${groomFirst}`;
-  }
-
-  if (
-    brideFirst
-  ) {
-    return brideFirst;
+    return `${groomFirst} & ${brideFirst}`;
   }
 
   if (
     groomFirst
   ) {
     return groomFirst;
+  }
+
+  if (
+    brideFirst
+  ) {
+    return brideFirst;
   }
 
   return "Our Wedding";
@@ -418,19 +500,24 @@ function formatWeddingDate(
     month,
     day,
   ] =
-    value
-      .split(
-        "-"
-      )
-      .map(
-        Number
-      );
+    String(
+      value
+    )
+      .split("-")
+      .map(Number);
+
+  if (
+    !year ||
+    !month ||
+    !day
+  ) {
+    return "Wedding";
+  }
 
   const date =
     new Date(
       year,
-      month -
-        1,
+      month - 1,
       day
     );
 

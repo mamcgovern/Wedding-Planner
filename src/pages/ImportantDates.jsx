@@ -106,7 +106,7 @@ function ImportantDates() {
     return unsubscribe;
   }, []);
 
-  const upcomingItems =
+  const sortedItems =
     useMemo(
       () =>
         items
@@ -122,44 +122,87 @@ function ImportantDates() {
       ]
     );
 
+  const upcomingCount =
+    useMemo(
+      () =>
+        sortedItems.filter(
+          (item) =>
+            isUpcomingItem(
+              item
+            )
+        ).length,
+      [
+        sortedItems,
+      ]
+    );
+
   return (
     <main className="page important-dates-page">
-      <p className="page-eyebrow">
-        Wedding Party
-      </p>
+      <header className="important-dates-intro">
+        <p className="page-eyebrow">
+          Wedding Guide
+        </p>
 
-      <h1 className="page-title">
-        Important Dates
-      </h1>
+        <h1 className="page-title">
+          Important Dates
+        </h1>
 
-      <p className="page-description">
-        Keep track of attire deadlines, RSVP dates,
-        wedding events, and other things you need to
-        know before the wedding.
-      </p>
+        <p className="page-description">
+          Keep track of attire deadlines, RSVP dates,
+          wedding events, and other important things to
+          know before the wedding.
+        </p>
+
+        {!loading &&
+          !error &&
+          sortedItems.length >
+            0 && (
+            <div className="important-dates-summary">
+              <CalendarDays
+                size={18}
+              />
+
+              <span>
+                {upcomingCount ===
+                1
+                  ? "1 upcoming date"
+                  : `${upcomingCount} upcoming dates`}
+              </span>
+            </div>
+          )}
+      </header>
 
       {loading ? (
-        <div className="content-card">
+        <div className="content-card important-dates-status">
           Loading important dates...
         </div>
       ) : error ? (
-        <div className="content-card">
+        <div className="content-card important-dates-status">
           {error}
         </div>
-      ) : upcomingItems.length ===
+      ) : sortedItems.length ===
         0 ? (
         <div className="content-card important-dates-empty">
-          <CalendarDays
-            size={22}
-          />
+          <div className="important-dates-empty__icon">
+            <CalendarDays
+              size={24}
+            />
+          </div>
 
-          <p>
-            There aren't any important dates posted yet.
-          </p>
+          <div>
+            <h2>
+              Nothing Posted Yet
+            </h2>
+
+            <p>
+              There aren't any important dates posted
+              yet. Check back later for updates.
+            </p>
+          </div>
         </div>
       ) : (
         <div className="important-dates-list">
-          {upcomingItems.map(
+          {sortedItems.map(
             (item) => (
               <ImportantDateCard
                 key={
@@ -184,13 +227,36 @@ function ImportantDateCard({
     item.type ===
     "event";
 
+  const isCompleted =
+    item.type ===
+      "task" &&
+    item.completed;
+
+  const isPast =
+    !isUpcomingItem(
+      item
+    );
+
+  const cardClassName = [
+    "important-date-card",
+    isEvent
+      ? "important-date-event"
+      : "important-date-task",
+    isCompleted
+      ? "important-date-completed-card"
+      : "",
+    isPast
+      ? "important-date-past"
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <article
-      className={`important-date-card ${
-        isEvent
-          ? "important-date-event"
-          : "important-date-task"
-      }`}
+      className={
+        cardClassName
+      }
     >
       <div className="important-date-date">
         <span className="important-date-month">
@@ -211,15 +277,31 @@ function ImportantDateCard({
       </div>
 
       <div className="important-date-content">
-        <p className="card-eyebrow">
-          {isEvent
-            ? "Event"
-            : "Deadline"}
-        </p>
+        <div className="important-date-heading-row">
+          <div>
+            <p className="card-eyebrow">
+              {isEvent
+                ? "Event"
+                : "Deadline"}
+            </p>
 
-        <h2>
-          {item.title}
-        </h2>
+            <h2>
+              {
+                item.title
+              }
+            </h2>
+          </div>
+
+          {isCompleted && (
+            <span className="important-date-completed">
+              <Check
+                size={13}
+              />
+
+              Completed
+            </span>
+          )}
+        </div>
 
         <p className="important-date-full-date">
           {
@@ -276,23 +358,69 @@ function ImportantDateCard({
 
         {item.notes && (
           <p className="important-date-notes">
-            {item.notes}
+            {
+              item.notes
+            }
           </p>
         )}
-
-        {item.type ===
-          "task" &&
-          item.completed && (
-            <span className="important-date-completed">
-              <Check
-                size={13}
-              />
-
-              Completed
-            </span>
-          )}
       </div>
     </article>
+  );
+}
+
+function isUpcomingItem(
+  item
+) {
+  if (
+    !item?.date
+  ) {
+    return false;
+  }
+
+  const now =
+    new Date();
+
+  const itemDate =
+    createLocalDate(
+      item.date
+    );
+
+  if (
+    item.type ===
+      "event" &&
+    item.startTime
+  ) {
+    const [
+      hour,
+      minute,
+    ] =
+      item.startTime
+        .split(":")
+        .map(Number);
+
+    itemDate.setHours(
+      hour,
+      minute,
+      0,
+      0
+    );
+
+    return (
+      itemDate >=
+      now
+    );
+  }
+
+  itemDate.setHours(
+    23,
+    59,
+    59,
+    999
+  );
+
+  return (
+    itemDate >=
+    now
   );
 }
 
@@ -400,12 +528,8 @@ function formatTime(
     minute,
   ] =
     value
-      .split(
-        ":"
-      )
-      .map(
-        Number
-      );
+      .split(":")
+      .map(Number);
 
   const date =
     new Date();
@@ -438,17 +562,12 @@ function createLocalDate(
     day,
   ] =
     value
-      .split(
-        "-"
-      )
-      .map(
-        Number
-      );
+      .split("-")
+      .map(Number);
 
   return new Date(
     year,
-    month -
-      1,
+    month - 1,
     day
   );
 }

@@ -3,6 +3,14 @@ import {
   MapPin,
 } from "lucide-react";
 
+import {
+  Link,
+} from "react-router-dom";
+
+import {
+  useWedding,
+} from "../../context/WeddingContext";
+
 const venuePhotos = [
   {
     id: 1,
@@ -51,33 +59,96 @@ const venuePhotos = [
   },
 ];
 
-const venueDetails = [
-  {
-    label: "Location",
-    value: "Manchester, Iowa",
-  },
-  {
-    label: "Ceremony",
-    value: "3:00 PM",
-  },
-  {
-    label: "Cocktail Hour",
-    value: "3:30–5:00 PM",
-  },
-  {
-    label: "Reception",
-    value: "5:00–10:00 PM",
-  },
-];
-
 function Venue() {
+  const {
+    wedding,
+    loading,
+  } = useWedding();
+
+  if (loading) {
+    return (
+      <main className="page">
+        <div className="content-card">
+          Loading venue information...
+        </div>
+      </main>
+    );
+  }
+
+  const venueName =
+    wedding.venueName ||
+    "Windmill Hill Weddings & Events";
+
+  const venueShortName =
+    getVenueShortName(
+      venueName
+    );
+
+  const venueLocation =
+    wedding.venueLocation ||
+    "Manchester, Iowa";
+
+  const weddingDate =
+    formatWeddingDate(
+      wedding.weddingDate
+    );
+
+  const weddingDateShort =
+    formatWeddingDateShort(
+      wedding.weddingDate
+    );
+
+  const ceremonyTime =
+    formatTime(
+      wedding.ceremonyTime
+    ) ||
+    "3:00 PM";
+
+  const receptionTime =
+    buildTimeRange(
+      wedding.receptionTime,
+      wedding.receptionEndTime
+    ) ||
+    "5:00–10:00 PM";
+
+  const venueDetails = [
+    {
+      label:
+        "Location",
+
+      value:
+        venueLocation,
+    },
+    {
+      label:
+        "Ceremony",
+
+      value:
+        ceremonyTime,
+    },
+    {
+      label:
+        "Cocktail Hour",
+
+      value:
+        "3:30–5:00 PM",
+    },
+    {
+      label:
+        "Reception",
+
+      value:
+        receptionTime,
+    },
+  ];
+
   return (
     <main className="venue-page">
       <section className="venue-hero">
         <img
           className="venue-hero-image"
           src="/images/venue/venue-exterior.jpg"
-          alt="Windmill Hill Weddings and Events"
+          alt={venueName}
         />
 
         <div className="venue-hero-overlay" />
@@ -88,30 +159,40 @@ function Venue() {
           </p>
 
           <h1>
-            Windmill Hill
+            {venueShortName}
           </h1>
 
           <p className="venue-hero-subtitle">
             Weddings & Events
           </p>
+
+          <div className="venue-hero-location">
+            <MapPin
+              size={16}
+            />
+
+            <span>
+              {venueLocation}
+            </span>
+          </div>
         </div>
       </section>
 
       <section className="venue-section venue-introduction">
         <div className="venue-section-heading">
           <p className="page-eyebrow">
-            Manchester, Iowa
+            {venueLocation}
           </p>
 
           <h2>
-            Where We’ll Celebrate
+            Where We&apos;ll Celebrate
           </h2>
 
           <p>
-            Windmill Hill Weddings & Events will be home
-            to our ceremony, cocktail hour, and reception
-            on April 24th, 2027. We cannot wait to spend
-            the day celebrating here with all of you.
+            {venueName} will be home to our ceremony,
+            cocktail hour, and reception on{" "}
+            {weddingDate}. We cannot wait to spend the
+            day celebrating here with all of you.
           </p>
         </div>
 
@@ -119,7 +200,7 @@ function Venue() {
           <div className="venue-feature-image">
             <img
               src="/images/venue/venue-ceremony.jpg"
-              alt="Wedding ceremony space at Windmill Hill"
+              alt={`Wedding ceremony space at ${venueShortName}`}
             />
           </div>
 
@@ -134,9 +215,9 @@ function Venue() {
 
             <p className="venue-feature-description">
               The ceremony and reception will both take
-              place at Windmill Hill, so guests will not
-              need to travel between locations during the
-              wedding day.
+              place at {venueShortName}, so guests will
+              not need to travel between locations during
+              the wedding day.
             </p>
 
             <div className="venue-detail-grid">
@@ -207,7 +288,7 @@ function Venue() {
               index
             ) => (
               <figure
-                className="venue-gallery-item"
+                className={`venue-gallery-item venue-gallery-item-${index + 1}`}
                 key={
                   photo.id
                 }
@@ -250,23 +331,23 @@ function Venue() {
             wedding.
           </p>
 
-          <a
-            href="/weekend/sleeping"
+          <Link
+            to="/weekend/sleeping"
             className="secondary-button venue-weekend-link"
           >
             View Sleeping Arrangements
-          </a>
+          </Link>
         </div>
       </section>
 
       <section className="venue-closing">
         <div className="venue-closing-content">
           <p className="page-eyebrow">
-            April 24th, 2027
+            {weddingDateShort}
           </p>
 
           <h2>
-            Meet Us at Windmill Hill
+            Meet Us at {venueShortName}
           </h2>
 
           <p>
@@ -276,6 +357,186 @@ function Venue() {
         </div>
       </section>
     </main>
+  );
+}
+
+function getVenueShortName(
+  value
+) {
+  if (
+    !value
+  ) {
+    return "Windmill Hill";
+  }
+
+  const shortName =
+    value
+      .replace(
+        /\s+Weddings\s*&\s*Events.*$/i,
+        ""
+      )
+      .trim();
+
+  return (
+    shortName ||
+    value
+  );
+}
+
+function formatWeddingDate(
+  value
+) {
+  if (
+    !value
+  ) {
+    return "April 24th, 2027";
+  }
+
+  const date =
+    createLocalDate(
+      value
+    );
+
+  if (
+    !date
+  ) {
+    return "April 24th, 2027";
+  }
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      month:
+        "long",
+
+      day:
+        "numeric",
+
+      year:
+        "numeric",
+    }
+  );
+}
+
+function formatWeddingDateShort(
+  value
+) {
+  if (
+    !value
+  ) {
+    return "April 24th, 2027";
+  }
+
+  return formatWeddingDate(
+    value
+  );
+}
+
+function createLocalDate(
+  value
+) {
+  const [
+    year,
+    month,
+    day,
+  ] =
+    String(
+      value ||
+      ""
+    )
+      .split("-")
+      .map(Number);
+
+  if (
+    !year ||
+    !month ||
+    !day
+  ) {
+    return null;
+  }
+
+  return new Date(
+    year,
+    month - 1,
+    day
+  );
+}
+
+function buildTimeRange(
+  startTime,
+  endTime
+) {
+  const start =
+    formatTime(
+      startTime
+    );
+
+  const end =
+    formatTime(
+      endTime
+    );
+
+  if (
+    start &&
+    end
+  ) {
+    return `${start}–${end}`;
+  }
+
+  return (
+    start ||
+    end ||
+    ""
+  );
+}
+
+function formatTime(
+  value
+) {
+  if (
+    !value
+  ) {
+    return "";
+  }
+
+  const [
+    hour,
+    minute,
+  ] =
+    value
+      .split(":")
+      .map(Number);
+
+  if (
+    Number.isNaN(
+      hour
+    ) ||
+    Number.isNaN(
+      minute
+    )
+  ) {
+    return "";
+  }
+
+  const date =
+    new Date();
+
+  date.setHours(
+    hour,
+    minute,
+    0,
+    0
+  );
+
+  return date.toLocaleTimeString(
+    "en-US",
+    {
+      hour:
+        "numeric",
+
+      minute:
+        "2-digit",
+    }
   );
 }
 

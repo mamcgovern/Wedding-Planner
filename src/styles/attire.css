@@ -86,13 +86,13 @@
  */
 
 .attire-overview-page {
-  max-width: 1000px;
+  max-width: 1050px;
 }
 
 .attire-overview-heading {
   max-width: 700px;
 
-  margin-bottom: 34px;
+  margin-bottom: 40px;
 }
 
 .attire-overview-grid {
@@ -104,7 +104,7 @@
       minmax(0, 1fr)
     );
 
-  gap: 18px;
+  gap: 20px;
 }
 
 .attire-overview-card {
@@ -113,9 +113,11 @@
   align-items:
     flex-start;
 
-  gap: 18px;
+  gap: 20px;
 
-  padding: 30px;
+  min-height: 280px;
+
+  padding: 32px;
 
   background:
     var(--white);
@@ -137,15 +139,19 @@
 
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .attire-overview-card:hover {
   transform:
-    translateY(-2px);
+    translateY(-4px);
+
+  border-color:
+    var(--sage);
 
   box-shadow:
-    0 12px 34px
+    0 14px 36px
     rgba(
       55,
       55,
@@ -161,9 +167,9 @@
 
   justify-content: center;
 
-  width: 50px;
+  width: 52px;
 
-  height: 50px;
+  height: 52px;
 
   flex:
     0 0 auto;
@@ -178,11 +184,32 @@
     50%;
 }
 
+.attire-overview-card:nth-child(2)
+.attire-overview-icon {
+  background:
+    var(--sage-light);
+
+  color:
+    var(--sage-dark);
+}
+
+.attire-overview-card__content {
+  display: flex;
+
+  flex: 1;
+
+  flex-direction: column;
+
+  min-width: 0;
+
+  min-height: 214px;
+}
+
 .attire-overview-card h2 {
   margin:
     4px 0 10px;
 
-  font-size: 1.45rem;
+  font-size: 1.65rem;
 
   font-weight: 400;
 }
@@ -190,15 +217,25 @@
 .attire-overview-card
 p:not(.card-eyebrow) {
   margin:
-    0 0 17px;
+    0 0 20px;
 
   color:
     var(--text-light);
 
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .attire-overview-link {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  width: fit-content;
+
+  margin-top: auto;
+
   color:
     var(--sage-dark);
 
@@ -209,6 +246,64 @@ p:not(.card-eyebrow) {
   font-size: 0.75rem;
 
   font-weight: 800;
+}
+
+.attire-overview-link svg {
+  transition:
+    transform 0.2s ease;
+}
+
+.attire-overview-card:hover
+.attire-overview-link svg {
+  transform:
+    translateX(3px);
+}
+
+.attire-overview-note {
+  margin-top: 30px;
+
+  padding:
+    34px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--sage-light),
+      var(--blush-light)
+    );
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-large);
+}
+
+.attire-overview-note h2 {
+  margin:
+    5px 0 10px;
+
+  font-size:
+    clamp(
+      1.6rem,
+      4vw,
+      2.1rem
+    );
+
+  font-weight: 400;
+}
+
+.attire-overview-note
+> p:last-child {
+  max-width: 680px;
+
+  margin: 0;
+
+  color:
+    var(--text-light);
+
+  line-height: 1.7;
 }
 
 
@@ -1351,13 +1446,29 @@ p:last-child {
     text-align: center;
   }
 
+  .attire-overview-heading {
+    margin-bottom: 28px;
+  }
+
   .attire-overview-grid {
     grid-template-columns:
       1fr;
   }
 
   .attire-overview-card {
-    padding: 23px;
+    min-height: 0;
+
+    padding: 24px;
+  }
+
+  .attire-overview-card__content {
+    min-height: 0;
+  }
+
+  .attire-overview-note {
+    margin-top: 20px;
+
+    padding: 26px;
   }
 
   .outfit-product-grid {
@@ -1461,6 +1572,16 @@ p:last-child {
 ) {
   .attire-overview-card {
     flex-direction: column;
+  }
+
+  .attire-overview-icon {
+    width: 48px;
+
+    height: 48px;
+  }
+
+  .attire-overview-note {
+    padding: 22px;
   }
 
   .outfit-product-content {

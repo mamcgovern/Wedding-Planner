@@ -5,7 +5,11 @@ import {
 } from "react";
 
 import {
+  Headphones,
+  ListMusic,
   Music2,
+  Radio,
+  Sparkles,
 } from "lucide-react";
 
 import {
@@ -26,25 +30,37 @@ const musicCategories = [
     type: "prelude",
     eyebrow: "Prelude",
     title: "Prelude Music",
+    description:
+      "Songs playing as guests arrive and get settled before the ceremony.",
     id: "prelude",
+    icon: Headphones,
   },
   {
     type: "ceremony",
     eyebrow: "Ceremony",
     title: "Ceremony Music",
+    description:
+      "The songs chosen for the processional, entrances, and recessional.",
     id: "ceremony",
+    icon: Sparkles,
   },
   {
     type: "reception",
     eyebrow: "Reception",
     title: "Reception Music",
+    description:
+      "Special dances, entrances, and other planned moments during the reception.",
     id: "reception",
+    icon: Radio,
   },
   {
     type: "must-play",
     eyebrow: "Dance Floor",
     title: "Must Plays",
+    description:
+      "A few songs we definitely want to hear once the dance floor opens.",
     id: "must-plays",
+    icon: ListMusic,
   },
 ];
 
@@ -133,8 +149,13 @@ function Music() {
             loadedConfig
           );
 
-          setError("");
-          setLoading(false);
+          setError(
+            ""
+          );
+
+          setLoading(
+            false
+          );
         },
         (firebaseError) => {
           console.error(
@@ -146,7 +167,9 @@ function Music() {
             "We couldn't load the wedding music."
           );
 
-          setLoading(false);
+          setLoading(
+            false
+          );
         }
       );
 
@@ -177,7 +200,9 @@ function Music() {
 
         return grouped;
       },
-      [songs]
+      [
+        songs,
+      ]
     );
 
   const playlistEmbedUrl =
@@ -249,21 +274,44 @@ function Music() {
       ]
     );
 
+  const visibleSongCount =
+    songs.length;
+
   return (
     <main className="page weekend-detail-page music-page">
-      <p className="page-eyebrow">
-        Wedding Weekend
-      </p>
+      <header className="music-page-intro">
+        <p className="page-eyebrow">
+          Wedding Weekend
+        </p>
 
-      <h1 className="page-title">
-        Music
-      </h1>
+        <h1 className="page-title">
+          Music
+        </h1>
 
-      <p className="page-description">
-        Prelude music, ceremony songs, special dances,
-        must-plays, our reception playlist, and a place
-        to send us your own song request.
-      </p>
+        <p className="page-description">
+          Ceremony songs, special dances, reception
+          favorites, and a few of the songs we hope
+          make it onto the dance floor.
+        </p>
+
+        {!loading &&
+          !error &&
+          visibleSongCount >
+            0 && (
+            <div className="music-page-summary">
+              <Music2
+                size={18}
+              />
+
+              <span>
+                {visibleSongCount ===
+                1
+                  ? "1 song selected"
+                  : `${visibleSongCount} songs selected`}
+              </span>
+            </div>
+          )}
+      </header>
 
       {navigation.length >
         0 && (
@@ -327,8 +375,14 @@ function Music() {
                   title={
                     category.title
                   }
+                  description={
+                    category.description
+                  }
                   songs={
                     categorySongs
+                  }
+                  icon={
+                    category.icon
                   }
                 />
               );
@@ -341,17 +395,27 @@ function Music() {
               id="playlist"
             >
               <div className="music-special-heading">
-                <p className="card-eyebrow">
-                  Listen Along
-                </p>
+                <div className="music-section-title-row">
+                  <div className="music-section-icon">
+                    <Headphones
+                      size={20}
+                    />
+                  </div>
 
-                <h2>
-                  Spotify Playlist
-                </h2>
+                  <div>
+                    <p className="card-eyebrow">
+                      Listen Along
+                    </p>
+
+                    <h2>
+                      Spotify Playlist
+                    </h2>
+                  </div>
+                </div>
 
                 <p>
-                  Listen to some of the songs we plan to
-                  play throughout the reception.
+                  Listen to some of the songs we plan
+                  to play throughout the reception.
                 </p>
               </div>
 
@@ -369,13 +433,23 @@ function Music() {
               id="song-request"
             >
               <div className="music-special-heading">
-                <p className="card-eyebrow">
-                  Have a Request?
-                </p>
+                <div className="music-section-title-row">
+                  <div className="music-section-icon music-section-icon-blush">
+                    <Music2
+                      size={20}
+                    />
+                  </div>
 
-                <h2>
-                  Request a Song
-                </h2>
+                  <div>
+                    <p className="card-eyebrow">
+                      Have a Request?
+                    </p>
+
+                    <h2>
+                      Request a Song
+                    </h2>
+                  </div>
+                </div>
 
                 <p>
                   Is there a song you want to hear at
@@ -402,6 +476,31 @@ function Music() {
               </div>
             </section>
           )}
+
+          {songs.length ===
+            0 &&
+            !playlistEmbedUrl &&
+            !requestFormEmbedUrl && (
+            <div className="content-card music-page-empty">
+              <div className="music-page-empty-icon">
+                <Music2
+                  size={24}
+                />
+              </div>
+
+              <div>
+                <h2>
+                  Music Coming Soon
+                </h2>
+
+                <p>
+                  We&apos;re still putting together the
+                  soundtrack for the wedding weekend.
+                  Check back later!
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </main>
@@ -412,7 +511,9 @@ function MusicSection({
   id,
   eyebrow,
   title,
+  description,
   songs,
+  icon: Icon,
 }) {
   return (
     <section
@@ -422,13 +523,34 @@ function MusicSection({
       }
     >
       <div className="music-section-heading">
-        <p className="card-eyebrow">
-          {eyebrow}
+        <div className="music-section-title-row">
+          <div className="music-section-icon">
+            <Icon
+              size={20}
+            />
+          </div>
+
+          <div>
+            <p className="card-eyebrow">
+              {eyebrow}
+            </p>
+
+            <h2>
+              {title}
+            </h2>
+          </div>
+        </div>
+
+        <p className="music-section-description">
+          {description}
         </p>
 
-        <h2>
-          {title}
-        </h2>
+        <span className="music-section-count">
+          {songs.length ===
+          1
+            ? "1 song"
+            : `${songs.length} songs`}
+        </span>
       </div>
 
       <div className="music-embed-list">
@@ -457,7 +579,9 @@ function SongEmbed({
       song.spotifyUrl
     );
 
-  if (!embedUrl) {
+  if (
+    !embedUrl
+  ) {
     return (
       <article className="music-fallback-card">
         <div className="music-fallback-icon">
@@ -490,7 +614,7 @@ function SongEmbed({
           )}
 
           <p className="music-no-spotify">
-            Add a Spotify track link to enable playback.
+            Playback coming soon.
           </p>
         </div>
       </article>
@@ -562,7 +686,9 @@ function getSpotifyEmbedUrl(
   value,
   expectedType
 ) {
-  if (!value) {
+  if (
+    !value
+  ) {
     return "";
   }
 
@@ -615,7 +741,9 @@ function getSpotifyEmbedUrl(
 function getGoogleFormEmbedUrl(
   value
 ) {
-  if (!value) {
+  if (
+    !value
+  ) {
     return "";
   }
 

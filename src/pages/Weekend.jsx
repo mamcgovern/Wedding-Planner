@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   BedDouble,
   MapPin,
   Music2,
@@ -11,6 +12,9 @@ import {
 
 const weekendPages = [
   {
+    eyebrow:
+      "Schedule",
+
     title:
       "Weekend Timeline",
 
@@ -24,11 +28,14 @@ const weekendPages = [
       Rows3,
   },
   {
+    eyebrow:
+      "Soundtrack",
+
     title:
       "Music",
 
     description:
-      "Ceremony music, reception songs, and other wedding music.",
+      "Ceremony music, reception songs, and the playlist for the weekend.",
 
     path:
       "/weekend/music",
@@ -37,6 +44,9 @@ const weekendPages = [
       Music2,
   },
   {
+    eyebrow:
+      "Location",
+
     title:
       "Venue",
 
@@ -50,11 +60,14 @@ const weekendPages = [
       MapPin,
   },
   {
+    eyebrow:
+      "Staying With Us",
+
     title:
       "Sleeping Arrangements",
 
     description:
-      "Rooms, beds, and sleeping assignments for the wedding weekend.",
+      "Rooms, beds, and sleeping assignments for anyone staying at the venue house.",
 
     path:
       "/weekend/sleeping",
@@ -67,18 +80,21 @@ const weekendPages = [
 function Weekend() {
   return (
     <main className="page weekend-page">
-      <p className="page-eyebrow">
-        Wedding Weekend
-      </p>
+      <header className="weekend-heading">
+        <p className="page-eyebrow">
+          Wedding Weekend
+        </p>
 
-      <h1 className="page-title">
-        Weekend
-      </h1>
+        <h1 className="page-title">
+          Weekend
+        </h1>
 
-      <p className="page-description">
-        Everything the wedding party needs to know for
-        the wedding weekend, all in one place.
-      </p>
+        <p className="page-description">
+          Everything you need for the wedding weekend,
+          including the schedule, venue, music, and
+          sleeping arrangements.
+        </p>
+      </header>
 
       <div className="weekend-grid">
         {weekendPages.map(
@@ -98,11 +114,17 @@ function Weekend() {
               >
                 <div className="weekend-card-icon">
                   <Icon
-                    size={21}
+                    size={22}
                   />
                 </div>
 
-                <div>
+                <div className="weekend-card-content">
+                  <p className="card-eyebrow">
+                    {
+                      item.eyebrow
+                    }
+                  </p>
+
                   <h2>
                     {
                       item.title
@@ -114,12 +136,36 @@ function Weekend() {
                       item.description
                     }
                   </p>
+
+                  <span className="weekend-card-link">
+                    View Details
+
+                    <ArrowRight
+                      size={16}
+                    />
+                  </span>
                 </div>
               </Link>
             );
           }
         )}
       </div>
+
+      <section className="weekend-note">
+        <p className="card-eyebrow">
+          April 23–25, 2027
+        </p>
+
+        <h2>
+          A Full Weekend Together
+        </h2>
+
+        <p>
+          Check back here as the wedding gets closer for
+          any updates to the weekend schedule or other
+          important details.
+        </p>
+      </section>
     </main>
   );
 }
