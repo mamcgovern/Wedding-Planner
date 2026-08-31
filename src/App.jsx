@@ -25,6 +25,7 @@ import Budget from "./pages/admin/Budget";
 import Calendar from "./pages/admin/Calendar";
 import Dashboard from "./pages/admin/Dashboard";
 import Guests from "./pages/admin/Guests";
+import Inventory from "./pages/admin/Inventory";
 import MusicAdmin from "./pages/admin/MusicAdmin";
 import Pins from "./pages/admin/Pins";
 import SeatingChart from "./pages/admin/SeatingChart";
@@ -243,6 +244,15 @@ function App() {
           element={
             <ProtectedPage>
               <Pins />
+            </ProtectedPage>
+          }
+        />
+
+        <Route
+          path="/admin/inventory"
+          element={
+            <ProtectedPage>
+              <Inventory />
             </ProtectedPage>
           }
         />
