@@ -43,7 +43,7 @@ const defaultSleepingData = {
     "Want to stay at the house?",
 
   contactMessage:
-    "Please reach out to the couple to let us know so we can make sure we have a sleeping space planned for you.",
+    "Please reach out to the couple to let us know so we can make sure we have a sleeping space planned for you. Sleeping spaces are available on a first-come, first-served basis and are reserved for those who have RSVP'd to the wedding.",
 
   bedrooms:
     "3",
