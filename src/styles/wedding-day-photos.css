@@ -1,0 +1,1572 @@
+/*
+ * =========================================================
+ * STANDALONE WEDDING DAY PHOTO PAGE
+ * =========================================================
+ */
+
+.wedding-day-photo-page {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    linear-gradient(180deg,
+      var(--sage-light) 0,
+      var(--background) 330px);
+  color: var(--charcoal);
+}
+
+/*
+ * HERO
+ */
+
+.wedding-day-hero {
+  width: min(760px,
+      calc(100% - 40px));
+
+  margin:
+    0 auto;
+
+  padding:
+    72px 0 54px;
+
+  text-align: center;
+}
+
+.wedding-day-hero-decoration {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  margin-bottom: 18px;
+
+  color: var(--primary-dark);
+}
+
+.wedding-day-hero-decoration span {
+  width: 52px;
+
+  height: 1px;
+
+  background:
+    var(--primary);
+}
+
+.wedding-day-eyebrow {
+  margin:
+    0 0 10px;
+
+  color:
+    var(--primary-dark);
+
+  font-size: 0.78rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.17em;
+
+  text-transform: uppercase;
+}
+
+.wedding-day-hero h1 {
+  margin:
+    0 0 20px;
+
+  font-size:
+    clamp(3.1rem,
+      8vw,
+      6rem);
+
+  font-weight: 400;
+
+  line-height: 0.95;
+}
+
+.wedding-day-description {
+  max-width: 620px;
+
+  margin:
+    0 auto;
+
+  font-size:
+    clamp(1rem,
+      2vw,
+      1.14rem);
+
+  line-height: 1.65;
+
+  opacity: 0.82;
+}
+
+.wedding-day-location {
+  margin:
+    16px 0 0;
+
+  color:
+    var(--primary-dark);
+
+  font-size: 0.9rem;
+
+  font-weight: 600;
+}
+
+.wedding-day-scroll-note {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 34px;
+
+  padding:
+    8px 12px;
+
+  border:
+    1px solid rgba(107,
+      112,
+      92,
+      0.18);
+
+  border-radius: 999px;
+
+  background:
+    rgba(255,
+      255,
+      255,
+      0.54);
+
+  color:
+    var(--primary-dark);
+
+  font-size: 0.8rem;
+}
+
+/*
+ * MESSAGES
+ */
+
+.wedding-day-message {
+  width: min(760px,
+      calc(100% - 40px));
+
+  margin:
+    0 auto 26px;
+
+  padding:
+    13px 16px;
+
+  border-radius:
+    var(--radius-medium);
+
+  line-height: 1.45;
+}
+
+.wedding-day-message-success {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  border:
+    1px solid var(--primary);
+
+  background:
+    var(--sage-light);
+
+  color:
+    var(--primary-dark);
+
+  text-align: center;
+}
+
+.wedding-day-message-error {
+  white-space: pre-line;
+
+  border:
+    1px solid var(--secondary-dark);
+
+  background:
+    var(--blush-light);
+}
+
+/*
+ * GALLERY
+ */
+
+.wedding-day-gallery-section {
+  width: min(1280px,
+      calc(100% - 40px));
+
+  margin:
+    0 auto;
+
+  padding:
+    18px 0 40px;
+}
+
+.wedding-day-gallery-heading {
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 22px;
+}
+
+.wedding-day-gallery-heading p {
+  margin:
+    0 0 4px;
+
+  color:
+    var(--primary-dark);
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+.wedding-day-gallery-heading h2 {
+  margin: 0;
+
+  font-size:
+    clamp(1.6rem,
+      3vw,
+      2.2rem);
+
+  font-weight: 500;
+}
+
+.wedding-day-gallery-heading>span {
+  padding-bottom: 3px;
+
+  font-size: 0.88rem;
+
+  opacity: 0.58;
+}
+
+/*
+ * Masonry columns
+ */
+
+.wedding-day-gallery {
+  columns: 4;
+
+  column-gap: 12px;
+}
+
+.wedding-day-photo-card {
+  display: inline-block;
+
+  width: 100%;
+
+  margin:
+    0 0 14px;
+
+  break-inside: avoid;
+
+  vertical-align: top;
+}
+
+.wedding-day-photo {
+  display: block;
+
+  width: 100%;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  border: 0;
+
+  border-radius:
+    14px;
+
+  background:
+    var(--sage-light);
+
+  cursor: zoom-in;
+
+  box-shadow:
+    0 3px 14px rgba(0,
+      0,
+      0,
+      0.04);
+}
+
+.wedding-day-photo img {
+  display: block;
+
+  width: 100%;
+
+  height: auto;
+
+  transition:
+    transform 220ms ease;
+}
+
+.wedding-day-photo:hover img {
+  transform:
+    scale(1.015);
+}
+
+.wedding-day-photo-unavailable {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 180px;
+
+  color:
+    var(--primary-dark);
+}
+
+/*
+ * SHARED BY
+ */
+
+.wedding-day-photo-credit {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  max-width: 100%;
+
+  margin:
+    7px 3px 0;
+
+  color:
+    var(--primary-dark);
+
+  font-size: 0.76rem;
+
+  line-height: 1.25;
+}
+
+.wedding-day-photo-credit svg {
+  flex-shrink: 0;
+
+  opacity: 0.7;
+}
+
+.wedding-day-photo-credit span {
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+.wedding-day-photo-credit strong {
+  font-weight: 700;
+}
+
+/*
+ * LOADING / EMPTY
+ */
+
+.wedding-day-gallery-loading,
+.wedding-day-empty,
+.wedding-day-loading,
+.wedding-day-unavailable {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  text-align: center;
+}
+
+.wedding-day-gallery-loading,
+.wedding-day-empty {
+  min-height: 280px;
+
+  border:
+    1px dashed var(--border);
+
+  border-radius:
+    var(--radius-large);
+
+  background:
+    rgba(255,
+      255,
+      255,
+      0.42);
+}
+
+.wedding-day-empty {
+  padding: 30px;
+}
+
+.wedding-day-empty h2 {
+  margin:
+    5px 0 0;
+}
+
+.wedding-day-empty p {
+  max-width: 460px;
+
+  margin: 0;
+
+  opacity: 0.7;
+}
+
+.wedding-day-loading,
+.wedding-day-unavailable {
+  width: min(600px,
+      calc(100% - 40px));
+
+  min-height: 100vh;
+
+  margin: auto;
+
+  color:
+    var(--primary-dark);
+}
+
+.wedding-day-unavailable h1 {
+  margin:
+    5px 0 0;
+}
+
+.wedding-day-unavailable p {
+  margin: 0;
+
+  opacity: 0.7;
+}
+
+/*
+ * BOTTOM SHARE SECTION
+ */
+
+.wedding-day-share-section {
+  width: min(680px,
+      calc(100% - 40px));
+
+  margin:
+    38px auto 58px;
+
+  padding:
+    46px 34px;
+
+  text-align: center;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    28px;
+
+  background:
+    linear-gradient(135deg,
+      var(--sage-light),
+      var(--blush-light));
+
+  box-shadow:
+    0 14px 36px rgba(0,
+      0,
+      0,
+      0.04);
+}
+
+.wedding-day-share-mark {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 48px;
+
+  height: 48px;
+
+  margin:
+    0 auto 16px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,
+      255,
+      255,
+      0.7);
+
+  color:
+    var(--primary-dark);
+}
+
+.wedding-day-share-section h2 {
+  margin:
+    0 0 8px;
+
+  font-size: 1.8rem;
+}
+
+.wedding-day-share-section p {
+  margin:
+    0 0 22px;
+
+  opacity: 0.72;
+}
+
+.wedding-day-share-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 48px;
+
+  padding:
+    11px 20px;
+
+  border:
+    1px solid var(--primary-dark);
+
+  border-radius: 999px;
+
+  background:
+    var(--blush);
+
+  color: var(--sage-dark);
+
+  font: inherit;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.wedding-day-share-button:hover {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 9px 20px rgba(55,
+      55,
+      55,
+      0.12);
+}
+
+/*
+ * FOOTER
+ */
+
+.wedding-day-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  padding:
+    0 20px 48px;
+
+  color:
+    var(--primary-dark);
+
+  font-size: 0.88rem;
+}
+
+/*
+ * FLOATING MOBILE BUTTON
+ */
+
+.wedding-day-floating-upload {
+  display: none;
+}
+
+/*
+ * =========================================================
+ * UPLOAD MODAL
+ * =========================================================
+ */
+
+.wedding-day-upload-backdrop {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 2000;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(28,
+      28,
+      28,
+      0.7);
+
+  backdrop-filter:
+    blur(5px);
+}
+
+.wedding-day-upload-modal {
+  position: relative;
+
+  width: min(540px,
+      100%);
+
+  max-height:
+    calc(100vh - 40px);
+
+  padding:
+    34px;
+
+  overflow-y: auto;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 26px;
+
+  background:
+    #ffffff;
+
+  color:
+    var(--charcoal);
+
+  box-shadow:
+    0 30px 80px rgba(0,
+      0,
+      0,
+      0.28);
+}
+
+.wedding-day-upload-handle {
+  display: none;
+}
+
+.wedding-day-modal-close {
+  position: absolute;
+
+  top: 16px;
+
+  right: 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 38px;
+
+  height: 38px;
+
+  padding: 0;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 50%;
+
+  background:
+    var(--background);
+
+  color:
+    var(--charcoal);
+
+  cursor: pointer;
+}
+
+.wedding-day-modal-close:disabled {
+  cursor: wait;
+
+  opacity: 0.5;
+}
+
+.wedding-day-upload-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 50px;
+
+  height: 50px;
+
+  margin-bottom: 18px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(135deg,
+      var(--sage-light),
+      var(--blush-light));
+
+  color:
+    var(--primary-dark);
+}
+
+.wedding-day-modal-eyebrow {
+  margin:
+    0 0 5px;
+
+  color:
+    var(--primary-dark);
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+}
+
+.wedding-day-upload-modal h2 {
+  margin:
+    0 0 10px;
+
+  font-size: 2rem;
+}
+
+.wedding-day-modal-description {
+  margin:
+    0 0 24px;
+
+  line-height: 1.55;
+
+  opacity: 0.72;
+}
+
+.wedding-day-form-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin-bottom: 18px;
+}
+
+.wedding-day-form-field>span {
+  font-size: 0.9rem;
+
+  font-weight: 700;
+}
+
+.wedding-day-form-field input {
+  width: 100%;
+
+  min-height: 46px;
+
+  padding:
+    10px 12px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    var(--radius-medium);
+
+  background:
+    #ffffff;
+
+  color:
+    var(--charcoal);
+
+  font: inherit;
+
+  outline: none;
+}
+
+.wedding-day-form-field input:focus {
+  border-color:
+    var(--primary-dark);
+
+  box-shadow:
+    0 0 0 3px rgba(195,
+      206,
+      193,
+      0.28);
+}
+
+.wedding-day-form-field small {
+  font-size: 0.78rem;
+
+  opacity: 0.62;
+}
+
+/*
+ * FILE PICKER
+ */
+
+.wedding-day-file-picker {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  width: 100%;
+
+  min-height: 78px;
+
+  padding:
+    14px 16px;
+
+  text-align: left;
+
+  border:
+    1px dashed var(--primary);
+
+  border-radius:
+    var(--radius-medium);
+
+  background:
+    var(--sage-light);
+
+  color:
+    var(--charcoal);
+
+  cursor: pointer;
+}
+
+.wedding-day-file-picker>svg {
+  flex-shrink: 0;
+
+  color:
+    var(--primary-dark);
+}
+
+.wedding-day-file-picker>span {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.wedding-day-file-picker strong {
+  font-size: 0.94rem;
+}
+
+.wedding-day-file-picker small {
+  font-size: 0.76rem;
+
+  opacity: 0.64;
+}
+
+.wedding-day-file-picker:disabled {
+  cursor: wait;
+
+  opacity: 0.6;
+}
+
+/*
+ * MODAL ERROR
+ */
+
+.wedding-day-modal-error {
+  margin-top: 14px;
+
+  padding:
+    11px 13px;
+
+  white-space: pre-line;
+
+  border:
+    1px solid var(--secondary-dark);
+
+  border-radius:
+    var(--radius-medium);
+
+  background:
+    var(--blush-light);
+
+  font-size: 0.84rem;
+}
+
+/*
+ * UPLOAD SUBMIT
+ */
+
+.wedding-day-upload-submit {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  width: 100%;
+
+  min-height: 50px;
+
+  margin-top: 18px;
+
+  padding:
+    11px
+    16px;
+
+  border:
+    1px solid
+    var(--primary);
+
+  border-radius: 999px;
+
+  background:
+    var(--sage-light);
+
+  color:
+    var(--primary-dark);
+
+  font: inherit;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background
+      160ms
+      ease,
+    transform
+      160ms
+      ease;
+}
+
+.wedding-day-upload-submit:hover:not(:disabled) {
+  background:
+    var(--primary);
+
+  transform:
+    translateY(
+      -1px
+    );
+}
+
+.wedding-day-upload-submit:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.48;
+}
+
+.wedding-day-upload-note {
+  margin:
+    14px 0 0;
+
+  text-align: center;
+
+  font-size: 0.76rem;
+
+  opacity: 0.56;
+}
+
+/*
+ * =========================================================
+ * LIGHTBOX
+ * =========================================================
+ */
+
+.wedding-day-lightbox {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 3000;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding:
+    68px 84px 48px;
+
+  background:
+    rgba(0,
+      0,
+      0,
+      0.92);
+
+  touch-action: pan-y;
+}
+
+.wedding-day-lightbox-content {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 14px;
+
+  width: 100%;
+
+  max-width: 1200px;
+
+  max-height: 100%;
+}
+
+.wedding-day-lightbox-image {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 100%;
+
+  min-height: 240px;
+
+  max-height:
+    calc(100vh - 150px);
+}
+
+.wedding-day-lightbox-image img {
+  display: block;
+
+  max-width: 100%;
+
+  max-height:
+    calc(100vh - 150px);
+
+  object-fit: contain;
+
+  user-select: none;
+
+  -webkit-user-drag: none;
+}
+
+.wedding-day-lightbox-loading {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  min-height: 260px;
+
+  color: white;
+}
+
+.wedding-day-lightbox-close {
+  position: fixed;
+
+  top: 14px;
+
+  right: 18px;
+
+  z-index: 3003;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 44px;
+
+  height: 44px;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,
+      255,
+      255,
+      0.14);
+
+  color: white;
+
+  cursor: pointer;
+}
+
+.wedding-day-lightbox-nav {
+  position: fixed;
+
+  top: 50%;
+
+  z-index: 3002;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 50px;
+
+  height: 60px;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255,
+      255,
+      255,
+      0.12);
+
+  color: white;
+
+  cursor: pointer;
+
+  transform:
+    translateY(-50%);
+}
+
+.wedding-day-lightbox-previous {
+  left: 18px;
+}
+
+.wedding-day-lightbox-next {
+  right: 18px;
+}
+
+.wedding-day-lightbox-close:hover,
+.wedding-day-lightbox-nav:hover {
+  background:
+    rgba(255,
+      255,
+      255,
+      0.22);
+}
+
+/*
+ * LIGHTBOX FOOTER
+ */
+
+.wedding-day-lightbox-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 24px;
+
+  width: 100%;
+
+  min-height: 44px;
+
+  color: white;
+}
+
+.wedding-day-lightbox-details {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.wedding-day-lightbox-credit {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  font-size: 0.88rem;
+}
+
+.wedding-day-lightbox-credit strong {
+  color: white;
+}
+
+.wedding-day-lightbox-count {
+  color:
+    rgba(255,
+      255,
+      255,
+      0.62);
+
+  font-size: 0.82rem;
+}
+
+.wedding-day-lightbox-download {
+  flex-shrink: 0;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 42px;
+
+  padding:
+    8px 13px;
+
+  border:
+    1px solid rgba(255,
+      255,
+      255,
+      0.22);
+
+  border-radius: 999px;
+
+  background:
+    rgba(255,
+      255,
+      255,
+      0.14);
+
+  color: white;
+
+  font: inherit;
+
+  font-size: 0.84rem;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+/*
+ * =========================================================
+ * TABLET
+ * =========================================================
+ */
+
+@media (max-width: 1000px) {
+  .wedding-day-gallery {
+    columns: 3;
+  }
+}
+
+/*
+ * =========================================================
+ * MOBILE
+ * =========================================================
+ */
+
+@media (max-width: 720px) {
+  .wedding-day-photo-page {
+    padding-bottom: 70px;
+  }
+
+  .wedding-day-hero {
+    width:
+      calc(100% - 28px);
+
+    padding:
+      50px 0 40px;
+  }
+
+  .wedding-day-hero h1 {
+    font-size:
+      clamp(3.2rem,
+        16vw,
+        5rem);
+  }
+
+  .wedding-day-description {
+    font-size: 0.98rem;
+  }
+
+  .wedding-day-scroll-note {
+    margin-top: 26px;
+  }
+
+  .wedding-day-gallery-section {
+    width:
+      calc(100% - 20px);
+
+    padding-top: 10px;
+  }
+
+  .wedding-day-gallery {
+    columns: 2;
+
+    column-gap: 8px;
+  }
+
+  .wedding-day-photo-card {
+    margin-bottom: 10px;
+  }
+
+  .wedding-day-photo {
+    border-radius: 10px;
+  }
+
+  .wedding-day-photo-credit {
+    gap: 4px;
+
+    margin:
+      5px 2px 0;
+
+    font-size: 0.68rem;
+  }
+
+  .wedding-day-photo-credit svg {
+    width: 11px;
+
+    height: 11px;
+  }
+
+  .wedding-day-share-section {
+    width:
+      calc(100% - 28px);
+
+    margin-top: 28px;
+
+    padding:
+      36px 22px;
+  }
+
+  /*
+   * Floating action button
+   */
+
+  .wedding-day-floating-upload {
+    position: fixed;
+
+    right: 16px;
+
+    bottom:
+      calc(16px + env(safe-area-inset-bottom));
+
+    z-index: 900;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 48px;
+
+    padding:
+      10px 16px;
+
+    border: 0;
+
+    border-radius: 999px;
+
+    background:
+      var(--primary-dark);
+
+    color: white;
+
+    font: inherit;
+
+    font-size: 0.88rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+      0 8px 28px rgba(0,
+        0,
+        0,
+        0.2);
+  }
+
+  /*
+   * Modal becomes bottom sheet
+   */
+
+  .wedding-day-upload-backdrop {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+  .wedding-day-upload-modal {
+    width: 100%;
+
+    max-height:
+      min(88vh,
+        760px);
+
+    padding:
+      26px 20px calc(24px + env(safe-area-inset-bottom));
+
+    border-radius:
+      24px 24px 0 0;
+  }
+
+  .wedding-day-upload-handle {
+    display: block;
+
+    width: 42px;
+
+    height: 4px;
+
+    margin:
+      -10px auto 18px;
+
+    border-radius: 999px;
+
+    background:
+      var(--border);
+  }
+
+  .wedding-day-modal-close {
+    top: 17px;
+
+    right: 17px;
+  }
+
+  /*
+   * Lightbox
+   */
+
+  .wedding-day-lightbox {
+    padding:
+      62px 10px 86px;
+  }
+
+  .wedding-day-lightbox-image,
+  .wedding-day-lightbox-image img {
+    max-height:
+      calc(100vh - 190px);
+  }
+
+  .wedding-day-lightbox-footer {
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    text-align: center;
+  }
+
+  .wedding-day-lightbox-details {
+    justify-content: center;
+  }
+
+  .wedding-day-lightbox-download {
+    min-width: 44px;
+
+    min-height: 44px;
+  }
+
+  .wedding-day-lightbox-download span {
+    display: none;
+  }
+
+  .wedding-day-lightbox-nav {
+    top: auto;
+
+    bottom: 18px;
+
+    width: 46px;
+
+    height: 46px;
+
+    border-radius: 50%;
+
+    transform: none;
+  }
+
+  .wedding-day-lightbox-previous {
+    left: 18px;
+  }
+
+  .wedding-day-lightbox-next {
+    right: 18px;
+  }
+}
+
+/*
+ * =========================================================
+ * EXTRA SMALL
+ * =========================================================
+ */
+
+@media (max-width: 420px) {
+  .wedding-day-hero {
+    width:
+      calc(100% - 22px);
+  }
+
+  .wedding-day-hero-decoration span {
+    width: 38px;
+  }
+
+  .wedding-day-gallery-section {
+    width:
+      calc(100% - 14px);
+  }
+
+  .wedding-day-gallery {
+    column-gap: 6px;
+  }
+
+  .wedding-day-photo-card {
+    margin-bottom: 8px;
+  }
+
+  .wedding-day-gallery-heading {
+    padding:
+      0 3px;
+  }
+
+  .wedding-day-gallery-heading h2 {
+    font-size: 1.45rem;
+  }
+
+  .wedding-day-photo-credit {
+    font-size: 0.64rem;
+  }
+}

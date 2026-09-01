@@ -2,6 +2,7 @@ import {
   BedDouble,
   CalendarDays,
   CircleDollarSign,
+  Images,
   ListChecks,
   MapPinned,
   Music2,
@@ -41,6 +42,19 @@ const planningTools = [
 
     icon:
       CalendarDays,
+  },
+  {
+    title:
+      "Photos",
+
+    description:
+      "Create photo albums, upload photos, manage guest uploads, and control album visibility.",
+
+    path:
+      "/admin/photos",
+
+    icon:
+      Images,
   },
   {
     title:

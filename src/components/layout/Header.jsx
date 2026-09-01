@@ -49,6 +49,13 @@ const publicLinks = [
   },
   {
     label:
+      "Photos",
+
+    path:
+      "/photos",
+  },
+  {
+    label:
       "Weekend",
 
     path:
