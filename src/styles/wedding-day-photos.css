@@ -938,12 +938,10 @@
   margin-top: 18px;
 
   padding:
-    11px
-    16px;
+    11px 16px;
 
   border:
-    1px solid
-    var(--primary);
+    1px solid var(--primary);
 
   border-radius: 999px;
 
@@ -960,12 +958,8 @@
   cursor: pointer;
 
   transition:
-    background
-      160ms
-      ease,
-    transform
-      160ms
-      ease;
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .wedding-day-upload-submit:hover:not(:disabled) {
@@ -973,9 +967,7 @@
     var(--primary);
 
   transform:
-    translateY(
-      -1px
-    );
+    translateY(-1px);
 }
 
 .wedding-day-upload-submit:disabled {
@@ -1391,25 +1383,29 @@
 
     gap: 7px;
 
-    min-height: 48px;
+    min-height: 50px;
 
     padding:
-      10px 16px;
+      11px 18px;
 
-    border: 0;
+    border:
+      2px solid var(--primary-dark);
 
     border-radius: 999px;
 
     background:
-      var(--primary-dark);
+      var(--sage-light) !important;
 
-    color: white;
+    color:
+      var(--primary-dark) !important;
 
     font: inherit;
 
-    font-size: 0.88rem;
+    font-size: 0.9rem;
 
     font-weight: 700;
+
+    opacity: 1 !important;
 
     cursor: pointer;
 
@@ -1417,7 +1413,27 @@
       0 8px 28px rgba(0,
         0,
         0,
-        0.2);
+        0.28);
+  }
+
+  .wedding-day-floating-upload svg {
+    flex-shrink: 0;
+
+    color:
+      var(--primary-dark) !important;
+  }
+
+  .wedding-day-floating-upload:hover,
+  .wedding-day-floating-upload:focus,
+  .wedding-day-floating-upload:focus-visible,
+  .wedding-day-floating-upload:active {
+    background:
+      var(--sage-light) !important;
+
+    color:
+      var(--primary-dark) !important;
+
+    opacity: 1 !important;
   }
 
   /*
