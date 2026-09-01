@@ -10,6 +10,14 @@ import {
   getFirestore,
 } from "firebase/firestore";
 
+import {
+  getStorage,
+} from "firebase/storage";
+
+import {
+  getFunctions,
+} from "firebase/functions";
+
 const firebaseConfig = {
   apiKey:
     "AIzaSyAs81kYRb5pjpJs8vRVuJv9VvF-1bnj23k",
@@ -36,7 +44,22 @@ const app =
   );
 
 export const auth =
-  getAuth(app);
+  getAuth(
+    app
+  );
 
 export const db =
-  getFirestore(app);
+  getFirestore(
+    app
+  );
+
+export const storage =
+  getStorage(
+    app
+  );
+
+export const functions =
+  getFunctions(
+    app,
+    "us-central1"
+  );

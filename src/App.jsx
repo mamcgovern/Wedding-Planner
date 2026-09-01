@@ -12,7 +12,10 @@ import AttireAssignments from "./pages/AttireAssignments";
 import Home from "./pages/Home";
 import ImportantDates from "./pages/ImportantDates";
 import Login from "./pages/Login";
+import PhotoAlbum from "./pages/PhotoAlbum";
+import Photos from "./pages/Photos";
 import SelectedOutfits from "./pages/SelectedOutfits";
+import WeddingDayPhotos from "./pages/WeddingDayPhotos";
 import Weekend from "./pages/Weekend";
 
 import Music from "./pages/weekend/Music";
@@ -27,6 +30,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Guests from "./pages/admin/Guests";
 import Inventory from "./pages/admin/Inventory";
 import MusicAdmin from "./pages/admin/MusicAdmin";
+import PhotosAdmin from "./pages/admin/PhotosAdmin";
 import Pins from "./pages/admin/Pins";
 import SeatingChart from "./pages/admin/SeatingChart";
 import Settings from "./pages/admin/Settings";
@@ -47,6 +51,28 @@ function ProtectedPage({
 function App() {
   return (
     <Routes>
+      {/*
+       * =================================================
+       * STANDALONE WEDDING DAY PAGE
+       *
+       * This route intentionally sits OUTSIDE SiteLayout.
+       * It therefore has no normal site header/navigation.
+       * =================================================
+       */}
+
+      <Route
+        path="/our-wedding-day"
+        element={
+          <WeddingDayPhotos />
+        }
+      />
+
+      {/*
+       * =================================================
+       * NORMAL WEBSITE
+       * =================================================
+       */}
+
       <Route
         element={
           <SiteLayout />
@@ -84,6 +110,20 @@ function App() {
           path="/important-dates"
           element={
             <ImportantDates />
+          }
+        />
+
+        <Route
+          path="/photos"
+          element={
+            <Photos />
+          }
+        />
+
+        <Route
+          path="/photos/:albumId"
+          element={
+            <PhotoAlbum />
           }
         />
 
@@ -262,6 +302,15 @@ function App() {
           element={
             <ProtectedPage>
               <Settings />
+            </ProtectedPage>
+          }
+        />
+
+        <Route
+          path="/admin/photos"
+          element={
+            <ProtectedPage>
+              <PhotosAdmin />
             </ProtectedPage>
           }
         />
