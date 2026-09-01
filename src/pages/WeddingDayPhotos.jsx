@@ -1116,7 +1116,9 @@ function WeddingDayPhotos() {
           />
 
           <span>
-            Photos from our favorite day
+            {
+              album.eyebrow
+            }
           </span>
         </div>
       </section>
