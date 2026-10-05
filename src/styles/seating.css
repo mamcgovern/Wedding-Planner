@@ -732,43 +732,35 @@ i.pending {
 
 .seating-guest-name {
   display: flex;
-
+  flex: 1 1 auto;
   flex-direction: column;
-
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .seating-guest-name strong {
+  display: block;
+  min-width: 0;
   overflow: hidden;
-
-  color:
-    var(--text);
-
+  color: var(--text);
   font-size: 0.7rem;
-
-  text-overflow:
-    ellipsis;
-
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .seating-guest-name span {
-  overflow: hidden;
-
+  display: block;
+  min-width: 0;
   margin-top: 2px;
-
-  color:
-    var(--text-light);
-
-  font-family:
-    Arial,
-    sans-serif;
-
+  overflow: hidden;
+  color: var(--text-light);
+  font-family: Arial, sans-serif;
   font-size: 0.54rem;
-
-  text-overflow:
-    ellipsis;
-
+  line-height: 1.2;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
