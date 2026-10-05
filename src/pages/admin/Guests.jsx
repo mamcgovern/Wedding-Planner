@@ -181,10 +181,15 @@ function Guests() {
     setManagingFamilies,
   ] = useState(false);
 
+  /*
+   * Family management starts with assigned guests
+   * hidden. Turn this on when you need to move or
+   * reassign someone who is already in a family.
+   */
   const [
     hideAssignedGuests,
     setHideAssignedGuests,
-  ] = useState(false);
+  ] = useState(true);
 
   const [
     selectedGuestIds,
@@ -525,36 +530,26 @@ function Guests() {
   const importPlan =
     useMemo(
       () => {
-        const existingLookup =
-          buildExistingGuestLookup(
-            guests
+        const matchPlan =
+          buildImportMatchPlan(
+            guests,
+            parsedImportGuests
           );
 
-        let additions =
-          0;
-
-        let updates =
-          0;
-
-        parsedImportGuests.forEach(
-          (guest) => {
-            if (
-              existingLookup.has(
-                guest.sourceKey
-              )
-            ) {
-              updates +=
-                1;
-            } else {
-              additions +=
-                1;
-            }
-          }
-        );
-
         return {
-          additions,
-          updates,
+          additions:
+            matchPlan.filter(
+              (item) =>
+                !item.existingGuest
+            ).length,
+
+          updates:
+            matchPlan.filter(
+              (item) =>
+                Boolean(
+                  item.existingGuest
+                )
+            ).length,
         };
       },
       [
@@ -1091,28 +1086,11 @@ function Guests() {
       );
 
       try {
-        const existingLookup =
-          buildExistingGuestLookup(
-            guests
+        const matchPlan =
+          buildImportMatchPlan(
+            guests,
+            parsedImportGuests
           );
-
-        const operations =
-          parsedImportGuests.map(
-            (guest) => ({
-              guest,
-
-              existingGuest:
-                existingLookup.get(
-                  guest.sourceKey
-                ) ||
-                null,
-            })
-          );
-
-        /*
-         * Firestore batches allow up to 500 writes.
-         * 400 leaves us a little breathing room.
-         */
 
         const chunkSize =
           400;
@@ -1121,12 +1099,12 @@ function Guests() {
           let start =
             0;
           start <
-          operations.length;
+          matchPlan.length;
           start +=
             chunkSize
         ) {
           const chunk =
-            operations.slice(
+            matchPlan.slice(
               start,
               start +
                 chunkSize
@@ -1204,18 +1182,6 @@ function Guests() {
                       null,
                   }
                 );
-
-                /*
-                 * Deliberately preserve:
-                 * householdId
-                 * householdName
-                 * tableId
-                 * email
-                 * phone
-                 *
-                 * Re-importing Zola should not erase
-                 * planning work done in this app.
-                 */
 
                 return;
               }
@@ -1314,6 +1280,10 @@ function Guests() {
         true
       );
 
+      setHideAssignedGuests(
+        true
+      );
+
       setSelectedGuestIds(
         []
       );
@@ -1348,7 +1318,7 @@ function Guests() {
       );
 
       setHideAssignedGuests(
-        false
+        true
       );
 
       setSelectedGuestIds(
@@ -1799,16 +1769,16 @@ function Guests() {
               <input
                 type="checkbox"
                 checked={
-                  hideAssignedGuests
+                  !hideAssignedGuests
                 }
                 onChange={(event) =>
                   setHideAssignedGuests(
-                    event.target.checked
+                    !event.target.checked
                   )
                 }
               />
 
-              Hide guests already in a family
+              Show guests already assigned to a family
             </label>
 
             <button
@@ -3148,8 +3118,8 @@ function parseWeddingCsvRows(
   const parsed =
     [];
 
-  let previousNamedGuest =
-    "";
+  const unnamedGuestCounts =
+    new Map();
 
   rows.forEach(
     (
@@ -3198,8 +3168,37 @@ function parseWeddingCsvRows(
 
       const guestOfName =
         isUnnamedGuest
-          ? previousNamedGuest
+          ? getPreviousNamedGuestName(
+              parsed
+            )
           : "";
+
+      const normalizedGuestOf =
+        normalizeKeyValue(
+          guestOfName
+        );
+
+      let guestOccurrence =
+        null;
+
+      if (
+        isUnnamedGuest
+      ) {
+        const currentCount =
+          unnamedGuestCounts.get(
+            normalizedGuestOf
+          ) ||
+          0;
+
+        guestOccurrence =
+          currentCount +
+          1;
+
+        unnamedGuestCounts.set(
+          normalizedGuestOf,
+          guestOccurrence
+        );
+      }
 
       const guest = {
         title,
@@ -3265,31 +3264,61 @@ function parseWeddingCsvRows(
 
         sourceType:
           "csv",
+
+        guestOccurrence,
       };
 
       guest.sourceKey =
         buildGuestSourceKey(
-          guest,
-          index
+          guest
         );
 
       parsed.push(
         guest
       );
-
-      if (
-        !isUnnamedGuest
-      ) {
-        previousNamedGuest =
-          getGuestDisplayName(
-            guest
-          );
-      }
     }
   );
 
   return parsed;
 }
+
+function getPreviousNamedGuestName(
+  parsedGuests
+) {
+  for (
+    let index =
+      parsedGuests.length -
+      1;
+    index >=
+    0;
+    index -=
+      1
+  ) {
+    const guest =
+      parsedGuests[
+        index
+      ];
+
+    if (
+      !guest.isUnnamedGuest
+    ) {
+      return getGuestDisplayName(
+        guest
+      );
+    }
+  }
+
+  return "";
+}
+
+/*
+ * ZOLA RSVP PARSING
+ *
+ * Important:
+ * Do not use .includes("no") here.
+ * "No Response" contains "no", but it means
+ * the guest has not responded.
+ */
 
 function parseWeddingRsvp(
   value
@@ -3297,39 +3326,93 @@ function parseWeddingRsvp(
   const normalized =
     cleanCsvValue(
       value
-    ).toLowerCase();
+    )
+      .toLowerCase()
+      .replace(
+        /\s+/g,
+        " "
+      );
 
   if (
-    [
-      "yes",
-      "attending",
-      "accepted",
-      "accept",
-      "will attend",
-    ].some(
-      (option) =>
-        normalized.includes(
-          option
-        )
+    !normalized
+  ) {
+    return "pending";
+  }
+
+  const pendingValues = [
+    "no response",
+    "no response yet",
+    "not responded",
+    "not responded yet",
+    "awaiting response",
+    "awaiting rsvp",
+    "pending",
+    "no reply",
+    "no answer",
+  ];
+
+  if (
+    pendingValues.includes(
+      normalized
+    )
+  ) {
+    return "pending";
+  }
+
+  const attendingValues = [
+    "yes",
+    "attending",
+    "accepted",
+    "accept",
+    "will attend",
+    "yes, attending",
+  ];
+
+  if (
+    attendingValues.includes(
+      normalized
     )
   ) {
     return "attending";
   }
 
+  const declinedValues = [
+    "no",
+    "declined",
+    "decline",
+    "not attending",
+    "will not attend",
+    "no, not attending",
+  ];
+
   if (
-    [
-      "no",
-      "declined",
-      "decline",
-      "not attending",
-    ].some(
-      (option) =>
-        normalized.includes(
-          option
-        )
+    declinedValues.includes(
+      normalized
     )
   ) {
     return "declined";
+  }
+
+  if (
+    normalized.includes(
+      "will not attend"
+    ) ||
+    normalized.includes(
+      "not attending"
+    )
+  ) {
+    return "declined";
+  }
+
+  if (
+    normalized.includes(
+      "will attend"
+    ) ||
+    normalized.includes(
+      "attending"
+    )
+  ) {
+    return "attending";
   }
 
   return "pending";
@@ -3341,7 +3424,12 @@ function parseRehearsalRsvp(
   const normalized =
     cleanCsvValue(
       value
-    ).toLowerCase();
+    )
+      .toLowerCase()
+      .replace(
+        /\s+/g,
+        " "
+      );
 
   if (
     !normalized
@@ -3349,35 +3437,80 @@ function parseRehearsalRsvp(
     return "na";
   }
 
+  const pendingValues = [
+    "no response",
+    "no response yet",
+    "not responded",
+    "not responded yet",
+    "awaiting response",
+    "awaiting rsvp",
+    "pending",
+    "no reply",
+    "no answer",
+  ];
+
   if (
-    [
-      "yes",
-      "attending",
-      "accepted",
-      "accept",
-    ].some(
-      (option) =>
-        normalized.includes(
-          option
-        )
+    pendingValues.includes(
+      normalized
+    )
+  ) {
+    return "pending";
+  }
+
+  const attendingValues = [
+    "yes",
+    "attending",
+    "accepted",
+    "accept",
+    "will attend",
+    "yes, attending",
+  ];
+
+  if (
+    attendingValues.includes(
+      normalized
     )
   ) {
     return "attending";
   }
 
+  const declinedValues = [
+    "no",
+    "declined",
+    "decline",
+    "not attending",
+    "will not attend",
+    "no, not attending",
+  ];
+
   if (
-    [
-      "no",
-      "declined",
-      "decline",
-    ].some(
-      (option) =>
-        normalized.includes(
-          option
-        )
+    declinedValues.includes(
+      normalized
     )
   ) {
     return "declined";
+  }
+
+  if (
+    normalized.includes(
+      "will not attend"
+    ) ||
+    normalized.includes(
+      "not attending"
+    )
+  ) {
+    return "declined";
+  }
+
+  if (
+    normalized.includes(
+      "will attend"
+    ) ||
+    normalized.includes(
+      "attending"
+    )
+  ) {
+    return "attending";
   }
 
   return "pending";
@@ -3393,90 +3526,346 @@ function cleanCsvValue(
 }
 
 /*
- * SOURCE KEY
+ * IMPORT MATCHING
+ *
+ * The source key is used first because it is the
+ * strongest match available from a previous import.
+ *
+ * If the source key no longer matches, we fall back
+ * to a normalized identity:
+ *
+ * Named guest:
+ *   first name + last name
+ *
+ * Unnamed guest:
+ *   guest of + occurrence number
+ *
+ * Titles and suffixes are intentionally excluded
+ * from identity matching.
  */
 
 function buildGuestSourceKey(
-  guest,
-  index = null
+  guest
 ) {
-  const pieces =
-    [
-      guest.title,
-      guest.firstName,
-      guest.lastName,
-      guest.suffix,
-      guest.guestOfName,
-    ]
-      .map(
-        normalizeKeyValue
-      )
-      .join(
-        "|"
-      );
-
   if (
     guest.isUnnamedGuest
   ) {
-    return `${pieces}|guest-${index ?? 0}`;
+    const guestOf =
+      normalizeKeyValue(
+        guest.guestOfName
+      );
+
+    const occurrence =
+      Number(
+        guest.guestOccurrence ||
+        1
+      );
+
+    return [
+      "guest",
+      guestOf,
+      occurrence,
+    ].join(
+      "|"
+    );
   }
 
-  return pieces;
+  return [
+    "named",
+    normalizeKeyValue(
+      guest.firstName
+    ),
+    normalizeKeyValue(
+      guest.lastName
+    ),
+  ].join(
+    "|"
+  );
+}
+
+function buildGuestIdentityKey(
+  guest
+) {
+  if (
+    guest.isUnnamedGuest
+  ) {
+    return [
+      "guest",
+      normalizeKeyValue(
+        guest.guestOfName
+      ),
+    ].join(
+      "|"
+    );
+  }
+
+  return [
+    "named",
+    normalizeKeyValue(
+      guest.firstName
+    ),
+    normalizeKeyValue(
+      guest.lastName
+    ),
+  ].join(
+    "|"
+  );
 }
 
 function buildExistingGuestLookup(
   guests
 ) {
-  const map =
+  const sourceKeyMap =
+    new Map();
+
+  const identityMap =
     new Map();
 
   guests.forEach(
     (guest) => {
-      if (
-        guest.sourceKey
-      ) {
-        map.set(
-          guest.sourceKey,
-          guest
+      const isImportedGuest =
+        guest.sourceType ===
+          "csv" ||
+        Boolean(
+          guest.sourceKey
         );
 
+      if (
+        !isImportedGuest
+      ) {
         return;
       }
 
       if (
-        guest.sourceType ===
-        "csv"
+        guest.sourceKey
       ) {
-        const fallbackKey =
-          buildGuestSourceKey(
-            guest,
-            guest.importOrder
+        if (
+          !sourceKeyMap.has(
+            guest.sourceKey
+          )
+        ) {
+          sourceKeyMap.set(
+            guest.sourceKey,
+            []
           );
+        }
 
-        map.set(
-          fallbackKey,
+        sourceKeyMap
+          .get(
+            guest.sourceKey
+          )
+          .push(
+            guest
+          );
+      }
+
+      const identityKey =
+        buildGuestIdentityKey(
           guest
         );
+
+      if (
+        identityKey !==
+        "named||" &&
+        identityKey !==
+        "guest|"
+      ) {
+        if (
+          !identityMap.has(
+            identityKey
+          )
+        ) {
+          identityMap.set(
+            identityKey,
+            []
+          );
+        }
+
+        identityMap
+          .get(
+            identityKey
+          )
+          .push(
+            guest
+          );
       }
     }
   );
 
-  return map;
+  return {
+    sourceKeyMap,
+    identityMap,
+  };
 }
 
-function normalizeKeyValue(
-  value
+function buildImportMatchPlan(
+  existingGuests,
+  importedGuests
 ) {
-  return String(
-    value ||
-    ""
-  )
-    .trim()
-    .toLowerCase()
-    .replace(
-      /\s+/g,
-      " "
+  const {
+    sourceKeyMap,
+    identityMap,
+  } =
+    buildExistingGuestLookup(
+      existingGuests
     );
+
+  const matchedExistingIds =
+    new Set();
+
+  const plan =
+    [];
+
+  importedGuests.forEach(
+    (guest) => {
+      let existingGuest =
+        findAvailableSourceKeyMatch(
+          sourceKeyMap,
+          guest.sourceKey,
+          matchedExistingIds
+        );
+
+      if (
+        !existingGuest
+      ) {
+        existingGuest =
+          findAvailableIdentityMatch(
+            identityMap,
+            guest,
+            matchedExistingIds
+          );
+      }
+
+      if (
+        existingGuest
+      ) {
+        matchedExistingIds.add(
+          existingGuest.id
+        );
+      }
+
+      plan.push({
+        guest,
+        existingGuest:
+          existingGuest ||
+          null,
+      });
+    }
+  );
+
+  return plan;
+}
+
+function findAvailableSourceKeyMatch(
+  sourceKeyMap,
+  sourceKey,
+  matchedExistingIds
+) {
+  if (
+    !sourceKey
+  ) {
+    return null;
+  }
+
+  const candidates =
+    sourceKeyMap.get(
+      sourceKey
+    ) ||
+    [];
+
+  return (
+    candidates.find(
+      (guest) =>
+        !matchedExistingIds.has(
+          guest.id
+        )
+    ) ||
+    null
+  );
+}
+
+function findAvailableIdentityMatch(
+  identityMap,
+  importedGuest,
+  matchedExistingIds
+) {
+  const identityKey =
+    buildGuestIdentityKey(
+      importedGuest
+    );
+
+  if (
+    identityKey ===
+      "named||" ||
+    identityKey ===
+      "guest|"
+  ) {
+    return null;
+  }
+
+  const candidates =
+    identityMap.get(
+      identityKey
+    ) ||
+    [];
+
+  return (
+    candidates.find(
+      (guest) =>
+        !matchedExistingIds.has(
+          guest.id
+        ) &&
+        isCompatibleGuestIdentity(
+          guest,
+          importedGuest
+        )
+    ) ||
+    null
+  );
+}
+
+function isCompatibleGuestIdentity(
+  existingGuest,
+  importedGuest
+) {
+  if (
+    Boolean(
+      existingGuest.isUnnamedGuest
+    ) !==
+    Boolean(
+      importedGuest.isUnnamedGuest
+    )
+  ) {
+    return false;
+  }
+
+  if (
+    importedGuest.isUnnamedGuest
+  ) {
+    return (
+      normalizeKeyValue(
+        existingGuest.guestOfName
+      ) ===
+      normalizeKeyValue(
+        importedGuest.guestOfName
+      )
+    );
+  }
+
+  return (
+    normalizeKeyValue(
+      existingGuest.firstName
+    ) ===
+      normalizeKeyValue(
+        importedGuest.firstName
+      ) &&
+    normalizeKeyValue(
+      existingGuest.lastName
+    ) ===
+      normalizeKeyValue(
+        importedGuest.lastName
+      )
+  );
 }
 
 /*
@@ -3634,13 +4023,13 @@ function formatRsvp(
       "No",
 
     pending:
-      "No Response",
+      "Not responded",
   };
 
   return labels[
     status
   ] ||
-    "No Response";
+    "Not responded";
 }
 
 function formatRehearsal(
@@ -3707,6 +4096,21 @@ function compareGuestOrder(
       second
     )
   );
+}
+
+function normalizeKeyValue(
+  value
+) {
+  return String(
+    value ||
+    ""
+  )
+    .trim()
+    .toLowerCase()
+    .replace(
+      /\s+/g,
+      " "
+    );
 }
 
 export default Guests;
