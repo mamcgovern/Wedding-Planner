@@ -45,1670 +45,251 @@ import {
   useAuth,
 } from "../../context/AuthContext";
 
-const emptyTable = {
-  name: "",
-  capacity: 8,
-};
 
-function SeatingChart() {
-  const {
-    user,
-  } = useAuth();
-
-  const [
-    guests,
-    setGuests,
-  ] = useState([]);
-
-  const [
-    tables,
-    setTables,
-  ] = useState([]);
-
-  const [
-    guestsLoading,
-    setGuestsLoading,
-  ] = useState(true);
-
-  const [
-    tablesLoading,
-    setTablesLoading,
-  ] = useState(true);
-
-  const [
-    search,
-    setSearch,
-  ] = useState("");
-
-  const [
-    showTableModal,
-    setShowTableModal,
-  ] = useState(false);
-
-  const [
-    editingTableId,
-    setEditingTableId,
-  ] = useState(null);
-
-  const [
-    tableForm,
-    setTableForm,
-  ] = useState(
-    emptyTable
-  );
-
-  const [
-    savingTable,
-    setSavingTable,
-  ] = useState(false);
-
-  const [
-    movingGuests,
-    setMovingGuests,
-  ] = useState(false);
-
-  const [
-    dragOverTarget,
-    setDragOverTarget,
-  ] = useState(null);
-
-  const [
-    error,
-    setError,
-  ] = useState("");
-
-  /*
-   * LOAD GUESTS
-   */
-
-  useEffect(() => {
-    const guestsRef =
-      collection(
-        db,
-        "weddings",
-        WEDDING_ID,
-        "guests"
-      );
-
-    const unsubscribe =
-      onSnapshot(
-        guestsRef,
-        (snapshot) => {
-          const data =
-            snapshot.docs.map(
-              (
-                guestDocument
-              ) => ({
-                id:
-                  guestDocument.id,
-
-                ...guestDocument.data(),
-              })
-            );
-
-          data.sort(
-            compareGuestOrder
-          );
-
-          setGuests(
-            data
-          );
-
-          setGuestsLoading(
-            false
-          );
-        },
-        (firebaseError) => {
-          console.error(
-            "Error loading guests:",
-            firebaseError
-          );
-
-          setError(
-            "We couldn't load the guest list."
-          );
-
-          setGuestsLoading(
-            false
-          );
-        }
-      );
-
-    return unsubscribe;
-  }, []);
-
-  /*
-   * LOAD TABLES
-   */
-
-  useEffect(() => {
-    const tablesRef =
-      collection(
-        db,
-        "weddings",
-        WEDDING_ID,
-        "tables"
-      );
-
-    const tablesQuery =
-      query(
-        tablesRef,
-        orderBy(
-          "order",
-          "asc"
-        )
-      );
-
-    const unsubscribe =
-      onSnapshot(
-        tablesQuery,
-        (snapshot) => {
-          const data =
-            snapshot.docs.map(
-              (
-                tableDocument
-              ) => ({
-                id:
-                  tableDocument.id,
-
-                ...tableDocument.data(),
-              })
-            );
-
-          setTables(
-            data
-          );
-
-          setTablesLoading(
-            false
-          );
-        },
-        (firebaseError) => {
-          console.error(
-            "Error loading tables:",
-            firebaseError
-          );
-
-          setError(
-            "We couldn't load the tables."
-          );
-
-          setTablesLoading(
-            false
-          );
-        }
-      );
-
-    return unsubscribe;
-  }, []);
-
-  /*
-   * SEATABLE GUESTS
-   *
-   * Everyone stays on the seating chart
-   * unless they have declined.
-   */
-
-  const seatableGuests =
-    useMemo(
-      () =>
-        guests.filter(
-          (guest) =>
-            guest.rsvpStatus !==
-            "declined"
-        ),
-      [
-        guests,
-      ]
-    );
-
-  /*
-   * RSVP COUNTS
-   */
-
-  const confirmedCount =
-    useMemo(
-      () =>
-        seatableGuests.filter(
-          (guest) =>
-            guest.rsvpStatus ===
-            "attending"
-        ).length,
-      [
-        seatableGuests,
-      ]
-    );
-
-  const pendingCount =
-    useMemo(
-      () =>
-        seatableGuests.filter(
-          (guest) =>
-            guest.rsvpStatus !==
-            "attending"
-        ).length,
-      [
-        seatableGuests,
-      ]
-    );
-
-  /*
-   * UNSEATED
-   */
-
-  const unseatedGuests =
-    useMemo(
-      () =>
-        seatableGuests.filter(
-          (guest) =>
-            !guest.tableId
-        ),
-      [
-        seatableGuests,
-      ]
-    );
-
-  /*
-   * SEARCH UNSEATED
-   */
-
-  const filteredUnseatedGuests =
-    useMemo(
-      () => {
-        const searchValue =
-          search
-            .trim()
-            .toLowerCase();
-
-        if (
-          !searchValue
-        ) {
-          return unseatedGuests;
-        }
-
-        return unseatedGuests.filter(
-          (guest) => {
-            const name =
-              getGuestDisplayName(
-                guest
-              ).toLowerCase();
-
-            const household =
-              String(
-                guest.householdName ||
-                ""
-              ).toLowerCase();
-
-            return (
-              name.includes(
-                searchValue
-              ) ||
-              household.includes(
-                searchValue
-              )
-            );
-          }
-        );
-      },
-      [
-        unseatedGuests,
-        search,
-      ]
-    );
-
-  /*
-   * GROUP UNSEATED BY FAMILY
-   */
-
-  const unseatedGroups =
-    useMemo(
-      () =>
-        groupGuests(
-          filteredUnseatedGuests
-        ),
-      [
-        filteredUnseatedGuests,
-      ]
-    );
-
-  /*
-   * TABLE -> GUEST LOOKUP
-   */
-
-  const tableGuestMap =
-    useMemo(
-      () => {
-        const map =
-          new Map();
-
-        tables.forEach(
-          (table) => {
-            map.set(
-              table.id,
-              []
-            );
-          }
-        );
-
-        seatableGuests.forEach(
-          (guest) => {
-            if (
-              guest.tableId &&
-              map.has(
-                guest.tableId
-              )
-            ) {
-              map
-                .get(
-                  guest.tableId
-                )
-                .push(
-                  guest
-                );
-            }
-          }
-        );
-
-        return map;
-      },
-      [
-        tables,
-        seatableGuests,
-      ]
-    );
-
-  const seatedCount =
-    seatableGuests.length -
-    unseatedGuests.length;
-
-  const totalCapacity =
-    useMemo(
-      () =>
-        tables.reduce(
-          (
-            total,
-            table
-          ) =>
-            total +
-            Number(
-              table.capacity ||
-              0
-            ),
-          0
-        ),
-      [
-        tables,
-      ]
-    );
-
-  const loading =
-    guestsLoading ||
-    tablesLoading;
-
-  /*
-   * ADD TABLE
-   */
-
-  const openAddTable =
-    () => {
-      setEditingTableId(
-        null
-      );
-
-      setTableForm({
-        name:
-          `Table ${
-            tables.length +
-            1
-          }`,
-
-        capacity:
-          8,
-      });
-
-      setError(
-        ""
-      );
-
-      setShowTableModal(
-        true
-      );
-    };
-
-  /*
-   * EDIT TABLE
-   */
-
-  const openEditTable =
-    (table) => {
-      setEditingTableId(
-        table.id
-      );
-
-      setTableForm({
-        name:
-          table.name ||
-          "",
-
-        capacity:
-          table.capacity ||
-          8,
-      });
-
-      setError(
-        ""
-      );
-
-      setShowTableModal(
-        true
-      );
-    };
-
-  const closeTableModal =
-    () => {
-      if (
-        savingTable
-      ) {
-        return;
-      }
-
-      setShowTableModal(
-        false
-      );
-
-      setEditingTableId(
-        null
-      );
-
-      setTableForm(
-        emptyTable
-      );
-
-      setError(
-        ""
-      );
-    };
-
-  const handleTableChange =
-    (event) => {
-      const {
-        name,
-        value,
-      } =
-        event.target;
-
-      setTableForm(
-        (current) => ({
-          ...current,
-
-          [name]:
-            name ===
-            "capacity"
-              ? Number(
-                  value
-                )
-              : value,
-        })
-      );
-    };
-
-  /*
-   * SAVE TABLE
-   */
-
-  const handleSaveTable =
-    async (
-      event
-    ) => {
-      event.preventDefault();
-
-      if (
-        !tableForm.name.trim()
-      ) {
-        setError(
-          "Please enter a table name."
-        );
-
-        return;
-      }
-
-      if (
-        Number(
-          tableForm.capacity
-        ) <
-        1
-      ) {
-        setError(
-          "Table capacity must be at least 1."
-        );
-
-        return;
-      }
-
-      setSavingTable(
-        true
-      );
-
-      setError(
-        ""
-      );
-
-      try {
-        if (
-          editingTableId
-        ) {
-          const currentGuests =
-            tableGuestMap.get(
-              editingTableId
-            ) ||
-            [];
-
-          if (
-            Number(
-              tableForm.capacity
-            ) <
-            currentGuests.length
-          ) {
-            setError(
-              `This table already has ${currentGuests.length} guests. Increase the capacity or move guests first.`
-            );
-
-            setSavingTable(
-              false
-            );
-
-            return;
-          }
-
-          await updateDoc(
-            doc(
-              db,
-              "weddings",
-              WEDDING_ID,
-              "tables",
-              editingTableId
-            ),
-            {
-              name:
-                tableForm.name.trim(),
-
-              capacity:
-                Number(
-                  tableForm.capacity
-                ),
-
-              updatedAt:
-                serverTimestamp(),
-
-              updatedBy:
-                user?.uid ||
-                null,
-            }
-          );
-        } else {
-          await addDoc(
-            collection(
-              db,
-              "weddings",
-              WEDDING_ID,
-              "tables"
-            ),
-            {
-              name:
-                tableForm.name.trim(),
-
-              capacity:
-                Number(
-                  tableForm.capacity
-                ),
-
-              order:
-                getNextTableOrder(
-                  tables
-                ),
-
-              createdAt:
-                serverTimestamp(),
-
-              updatedAt:
-                serverTimestamp(),
-
-              createdBy:
-                user?.uid ||
-                null,
-
-              updatedBy:
-                user?.uid ||
-                null,
-            }
-          );
-        }
-
-        setShowTableModal(
-          false
-        );
-
-        setEditingTableId(
-          null
-        );
-
-        setTableForm(
-          emptyTable
-        );
-      } catch (firebaseError) {
-        console.error(
-          "Error saving table:",
-          firebaseError
-        );
-
-        setError(
-          "We couldn't save this table."
-        );
-      } finally {
-        setSavingTable(
-          false
-        );
-      }
-    };
-
-  /*
-   * CLEAR TABLE
-   */
-
-  const handleClearTable =
-    async (
-      table
-    ) => {
-      const tableGuests =
-        tableGuestMap.get(
-          table.id
-        ) ||
-        [];
-
-      if (
-        !tableGuests.length
-      ) {
-        return;
-      }
-
-      const confirmed =
-        window.confirm(
-          `Clear ${table.name}? All ${tableGuests.length} guests will return to Unseated.`
-        );
-
-      if (
-        !confirmed
-      ) {
-        return;
-      }
-
-      setMovingGuests(
-        true
-      );
-
-      setError(
-        ""
-      );
-
-      try {
-        const batch =
-          writeBatch(
-            db
-          );
-
-        tableGuests.forEach(
-          (guest) => {
-            batch.update(
-              doc(
-                db,
-                "weddings",
-                WEDDING_ID,
-                "guests",
-                guest.id
-              ),
-              {
-                tableId:
-                  null,
-
-                updatedAt:
-                  serverTimestamp(),
-
-                updatedBy:
-                  user?.uid ||
-                  null,
-              }
-            );
-          }
-        );
-
-        await batch.commit();
-      } catch (firebaseError) {
-        console.error(
-          "Error clearing table:",
-          firebaseError
-        );
-
-        setError(
-          "We couldn't clear this table."
-        );
-      } finally {
-        setMovingGuests(
-          false
-        );
-      }
-    };
-
-  /*
-   * DELETE TABLE
-   */
-
-  const handleDeleteTable =
-    async (
-      table
-    ) => {
-      const tableGuests =
-        tableGuestMap.get(
-          table.id
-        ) ||
-        [];
-
-      const confirmed =
-        window.confirm(
-          tableGuests.length
-            ? `Delete ${table.name}? Its ${tableGuests.length} guests will return to Unseated.`
-            : `Delete ${table.name}?`
-        );
-
-      if (
-        !confirmed
-      ) {
-        return;
-      }
-
-      setMovingGuests(
-        true
-      );
-
-      setError(
-        ""
-      );
-
-      try {
-        if (
-          tableGuests.length >
-          0
-        ) {
-          const batch =
-            writeBatch(
-              db
-            );
-
-          tableGuests.forEach(
-            (guest) => {
-              batch.update(
-                doc(
-                  db,
-                  "weddings",
-                  WEDDING_ID,
-                  "guests",
-                  guest.id
-                ),
-                {
-                  tableId:
-                    null,
-
-                  updatedAt:
-                    serverTimestamp(),
-
-                  updatedBy:
-                    user?.uid ||
-                    null,
-                }
-              );
-            }
-          );
-
-          await batch.commit();
-        }
-
-        await deleteDoc(
-          doc(
-            db,
-            "weddings",
-            WEDDING_ID,
-            "tables",
-            table.id
-          )
-        );
-      } catch (firebaseError) {
-        console.error(
-          "Error deleting table:",
-          firebaseError
-        );
-
-        setError(
-          "We couldn't delete this table."
-        );
-      } finally {
-        setMovingGuests(
-          false
-        );
-      }
-    };
-
-  /*
-   * DRAG START: ONE GUEST
-   */
-
-  const handleGuestDragStart =
-    (
-      event,
+function getGuestDisplayName(
+  guest
+) {
+  if (
+    guest.isUnnamedGuest
+  ) {
+    if (
+      guest.guestOfName
+    ) {
+      return `Guest of ${guest.guestOfName}`;
+    }
+
+    return "Guest";
+  }
+
+  const fullName = [
+    guest.firstName,
+    guest.lastName,
+  ]
+    .filter(
+      (value) =>
+        value &&
+        String(value).trim()
+    )
+    .join(" ")
+    .trim();
+
+  if (fullName) {
+    return fullName;
+  }
+
+  if (
+    guest.name &&
+    String(guest.name).trim()
+  ) {
+    return String(
+      guest.name
+    ).trim();
+  }
+
+  if (
+    guest.displayName &&
+    String(guest.displayName).trim()
+  ) {
+    return String(
+      guest.displayName
+    ).trim();
+  }
+
+  if (
+    guest.fullName &&
+    String(guest.fullName).trim()
+  ) {
+    return String(
+      guest.fullName
+    ).trim();
+  }
+
+  return "Unnamed Guest";
+}
+
+
+function getInitials(
+  guest
+) {
+  if (
+    guest.isUnnamedGuest
+  ) {
+    return "+1";
+  }
+
+  const displayName =
+    getGuestDisplayName(
       guest
-    ) => {
-      event.dataTransfer.effectAllowed =
-        "move";
+    );
 
-      event.dataTransfer.setData(
-        "text/plain",
-        JSON.stringify({
-          type:
-            "guest",
+  const parts =
+    displayName
+      .split(/\s+/)
+      .filter(Boolean);
 
-          guestIds: [
-            guest.id,
-          ],
-        })
-      );
-    };
+  if (
+    parts.length >= 2
+  ) {
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+  }
 
-  /*
-   * DRAG START: WHOLE FAMILY
-   */
+  if (
+    parts.length === 1
+  ) {
+    return parts[0][0].toUpperCase();
+  }
 
-  const handleFamilyDragStart =
-    (
-      event,
-      group
-    ) => {
-      event.dataTransfer.effectAllowed =
-        "move";
+  return "?";
+}
 
-      event.dataTransfer.setData(
-        "text/plain",
-        JSON.stringify({
-          type:
-            "family",
 
-          guestIds:
-            group.guests.map(
-              (guest) =>
-                guest.id
-            ),
-        })
-      );
-    };
+function compareGuestOrder(
+  a,
+  b
+) {
+  return getGuestDisplayName(
+    a
+  ).localeCompare(
+    getGuestDisplayName(
+      b
+    )
+  );
+}
 
-  /*
-   * DROP ON TABLE
-   */
 
-  const handleDropOnTable =
-    async (
-      event,
-      table
-    ) => {
-      event.preventDefault();
+function groupGuests(
+  guests
+) {
+  const groups = [];
+  const householdMap =
+    new Map();
 
-      setDragOverTarget(
-        null
-      );
-
-      const payload =
-        readDragPayload(
-          event
-        );
-
+  guests.forEach(
+    (guest) => {
       if (
-        !payload ||
-        !payload.guestIds?.length
+        guest.householdId
       ) {
-        return;
-      }
+        if (
+          !householdMap.has(
+            guest.householdId
+          )
+        ) {
+          const group = {
+            id: guest.householdId,
+            name:
+              guest.householdName ||
+              "Family",
+            householdName:
+              guest.householdName ||
+              "",
+            guests: [],
+          };
 
-      const moving =
-        seatableGuests.filter(
-          (guest) =>
-            payload.guestIds.includes(
-              guest.id
-            )
-        );
-
-      if (
-        !moving.length
-      ) {
-        return;
-      }
-
-      const currentGuests =
-        tableGuestMap.get(
-          table.id
-        ) ||
-        [];
-
-      const movingFromElsewhere =
-        moving.filter(
-          (guest) =>
-            guest.tableId !==
-            table.id
-        );
-
-      const newCount =
-        currentGuests.length +
-        movingFromElsewhere.length;
-
-      if (
-        newCount >
-        Number(
-          table.capacity ||
-          0
-        )
-      ) {
-        setError(
-          `${table.name} only has ${table.capacity} seats. This move would put ${newCount} guests at the table.`
-        );
-
-        return;
-      }
-
-      await assignGuestsToTable(
-        moving.map(
-          (guest) =>
-            guest.id
-        ),
-        table.id
-      );
-    };
-
-  /*
-   * DROP BACK INTO UNSEATED
-   */
-
-  const handleDropUnseated =
-    async (
-      event
-    ) => {
-      event.preventDefault();
-
-      setDragOverTarget(
-        null
-      );
-
-      const payload =
-        readDragPayload(
-          event
-        );
-
-      if (
-        !payload ||
-        !payload.guestIds?.length
-      ) {
-        return;
-      }
-
-      await assignGuestsToTable(
-        payload.guestIds,
-        null
-      );
-    };
-
-  /*
-   * SAVE TABLE ASSIGNMENT
-   */
-
-  const assignGuestsToTable =
-    async (
-      guestIds,
-      tableId
-    ) => {
-      if (
-        !guestIds.length
-      ) {
-        return;
-      }
-
-      setMovingGuests(
-        true
-      );
-
-      setError(
-        ""
-      );
-
-      try {
-        const batch =
-          writeBatch(
-            db
+          householdMap.set(
+            guest.householdId,
+            group
           );
 
-        guestIds.forEach(
-          (guestId) => {
-            batch.update(
-              doc(
-                db,
-                "weddings",
-                WEDDING_ID,
-                "guests",
-                guestId
-              ),
-              {
-                tableId,
+          groups.push(
+            group
+          );
+        }
 
-                updatedAt:
-                  serverTimestamp(),
+        householdMap
+          .get(
+            guest.householdId
+          )
+          .guests.push(
+            guest
+          );
 
-                updatedBy:
-                  user?.uid ||
-                  null,
-              }
-            );
-          }
-        );
-
-        await batch.commit();
-      } catch (firebaseError) {
-        console.error(
-          "Error moving guests:",
-          firebaseError
-        );
-
-        setError(
-          "We couldn't update the seating assignment."
-        );
-      } finally {
-        setMovingGuests(
-          false
-        );
+        return;
       }
-    };
 
-  return (
-    <main className="page seating-page">
-      <GuestPlanningNav />
-
-      <div className="seating-page-header">
-        <div>
-          <p className="page-eyebrow">
-            Guests
-          </p>
-
-          <h1 className="page-title">
-            Seating Chart
-          </h1>
-
-          <p className="page-description">
-            Arrange confirmed and pending guests while
-            RSVP responses are still coming in.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="primary-button seating-add-table"
-          onClick={
-            openAddTable
-          }
-        >
-          <Plus
-            size={17}
-          />
-
-          Add Table
-        </button>
-      </div>
-
-      <section className="seating-stats">
-        <SeatingStat
-          label="Seating Guests"
-          value={
-            seatableGuests.length
-          }
-        />
-
-        <SeatingStat
-          label="RSVP Yes"
-          value={
-            confirmedCount
-          }
-          type="confirmed"
-        />
-
-        <SeatingStat
-          label="Awaiting RSVP"
-          value={
-            pendingCount
-          }
-          type="pending"
-        />
-
-        <SeatingStat
-          label="Seated"
-          value={
-            seatedCount
-          }
-          type="seated"
-        />
-
-        <SeatingStat
-          label="Unseated"
-          value={
-            unseatedGuests.length
-          }
-        />
-
-        <SeatingStat
-          label="Total Seats"
-          value={
-            totalCapacity
-          }
-        />
-      </section>
-
-      <div className="seating-rsvp-legend">
-        <span>
-          <i className="confirmed" />
-
-          RSVP Yes
-        </span>
-
-        <span>
-          <i className="pending" />
-
-          Awaiting RSVP
-        </span>
-
-        <span className="seating-progress-text">
-          {seatedCount} of{" "}
-          {seatableGuests.length} seated
-          across{" "}
-          {tables.length}{" "}
-          {tables.length ===
-          1
-            ? "table"
-            : "tables"}
-        </span>
-      </div>
-
-      {error && (
-        <div className="seating-error">
-          <span>
-            {error}
-          </span>
-
-          <button
-            type="button"
-            onClick={() =>
-              setError(
-                ""
-              )
-            }
-          >
-            <X
-              size={15}
-            />
-          </button>
-        </div>
-      )}
-
-      {loading ? (
-        <div className="content-card seating-loading">
-          <LoaderCircle
-            className="spinner"
-            size={25}
-          />
-
-          <p>
-            Loading seating chart...
-          </p>
-        </div>
-      ) : (
-        <div className="seating-layout">
-          <aside
-            className={`unseated-panel ${
-              dragOverTarget ===
-              "unseated"
-                ? "drag-over"
-                : ""
-            }`}
-            onDragOver={(event) => {
-              event.preventDefault();
-
-              setDragOverTarget(
-                "unseated"
-              );
-            }}
-            onDragLeave={() =>
-              setDragOverTarget(
-                null
-              )
-            }
-            onDrop={
-              handleDropUnseated
-            }
-          >
-            <div className="unseated-header">
-              <div>
-                <p className="card-eyebrow">
-                  Unseated
-                </p>
-
-                <h2>
-                  Guests
-                </h2>
-              </div>
-
-              <span className="unseated-count">
-                {unseatedGuests.length}
-              </span>
-            </div>
-
-            <div className="seating-search">
-              <Search
-                size={16}
-              />
-
-              <input
-                type="search"
-                value={
-                  search
-                }
-                onChange={(event) =>
-                  setSearch(
-                    event.target.value
-                  )
-                }
-                placeholder="Search unseated guests..."
-              />
-            </div>
-
-            <div className="unseated-drop-hint">
-              Drag a guest or an entire family onto a
-              table. Drop them back here to remove
-              their seating assignment.
-            </div>
-
-            {unseatedGroups.length ===
-            0 ? (
-              <div className="unseated-empty">
-                <Check
-                  size={30}
-                />
-
-                <strong>
-                  {unseatedGuests.length ===
-                  0
-                    ? "Everyone is seated"
-                    : "No matches"}
-                </strong>
-
-                <span>
-                  {unseatedGuests.length ===
-                  0
-                    ? "Every guest who has not declined currently has a table assignment."
-                    : "Try a different search."}
-                </span>
-              </div>
-            ) : (
-              <div className="unseated-groups">
-                {unseatedGroups.map(
-                  (group) => (
-                    <GuestGroup
-                      key={
-                        group.id
-                      }
-                      group={
-                        group
-                      }
-                      onGuestDragStart={
-                        handleGuestDragStart
-                      }
-                      onFamilyDragStart={
-                        handleFamilyDragStart
-                      }
-                    />
-                  )
-                )}
-              </div>
-            )}
-          </aside>
-
-          <section className="table-area">
-            {tables.length ===
-            0 ? (
-              <div className="content-card seating-no-tables">
-                <Armchair
-                  size={40}
-                  strokeWidth={1.3}
-                />
-
-                <h2>
-                  No tables yet
-                </h2>
-
-                <p>
-                  Add your reception tables, then drag
-                  guests into them.
-                </p>
-
-                <button
-                  type="button"
-                  className="primary-button"
-                  onClick={
-                    openAddTable
-                  }
-                >
-                  <Plus
-                    size={17}
-                  />
-
-                  Add First Table
-                </button>
-              </div>
-            ) : (
-              <div className="table-grid">
-                {tables.map(
-                  (table) => (
-                    <TableCard
-                      key={
-                        table.id
-                      }
-                      table={
-                        table
-                      }
-                      guests={
-                        tableGuestMap.get(
-                          table.id
-                        ) ||
-                        []
-                      }
-                      dragOver={
-                        dragOverTarget ===
-                        table.id
-                      }
-                      onDragOver={(event) => {
-                        event.preventDefault();
-
-                        setDragOverTarget(
-                          table.id
-                        );
-                      }}
-                      onDragLeave={() =>
-                        setDragOverTarget(
-                          null
-                        )
-                      }
-                      onDrop={(event) =>
-                        handleDropOnTable(
-                          event,
-                          table
-                        )
-                      }
-                      onGuestDragStart={
-                        handleGuestDragStart
-                      }
-                      onEdit={() =>
-                        openEditTable(
-                          table
-                        )
-                      }
-                      onClear={() =>
-                        handleClearTable(
-                          table
-                        )
-                      }
-                      onDelete={() =>
-                        handleDeleteTable(
-                          table
-                        )
-                      }
-                    />
-                  )
-                )}
-              </div>
-            )}
-          </section>
-        </div>
-      )}
-
-      {movingGuests && (
-        <div className="seating-saving-indicator">
-          <LoaderCircle
-            className="spinner"
-            size={16}
-          />
-
-          Saving seating...
-        </div>
-      )}
-
-      {showTableModal && (
-        <div
-          className="modal-backdrop"
-          onMouseDown={
-            closeTableModal
-          }
-        >
-          <div
-            className="task-modal seating-table-modal"
-            onMouseDown={(event) =>
-              event.stopPropagation()
-            }
-          >
-            <div className="task-modal-header">
-              <div>
-                <p className="card-eyebrow">
-                  {editingTableId
-                    ? "Edit"
-                    : "New Table"}
-                </p>
-
-                <h2>
-                  {editingTableId
-                    ? "Edit Table"
-                    : "Add Table"}
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                className="icon-button"
-                onClick={
-                  closeTableModal
-                }
-                disabled={
-                  savingTable
-                }
-              >
-                <X
-                  size={19}
-                />
-              </button>
-            </div>
-
-            <form
-              className="task-form"
-              onSubmit={
-                handleSaveTable
-              }
-            >
-              <label className="form-field">
-                <span>
-                  Table Name
-                </span>
-
-                <input
-                  type="text"
-                  name="name"
-                  value={
-                    tableForm.name
-                  }
-                  onChange={
-                    handleTableChange
-                  }
-                  placeholder="Table 1"
-                  autoFocus
-                />
-              </label>
-
-              <label className="form-field">
-                <span>
-                  Number of Seats
-                </span>
-
-                <input
-                  type="number"
-                  name="capacity"
-                  min="1"
-                  max="30"
-                  value={
-                    tableForm.capacity
-                  }
-                  onChange={
-                    handleTableChange
-                  }
-                />
-              </label>
-
-              {error && (
-                <div className="seating-modal-error">
-                  {error}
-                </div>
-              )}
-
-              <div className="task-form-actions">
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={
-                    closeTableModal
-                  }
-                  disabled={
-                    savingTable
-                  }
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="primary-button"
-                  disabled={
-                    savingTable
-                  }
-                >
-                  {savingTable ? (
-                    <>
-                      <LoaderCircle
-                        className="spinner"
-                        size={17}
-                      />
-
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Check
-                        size={17}
-                      />
-
-                      {editingTableId
-                        ? "Save Changes"
-                        : "Add Table"}
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </main>
+      groups.push({
+        id: `guest-${guest.id}`,
+        name:
+          getGuestDisplayName(
+            guest
+          ),
+        householdName: "",
+        guests: [guest],
+      });
+    }
   );
+
+  groups.forEach(
+    (group) => {
+      group.guests.sort(
+        compareGuestOrder
+      );
+    }
+  );
+
+  groups.sort(
+    (a, b) =>
+      a.name.localeCompare(
+        b.name
+      )
+  );
+
+  return groups;
 }
 
-/*
- * GUEST / SEATING NAV
- */
 
-function GuestPlanningNav() {
-  return (
-    <nav
-      className="guest-planning-nav"
-      aria-label="Guest planning"
-    >
-      <NavLink
-        to="/admin/guests"
-        className={({
-          isActive,
-        }) =>
-          `guest-planning-nav-link ${
-            isActive
-              ? "active"
-              : ""
-          }`
-        }
-      >
-        Guests
-      </NavLink>
-
-      <NavLink
-        to="/admin/seating-chart"
-        className={({
-          isActive,
-        }) =>
-          `guest-planning-nav-link ${
-            isActive
-              ? "active"
-              : ""
-          }`
-        }
-      >
-        Seating Chart
-      </NavLink>
-    </nav>
-  );
-}
-
-/*
- * STAT
- */
-
-function SeatingStat({
-  label,
-  value,
-  type = "",
+function DraggableGuest({
+  guest,
+  onDragStart,
+  compact = false,
 }) {
+  const rsvpClass =
+    guest.rsvpStatus ===
+      "attending"
+      ? "confirmed"
+      : "pending";
+
   return (
     <div
-      className={`seating-stat-card ${
-        type
-          ? `seating-stat-${type}`
-          : ""
-      }`}
+      className={`seating-guest ${compact
+        ? "compact"
+        : ""
+        }`}
+      draggable
+      onDragStart={(event) =>
+        onDragStart(
+          event,
+          guest
+        )
+      }
     >
-      <span>
-        {label}
-      </span>
+      <GripVertical
+        size={14}
+        className="guest-grip"
+      />
 
-      <strong>
-        {value}
-      </strong>
+      <div
+        className={`seating-guest-avatar ${rsvpClass}`}
+      >
+        {getInitials(
+          guest
+        )}
+      </div>
+
+      <div className="seating-guest-name">
+        <strong>
+          {getGuestDisplayName(guest)}
+        </strong>
+
+        {guest.householdName && (
+          <span>
+            {guest.householdName}
+          </span>
+        )}
+      </div>
     </div>
   );
 }
 
-/*
- * UNSEATED FAMILY GROUP
- */
 
 function GuestGroup({
   group,
@@ -1717,7 +298,7 @@ function GuestGroup({
 }) {
   const isFamily =
     group.guests.length >
-      1 ||
+    1 ||
     Boolean(
       group.householdName
     );
@@ -1744,7 +325,7 @@ function GuestGroup({
           <span>
             {group.guests.length}{" "}
             {group.guests.length ===
-            1
+              1
               ? "guest"
               : "guests"}
           </span>
@@ -1783,85 +364,86 @@ function GuestGroup({
   );
 }
 
-/*
- * TABLE CARD
- */
 
 function TableCard({
   table,
   guests,
-  dragOver,
-  onDragOver,
-  onDragLeave,
-  onDrop,
   onGuestDragStart,
+  onDrop,
   onEdit,
-  onClear,
   onDelete,
 }) {
-  const capacity =
-    Number(
-      table.capacity ||
-      0
-    );
-
-  const remaining =
-    capacity -
-    guests.length;
-
-  const full =
-    remaining <=
-    0;
-
-  const confirmedAtTable =
+  const confirmedCount =
     guests.filter(
       (guest) =>
         guest.rsvpStatus ===
         "attending"
     ).length;
 
-  const pendingAtTable =
-    guests.length -
-    confirmedAtTable;
+  const pendingCount =
+    guests.filter(
+      (guest) =>
+        guest.rsvpStatus !==
+        "attending"
+    ).length;
+
+  const capacity =
+    Number(
+      table.capacity
+    ) || 0;
+
+  const occupancyPercent =
+    capacity > 0
+      ? Math.min(
+        (guests.length /
+          capacity) *
+        100,
+        100
+      )
+      : 0;
+
+  const isFull =
+    capacity > 0 &&
+    guests.length >=
+    capacity;
 
   return (
     <article
-      className={`seating-table-card ${
-        dragOver
-          ? "drag-over"
-          : ""
-      } ${
-        full
-          ? "table-full"
-          : ""
-      }`}
-      onDragOver={
-        onDragOver
+      className={`seating-table-card ${isFull
+        ? "full"
+        : ""
+        }`}
+      onDragOver={(event) =>
+        event.preventDefault()
       }
-      onDragLeave={
-        onDragLeave
-      }
-      onDrop={
-        onDrop
+      onDrop={(event) =>
+        onDrop(
+          event,
+          table.id
+        )
       }
     >
       <div className="seating-table-header">
         <div>
-          <p className="card-eyebrow">
-            Table
-          </p>
-
-          <h2>
+          <h3>
             {table.name}
-          </h2>
+          </h3>
+
+          {table.location && (
+            <span>
+              {table.location}
+            </span>
+          )}
         </div>
 
         <div className="seating-table-actions">
           <button
             type="button"
             className="icon-button"
-            onClick={
-              onEdit
+            onClick={() =>
+              onEdit(
+                table
+              )
             }
             title="Edit table"
           >
@@ -1872,26 +454,11 @@ function TableCard({
 
           <button
             type="button"
-            className="icon-button"
-            onClick={
-              onClear
-            }
-            title="Clear table"
-            disabled={
-              guests.length ===
-              0
-            }
-          >
-            <X
-              size={15}
-            />
-          </button>
-
-          <button
-            type="button"
             className="icon-button danger"
-            onClick={
-              onDelete
+            onClick={() =>
+              onDelete(
+                table
+              )
             }
             title="Delete table"
           >
@@ -1905,384 +472,1431 @@ function TableCard({
       <div className="table-capacity-row">
         <span>
           {guests.length} /{" "}
-          {capacity} seats
+          {capacity}
         </span>
 
-        <span
-          className={
-            full
-              ? "capacity-full"
-              : ""
-          }
-        >
-          {full
-            ? "Full"
-            : `${remaining} open`}
-        </span>
-      </div>
-
-      <div className="table-capacity-bar">
-        <div
-          style={{
-            width: `${Math.min(
-              100,
-              capacity
-                ? (
-                    guests.length /
-                    capacity
-                  ) *
-                  100
-                : 0
-            )}%`,
-          }}
-        />
-      </div>
-
-      {guests.length >
-        0 && (
-        <div className="table-rsvp-summary">
-          <span>
-            <i className="confirmed" />
-
-            {confirmedAtTable} yes
-          </span>
-
-          <span>
-            <i className="pending" />
-
-            {pendingAtTable} pending
-          </span>
+        <div className="table-capacity-bar">
+          <div
+            style={{
+              width: `${occupancyPercent}%`,
+            }}
+          />
         </div>
-      )}
+      </div>
+
+      <div className="table-rsvp-summary">
+        <span>
+          <Check
+            size={13}
+          />
+          {confirmedCount} confirmed
+        </span>
+
+        {pendingCount >
+          0 && (
+            <span>
+              {pendingCount} pending
+            </span>
+          )}
+      </div>
 
       <div className="table-guests">
         {guests.length ===
-        0 ? (
+          0 ? (
           <div className="empty-table-drop">
             <Armchair
-              size={24}
+              size={20}
             />
-
             <span>
               Drop guests here
             </span>
           </div>
         ) : (
-          [...guests]
-            .sort(
-              compareGuestOrder
+          guests.map(
+            (guest) => (
+              <DraggableGuest
+                key={
+                  guest.id
+                }
+                guest={
+                  guest
+                }
+                onDragStart={
+                  onGuestDragStart
+                }
+                compact
+              />
             )
-            .map(
-              (guest) => (
-                <DraggableGuest
-                  key={
-                    guest.id
-                  }
-                  guest={
-                    guest
-                  }
-                  onDragStart={
-                    onGuestDragStart
-                  }
-                  compact
-                />
-              )
-            )
+          )
         )}
       </div>
     </article>
   );
 }
 
-/*
- * DRAGGABLE GUEST
- */
 
-function DraggableGuest({
-  guest,
-  onDragStart,
-  compact = false,
+function TableModal({
+  table,
+  onClose,
+  onSave,
 }) {
-  const rsvpClass =
-    guest.rsvpStatus ===
-    "attending"
-      ? "confirmed"
-      : "pending";
+  const [
+    name,
+    setName,
+  ] = useState(
+    table?.name || ""
+  );
+
+  const [
+    capacity,
+    setCapacity,
+  ] = useState(
+    table?.capacity ||
+    8
+  );
+
+  const [
+    location,
+    setLocation,
+  ] = useState(
+    table?.location || ""
+  );
+
+  const handleSubmit = (
+    event
+  ) => {
+    event.preventDefault();
+
+    const trimmedName =
+      name.trim();
+
+    if (!trimmedName) {
+      return;
+    }
+
+    onSave({
+      name: trimmedName,
+      capacity:
+        Number(
+          capacity
+        ) || 8,
+      location:
+        location.trim(),
+    });
+  };
 
   return (
     <div
-      className={`seating-guest ${
-        compact
-          ? "compact"
-          : ""
-      }`}
-      draggable
-      onDragStart={(event) =>
-        onDragStart(
-          event,
-          guest
-        )
-      }
+      className="seating-table-modal-backdrop"
+      onMouseDown={(event) => {
+        if (
+          event.target ===
+          event.currentTarget
+        ) {
+          onClose();
+        }
+      }}
     >
-      <GripVertical
-        size={14}
-        className="guest-grip"
-      />
+      <div className="seating-table-modal">
+        <div className="seating-table-modal-header">
+          <div>
+            <h2>
+              {table
+                ? "Edit Table"
+                : "Add Table"}
+            </h2>
+          </div>
 
-      <div
-        className={`seating-guest-avatar ${rsvpClass}`}
-      >
-        {getInitials(
-          guest
-        )}
-      </div>
+          <button
+            type="button"
+            className="icon-button"
+            onClick={
+              onClose
+            }
+          >
+            <X
+              size={18}
+            />
+          </button>
+        </div>
 
-      <div className="seating-guest-name">
-        <strong>
-          {getGuestDisplayName(
-            guest
-          )}
-        </strong>
+        <form
+          onSubmit={
+            handleSubmit
+          }
+        >
+          <label>
+            <span>
+              Table name
+            </span>
 
-        {guest.householdName && (
-          <span>
-            {guest.householdName}
-          </span>
-        )}
+            <input
+              type="text"
+              value={
+                name
+              }
+              onChange={(event) =>
+                setName(
+                  event.target
+                    .value
+                )
+              }
+              placeholder="Table 1"
+              autoFocus
+            />
+          </label>
+
+          <label>
+            <span>
+              Capacity
+            </span>
+
+            <input
+              type="number"
+              min="1"
+              value={
+                capacity
+              }
+              onChange={(event) =>
+                setCapacity(
+                  event.target
+                    .value
+                )
+              }
+            />
+          </label>
+
+          <label>
+            <span>
+              Location
+              <small>
+                Optional
+              </small>
+            </span>
+
+            <input
+              type="text"
+              value={
+                location
+              }
+              onChange={(event) =>
+                setLocation(
+                  event.target
+                    .value
+                )
+              }
+              placeholder="Barn"
+            />
+          </label>
+
+          <div className="seating-table-modal-actions">
+            <button
+              type="button"
+              className="button secondary"
+              onClick={
+                onClose
+              }
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              className="button primary"
+              disabled={
+                !name.trim()
+              }
+            >
+              <Check
+                size={16}
+              />
+              {table
+                ? "Save Changes"
+                : "Add Table"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
 }
 
-/*
- * GROUP GUESTS BY HOUSEHOLD
- */
 
-function groupGuests(
-  guests
-) {
-  const groups =
-    [];
+export default function SeatingChart() {
+  const {
+    user,
+  } = useAuth();
 
-  const householdMap =
-    new Map();
+  const [
+    guests,
+    setGuests,
+  ] = useState([]);
 
-  guests.forEach(
-    (guest) => {
-      if (
-        guest.householdId
-      ) {
+  const [
+    tables,
+    setTables,
+  ] = useState([]);
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(
+    true
+  );
+
+  const [
+    error,
+    setError,
+  ] = useState("");
+
+  const [
+    search,
+    setSearch,
+  ] = useState("");
+
+  const [
+    modalTable,
+    setModalTable,
+  ] = useState(
+    null
+  );
+
+  const [
+    isAddingTable,
+    setIsAddingTable,
+  ] = useState(
+    false
+  );
+
+  const [
+    saving,
+    setSaving,
+  ] = useState(
+    false
+  );
+
+  useEffect(() => {
+    if (!user) {
+      return undefined;
+    }
+
+    const guestsRef =
+      collection(
+        db,
+        "weddings",
+        WEDDING_ID,
+        "guests"
+      );
+
+    const tablesRef =
+      collection(
+        db,
+        "weddings",
+        WEDDING_ID,
+        "tables"
+      );
+
+    const guestsQuery =
+      query(
+        guestsRef,
+        orderBy(
+          "lastName"
+        )
+      );
+
+    const tablesQuery =
+      query(
+        tablesRef,
+        orderBy(
+          "order"
+        )
+      );
+
+    let guestsLoaded =
+      false;
+
+    let tablesLoaded =
+      false;
+
+    const checkLoaded =
+      () => {
         if (
-          !householdMap.has(
-            guest.householdId
-          )
+          guestsLoaded &&
+          tablesLoaded
         ) {
-          const group = {
-            id:
-              guest.householdId,
+          setLoading(
+            false
+          );
+        }
+      };
 
-            name:
-              guest.householdName ||
-              "Family",
+    const unsubscribeGuests =
+      onSnapshot(
+        guestsQuery,
+        (snapshot) => {
+          const guestData =
+            snapshot.docs.map(
+              (
+                guestDoc
+              ) => ({
+                id:
+                  guestDoc.id,
+                ...guestDoc.data(),
+              })
+            );
 
-            householdName:
-              guest.householdName ||
-              "",
-
-            guests:
-              [],
-          };
-
-          householdMap.set(
-            guest.householdId,
-            group
+          setGuests(
+            guestData
           );
 
-          groups.push(
-            group
+          guestsLoaded =
+            true;
+
+          checkLoaded();
+        },
+        (snapshotError) => {
+          console.error(
+            "Error loading guests:",
+            snapshotError
+          );
+
+          setError(
+            "Unable to load guests."
+          );
+
+          guestsLoaded =
+            true;
+
+          checkLoaded();
+        }
+      );
+
+    const unsubscribeTables =
+      onSnapshot(
+        tablesQuery,
+        (snapshot) => {
+          const tableData =
+            snapshot.docs.map(
+              (
+                tableDoc
+              ) => ({
+                id:
+                  tableDoc.id,
+                ...tableDoc.data(),
+              })
+            );
+
+          setTables(
+            tableData
+          );
+
+          tablesLoaded =
+            true;
+
+          checkLoaded();
+        },
+        (snapshotError) => {
+          console.error(
+            "Error loading tables:",
+            snapshotError
+          );
+
+          setError(
+            "Unable to load tables."
+          );
+
+          tablesLoaded =
+            true;
+
+          checkLoaded();
+        }
+      );
+
+    return () => {
+      unsubscribeGuests();
+      unsubscribeTables();
+    };
+  }, [user]);
+
+  const attendingGuests =
+    useMemo(
+      () =>
+        guests.filter(
+          (guest) =>
+            guest.rsvpStatus !==
+            "declined"
+        ),
+      [guests]
+    );
+
+  const seatedGuests =
+    useMemo(
+      () =>
+        attendingGuests.filter(
+          (guest) =>
+            guest.tableId
+        ),
+      [attendingGuests]
+    );
+
+  const unseatedGuests =
+    useMemo(
+      () =>
+        attendingGuests.filter(
+          (guest) =>
+            !guest.tableId
+        ),
+      [attendingGuests]
+    );
+
+  const confirmedGuests =
+    useMemo(
+      () =>
+        attendingGuests.filter(
+          (guest) =>
+            guest.rsvpStatus ===
+            "attending"
+        ),
+      [attendingGuests]
+    );
+
+  const pendingGuests =
+    useMemo(
+      () =>
+        attendingGuests.filter(
+          (guest) =>
+            guest.rsvpStatus !==
+            "attending"
+        ),
+      [attendingGuests]
+    );
+
+  const filteredUnseatedGuests =
+    useMemo(() => {
+      const normalizedSearch =
+        search
+          .trim()
+          .toLowerCase();
+
+      if (
+        !normalizedSearch
+      ) {
+        return unseatedGuests;
+      }
+
+      return unseatedGuests.filter(
+        (guest) => {
+          const name =
+            getGuestDisplayName(
+              guest
+            ).toLowerCase();
+
+          const household =
+            (
+              guest.householdName ||
+              ""
+            ).toLowerCase();
+
+          return (
+            name.includes(
+              normalizedSearch
+            ) ||
+            household.includes(
+              normalizedSearch
+            )
+          );
+        }
+      );
+    }, [
+      search,
+      unseatedGuests,
+    ]);
+
+  const unseatedGroups =
+    useMemo(
+      () =>
+        groupGuests(
+          filteredUnseatedGuests
+        ),
+      [
+        filteredUnseatedGuests,
+      ]
+    );
+
+  const guestsByTable =
+    useMemo(() => {
+      const grouped =
+        new Map();
+
+      tables.forEach(
+        (table) => {
+          grouped.set(
+            table.id,
+            []
+          );
+        }
+      );
+
+      seatedGuests.forEach(
+        (guest) => {
+          if (
+            !grouped.has(
+              guest.tableId
+            )
+          ) {
+            grouped.set(
+              guest.tableId,
+              []
+            );
+          }
+
+          grouped
+            .get(
+              guest.tableId
+            )
+            .push(
+              guest
+            );
+        }
+      );
+
+      grouped.forEach(
+        (tableGuests) => {
+          tableGuests.sort(
+            compareGuestOrder
+          );
+        }
+      );
+
+      return grouped;
+    }, [
+      tables,
+      seatedGuests,
+    ]);
+
+  const totalCapacity =
+    useMemo(
+      () =>
+        tables.reduce(
+          (
+            total,
+            table
+          ) =>
+            total +
+            (Number(
+              table.capacity
+            ) || 0),
+          0
+        ),
+      [tables]
+    );
+
+  const seatingPercent =
+    attendingGuests.length >
+      0
+      ? Math.round(
+        (seatedGuests.length /
+          attendingGuests.length) *
+        100
+      )
+      : 0;
+
+  const handleGuestDragStart =
+    (
+      event,
+      guest
+    ) => {
+      event.dataTransfer.effectAllowed =
+        "move";
+
+      event.dataTransfer.setData(
+        "text/plain",
+        JSON.stringify({
+          type: "guest",
+          guestId:
+            guest.id,
+        })
+      );
+    };
+
+  const handleFamilyDragStart =
+    (
+      event,
+      group
+    ) => {
+      event.dataTransfer.effectAllowed =
+        "move";
+
+      event.dataTransfer.setData(
+        "text/plain",
+        JSON.stringify({
+          type: "family",
+          guestIds:
+            group.guests.map(
+              (guest) =>
+                guest.id
+            ),
+        })
+      );
+    };
+
+  const handleDrop =
+    async (
+      event,
+      tableId
+    ) => {
+      event.preventDefault();
+
+      try {
+        const data =
+          JSON.parse(
+            event.dataTransfer.getData(
+              "text/plain"
+            )
+          );
+
+        setSaving(
+          true
+        );
+
+        const batch =
+          writeBatch(
+            db
+          );
+
+        if (
+          data.type ===
+          "guest"
+        ) {
+          const guestRef =
+            doc(
+              db,
+              "weddings",
+              WEDDING_ID,
+              "guests",
+              data.guestId
+            );
+
+          batch.update(
+            guestRef,
+            {
+              tableId,
+              updatedAt:
+                serverTimestamp(),
+            }
           );
         }
 
-        householdMap
-          .get(
-            guest.householdId
-          )
-          .guests.push(
-            guest
+        if (
+          data.type ===
+          "family"
+        ) {
+          data.guestIds.forEach(
+            (
+              guestId
+            ) => {
+              const guestRef =
+                doc(
+                  db,
+                  "weddings",
+                  WEDDING_ID,
+                  "guests",
+                  guestId
+                );
+
+              batch.update(
+                guestRef,
+                {
+                  tableId,
+                  updatedAt:
+                    serverTimestamp(),
+                }
+              );
+            }
+          );
+        }
+
+        await batch.commit();
+      } catch (
+      dropError
+      ) {
+        console.error(
+          "Error seating guest:",
+          dropError
+        );
+
+        setError(
+          "Unable to move guest."
+        );
+      } finally {
+        setSaving(
+          false
+        );
+      }
+    };
+
+  const handleUnseatDrop =
+    async (
+      event
+    ) => {
+      event.preventDefault();
+
+      try {
+        const data =
+          JSON.parse(
+            event.dataTransfer.getData(
+              "text/plain"
+            )
           );
 
+        setSaving(
+          true
+        );
+
+        const batch =
+          writeBatch(
+            db
+          );
+
+        if (
+          data.type ===
+          "guest"
+        ) {
+          const guestRef =
+            doc(
+              db,
+              "weddings",
+              WEDDING_ID,
+              "guests",
+              data.guestId
+            );
+
+          batch.update(
+            guestRef,
+            {
+              tableId:
+                null,
+              updatedAt:
+                serverTimestamp(),
+            }
+          );
+        }
+
+        if (
+          data.type ===
+          "family"
+        ) {
+          data.guestIds.forEach(
+            (
+              guestId
+            ) => {
+              const guestRef =
+                doc(
+                  db,
+                  "weddings",
+                  WEDDING_ID,
+                  "guests",
+                  guestId
+                );
+
+              batch.update(
+                guestRef,
+                {
+                  tableId:
+                    null,
+                  updatedAt:
+                    serverTimestamp(),
+                }
+              );
+            }
+          );
+        }
+
+        await batch.commit();
+      } catch (
+      dropError
+      ) {
+        console.error(
+          "Error unseating guest:",
+          dropError
+        );
+
+        setError(
+          "Unable to remove guest from table."
+        );
+      } finally {
+        setSaving(
+          false
+        );
+      }
+    };
+
+  const handleSaveTable =
+    async (
+      tableData
+    ) => {
+      try {
+        setSaving(
+          true
+        );
+
+        if (
+          modalTable
+        ) {
+          const tableRef =
+            doc(
+              db,
+              "weddings",
+              WEDDING_ID,
+              "tables",
+              modalTable.id
+            );
+
+          await updateDoc(
+            tableRef,
+            {
+              ...tableData,
+              updatedAt:
+                serverTimestamp(),
+            }
+          );
+        } else {
+          const highestOrder =
+            tables.reduce(
+              (
+                highest,
+                table
+              ) =>
+                Math.max(
+                  highest,
+                  Number(
+                    table.order
+                  ) || 0
+                ),
+              0
+            );
+
+          await addDoc(
+            collection(
+              db,
+              "weddings",
+              WEDDING_ID,
+              "tables"
+            ),
+            {
+              ...tableData,
+              order:
+                highestOrder +
+                1,
+              createdAt:
+                serverTimestamp(),
+              updatedAt:
+                serverTimestamp(),
+            }
+          );
+        }
+
+        setModalTable(
+          null
+        );
+
+        setIsAddingTable(
+          false
+        );
+      } catch (
+      saveError
+      ) {
+        console.error(
+          "Error saving table:",
+          saveError
+        );
+
+        setError(
+          "Unable to save table."
+        );
+      } finally {
+        setSaving(
+          false
+        );
+      }
+    };
+
+  const handleDeleteTable =
+    async (
+      table
+    ) => {
+      const tableGuests =
+        guestsByTable.get(
+          table.id
+        ) || [];
+
+      const message =
+        tableGuests.length >
+          0
+          ? `Delete ${table.name}? The ${tableGuests.length} guest${tableGuests.length ===
+            1
+            ? ""
+            : "s"
+          } at this table will become unseated.`
+          : `Delete ${table.name}?`;
+
+      if (
+        !window.confirm(
+          message
+        )
+      ) {
         return;
       }
 
-      groups.push({
-        id:
-          `guest-${guest.id}`,
+      try {
+        setSaving(
+          true
+        );
 
-        name:
-          getGuestDisplayName(
-            guest
-          ),
+        const batch =
+          writeBatch(
+            db
+          );
 
-        householdName:
-          "",
+        tableGuests.forEach(
+          (guest) => {
+            const guestRef =
+              doc(
+                db,
+                "weddings",
+                WEDDING_ID,
+                "guests",
+                guest.id
+              );
 
-        guests: [
-          guest,
-        ],
-      });
-    }
-  );
+            batch.update(
+              guestRef,
+              {
+                tableId:
+                  null,
+                updatedAt:
+                  serverTimestamp(),
+              }
+            );
+          }
+        );
 
-  return groups;
-}
+        const tableRef =
+          doc(
+            db,
+            "weddings",
+            WEDDING_ID,
+            "tables",
+            table.id
+          );
 
-/*
- * READ DRAG PAYLOAD
- */
+        batch.delete(
+          tableRef
+        );
 
-function readDragPayload(
-  event
-) {
-  try {
-    const raw =
-      event.dataTransfer.getData(
-        "text/plain"
+        await batch.commit();
+      } catch (
+      deleteError
+      ) {
+        console.error(
+          "Error deleting table:",
+          deleteError
+        );
+
+        setError(
+          "Unable to delete table."
+        );
+      } finally {
+        setSaving(
+          false
+        );
+      }
+    };
+
+  const handleEditTable =
+    (table) => {
+      setModalTable(
+        table
       );
 
-    if (
-      !raw
-    ) {
-      return null;
-    }
+      setIsAddingTable(
+        false
+      );
+    };
 
-    return JSON.parse(
-      raw
+  const handleAddTable =
+    () => {
+      setModalTable(
+        null
+      );
+
+      setIsAddingTable(
+        true
+      );
+    };
+
+  const closeModal =
+    () => {
+      setModalTable(
+        null
+      );
+
+      setIsAddingTable(
+        false
+      );
+    };
+
+  if (loading) {
+    return (
+      <div className="seating-loading">
+        <LoaderCircle
+          size={24}
+          className="spin"
+        />
+        <span>
+          Loading seating chart...
+        </span>
+      </div>
     );
-  } catch {
-    return null;
-  }
-}
-
-/*
- * NEXT TABLE ORDER
- */
-
-function getNextTableOrder(
-  tables
-) {
-  if (
-    !tables.length
-  ) {
-    return 0;
   }
 
   return (
-    Math.max(
-      ...tables.map(
-        (table) =>
-          typeof table.order ===
-          "number"
-            ? table.order
-            : 0
-      )
-    ) +
-    1
+    <div className="seating-page">
+      <div className="seating-page-header">
+        <div>
+          <h1>
+            Seating Chart
+          </h1>
+
+          <p className="page-description">
+            Organize your attending guests into tables. Drag individual guests or entire families between tables.
+          </p>
+        </div>
+
+        <div className="seating-page-header-actions">
+          <NavLink
+            to="/guests"
+            className="button secondary"
+          >
+            View Guests
+          </NavLink>
+
+          <button
+            type="button"
+            className="button primary"
+            onClick={
+              handleAddTable
+            }
+          >
+            <Plus
+              size={16}
+            />
+            Add Table
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="seating-error">
+          <span>
+            {error}
+          </span>
+
+          <button
+            type="button"
+            onClick={() =>
+              setError(
+                ""
+              )
+            }
+          >
+            <X
+              size={16}
+            />
+          </button>
+        </div>
+      )}
+
+      <div className="seating-stats">
+        <div className="seating-stat-card">
+          <span>
+            Attending
+          </span>
+
+          <strong>
+            {
+              attendingGuests.length
+            }
+          </strong>
+        </div>
+
+        <div className="seating-stat-card seating-stat-confirmed">
+          <span>
+            Confirmed
+          </span>
+
+          <strong>
+            {
+              confirmedGuests.length
+            }
+          </strong>
+        </div>
+
+        <div className="seating-stat-card seating-stat-pending">
+          <span>
+            Pending
+          </span>
+
+          <strong>
+            {
+              pendingGuests.length
+            }
+          </strong>
+        </div>
+
+        <div className="seating-stat-card seating-stat-seated">
+          <span>
+            Seated
+          </span>
+
+          <strong>
+            {seatedGuests.length}
+          </strong>
+        </div>
+
+        <div className="seating-stat-card">
+          <span>
+            Unseated
+          </span>
+
+          <strong>
+            {
+              unseatedGuests.length
+            }
+          </strong>
+        </div>
+      </div>
+
+      <div className="seating-rsvp-legend">
+        <div>
+          <span className="legend-dot confirmed" />
+          Confirmed
+        </div>
+
+        <div>
+          <span className="legend-dot pending" />
+          Pending RSVP
+        </div>
+
+        <div className="seating-progress-text">
+          {seatingPercent}% seated
+          {totalCapacity >
+            0 && (
+              <>
+                {" "}
+                ·{" "}
+                {seatedGuests.length} /{" "}
+                {totalCapacity} seats
+              </>
+            )}
+        </div>
+      </div>
+
+      <div className="seating-layout">
+        <aside
+          className="unseated-panel"
+          onDragOver={(event) =>
+            event.preventDefault()
+          }
+          onDrop={
+            handleUnseatDrop
+          }
+        >
+          <div className="unseated-header">
+            <div>
+              <h2>
+                Unseated Guests
+              </h2>
+
+              <span className="unseated-count">
+                {
+                  unseatedGuests.length
+                }
+              </span>
+            </div>
+          </div>
+
+          <div className="seating-search">
+            <Search
+              size={16}
+            />
+
+            <input
+              type="search"
+              value={
+                search
+              }
+              onChange={(event) =>
+                setSearch(
+                  event.target
+                    .value
+                )
+              }
+              placeholder="Search guests..."
+            />
+
+            {search && (
+              <button
+                type="button"
+                onClick={() =>
+                  setSearch(
+                    ""
+                  )
+                }
+              >
+                <X
+                  size={14}
+                />
+              </button>
+            )}
+          </div>
+
+          <div className="unseated-drop-hint">
+            Drag guests here to remove them from a table
+          </div>
+
+          <div className="unseated-groups">
+            {unseatedGroups.length ===
+              0 ? (
+              <div className="unseated-empty">
+                <Check
+                  size={22}
+                />
+
+                <strong>
+                  {search
+                    ? "No guests found"
+                    : "Everyone is seated"}
+                </strong>
+
+                <span>
+                  {search
+                    ? "Try a different search."
+                    : "Nice work!"}
+                </span>
+              </div>
+            ) : (
+              unseatedGroups.map(
+                (group) => (
+                  <GuestGroup
+                    key={
+                      group.id
+                    }
+                    group={
+                      group
+                    }
+                    onGuestDragStart={
+                      handleGuestDragStart
+                    }
+                    onFamilyDragStart={
+                      handleFamilyDragStart
+                    }
+                  />
+                )
+              )
+            )}
+          </div>
+        </aside>
+
+        <main className="table-area">
+          {tables.length ===
+            0 ? (
+            <div className="seating-no-tables">
+              <Armchair
+                size={32}
+              />
+
+              <h2>
+                No tables yet
+              </h2>
+
+              <p>
+                Add your first table to start arranging your guests.
+              </p>
+
+              <button
+                type="button"
+                className="button primary"
+                onClick={
+                  handleAddTable
+                }
+              >
+                <Plus
+                  size={16}
+                />
+                Add Table
+              </button>
+            </div>
+          ) : (
+            <div className="table-grid">
+              {tables.map(
+                (table) => (
+                  <TableCard
+                    key={
+                      table.id
+                    }
+                    table={
+                      table
+                    }
+                    guests={
+                      guestsByTable.get(
+                        table.id
+                      ) || []
+                    }
+                    onGuestDragStart={
+                      handleGuestDragStart
+                    }
+                    onDrop={
+                      handleDrop
+                    }
+                    onEdit={
+                      handleEditTable
+                    }
+                    onDelete={
+                      handleDeleteTable
+                    }
+                  />
+                )
+              )}
+            </div>
+          )}
+        </main>
+      </div>
+
+      {saving && (
+        <div className="seating-saving-indicator">
+          <LoaderCircle
+            size={15}
+            className="spin"
+          />
+          Saving...
+        </div>
+      )}
+
+      {(modalTable ||
+        isAddingTable) && (
+          <TableModal
+            table={
+              modalTable
+            }
+            onClose={
+              closeModal
+            }
+            onSave={
+              handleSaveTable
+            }
+          />
+        )}
+    </div>
   );
 }
-
-/*
- * GUEST SORT
- */
-
-function compareGuestOrder(
-  first,
-  second
-) {
-  const firstOrder =
-    typeof first.importOrder ===
-    "number"
-      ? first.importOrder
-      : Number.MAX_SAFE_INTEGER;
-
-  const secondOrder =
-    typeof second.importOrder ===
-    "number"
-      ? second.importOrder
-      : Number.MAX_SAFE_INTEGER;
-
-  if (
-    firstOrder !==
-    secondOrder
-  ) {
-    return (
-      firstOrder -
-      secondOrder
-    );
-  }
-
-  return getGuestDisplayName(
-    first
-  ).localeCompare(
-    getGuestDisplayName(
-      second
-    )
-  );
-}
-
-/*
- * DISPLAY HELPERS
- */
-
-function getGuestDisplayName(
-  guest
-) {
-  if (
-    guest.isUnnamedGuest
-  ) {
-    if (
-      guest.guestOfName
-    ) {
-      return `Guest of ${guest.guestOfName}`;
-    }
-
-    return "Guest";
-  }
-
-  return [
-    guest.firstName,
-    guest.lastName,
-  ]
-    .filter(
-      Boolean
-    )
-    .join(
-      " "
-    )
-    .trim();
-}
-
-function getInitials(
-  guest
-) {
-  if (
-    guest.isUnnamedGuest
-  ) {
-    return "+1";
-  }
-
-  const first =
-    guest.firstName?.[
-      0
-    ] ||
-    "";
-
-  const last =
-    guest.lastName?.[
-      0
-    ] ||
-    "";
-
-  return `${first}${last}`.toUpperCase();
-}
-
-export default SeatingChart;

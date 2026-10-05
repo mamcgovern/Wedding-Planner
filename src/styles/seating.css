@@ -3,7 +3,11 @@
  */
 
 .seating-page {
+  width: 100%;
   max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 
 .seating-page-header {
@@ -16,8 +20,7 @@
   margin-bottom: 24px;
 }
 
-.seating-page-header
-.page-description {
+.seating-page-header .page-description {
   max-width: 680px;
 
   margin-bottom: 0;
@@ -40,10 +43,8 @@
   display: grid;
 
   grid-template-columns:
-    repeat(
-      6,
-      minmax(0, 1fr)
-    );
+    repeat(6,
+      minmax(0, 1fr));
 
   gap: 10px;
 
@@ -62,8 +63,7 @@
     var(--white);
 
   border:
-    1px solid
-    var(--border);
+    1px solid var(--border);
 
   border-radius:
     var(--radius-medium);
@@ -138,7 +138,7 @@
   font-size: 0.66rem;
 }
 
-.seating-rsvp-legend > span {
+.seating-rsvp-legend>span {
   display: inline-flex;
   align-items: center;
 
@@ -155,18 +155,14 @@
   border-radius: 50%;
 }
 
-.seating-rsvp-legend
-i.confirmed,
-.table-rsvp-summary
-i.confirmed {
+.seating-rsvp-legend i.confirmed,
+.table-rsvp-summary i.confirmed {
   background:
     var(--sage-dark);
 }
 
-.seating-rsvp-legend
-i.pending,
-.table-rsvp-summary
-i.pending {
+.seating-rsvp-legend i.pending,
+.table-rsvp-summary i.pending {
   background:
     var(--blush-dark);
 }
@@ -266,14 +262,9 @@ i.pending {
   display: grid;
 
   grid-template-columns:
-    minmax(
-      260px,
-      320px
-    )
-    minmax(
-      0,
-      1fr
-    );
+    minmax(260px,
+      320px) minmax(0,
+      1fr);
 
   align-items:
     start;
@@ -294,17 +285,13 @@ i.pending {
   overflow: hidden;
 
   max-height:
-    calc(
-      100vh -
-      120px
-    );
+    calc(100vh - 120px);
 
   background:
     var(--white);
 
   border:
-    1px solid
-    var(--border);
+    1px solid var(--border);
 
   border-radius:
     var(--radius-large);
@@ -326,13 +313,10 @@ i.pending {
     var(--sage-dark);
 
   box-shadow:
-    0 0 0 3px
-    rgba(
-      107,
+    0 0 0 3px rgba(107,
       112,
       92,
-      0.08
-    );
+      0.08);
 }
 
 .unseated-header {
@@ -416,8 +400,7 @@ i.pending {
     var(--sage-dark);
 
   border:
-    1px solid
-    var(--border);
+    1px solid var(--border);
 
   border-radius:
     999px;
@@ -479,10 +462,7 @@ i.pending {
   gap: 10px;
 
   max-height:
-    calc(
-      100vh -
-      350px
-    );
+    calc(100vh - 350px);
 
   overflow-y: auto;
 
@@ -539,17 +519,12 @@ i.pending {
  */
 
 .seating-family-group {
-  overflow: hidden;
-
-  background:
-    var(--cream);
-
-  border:
-    1px solid
-    var(--border);
-
-  border-radius:
-    var(--radius-medium);
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
 }
 
 .seating-family-heading {
@@ -577,7 +552,7 @@ i.pending {
   cursor: grabbing;
 }
 
-.seating-family-heading > div:first-child {
+.seating-family-heading>div:first-child {
   display: flex;
 
   flex-direction: column;
@@ -645,8 +620,7 @@ i.pending {
     var(--white);
 
   border:
-    1px solid
-    var(--border);
+    1px solid var(--border);
 
   border-radius:
     var(--radius-small);
@@ -666,13 +640,10 @@ i.pending {
     var(--sage);
 
   box-shadow:
-    0 3px 10px
-    rgba(
+    0 3px 10px rgba(55,
       55,
       55,
-      55,
-      0.05
-    );
+      0.05);
 }
 
 .seating-guest:active {
@@ -732,35 +703,63 @@ i.pending {
 
 .seating-guest-name {
   display: flex;
-  flex: 1 1 auto;
+
+  flex: 1 1 0;
+
   flex-direction: column;
+
   min-width: 0;
+
   max-width: 100%;
-  overflow: hidden;
+
+  overflow: visible;
 }
 
 .seating-guest-name strong {
   display: block;
+
+  width: 100%;
+
   min-width: 0;
+
   overflow: hidden;
+
   color: var(--text);
+
   font-size: 0.7rem;
+
   font-weight: 600;
+
   line-height: 1.2;
+
   text-overflow: ellipsis;
+
   white-space: nowrap;
 }
 
 .seating-guest-name span {
   display: block;
+
+  width: 100%;
+
   min-width: 0;
+
   margin-top: 2px;
+
   overflow: hidden;
+
   color: var(--text-light);
-  font-family: Arial, sans-serif;
+
+  font-family:
+    Arial,
+    sans-serif;
+
   font-size: 0.54rem;
+
   line-height: 1.2;
+
   text-overflow: ellipsis;
+
   white-space: nowrap;
 }
 
@@ -777,13 +776,9 @@ i.pending {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      2,
-      minmax(
-        0,
-        1fr
-      )
-    );
+    repeat(2,
+      minmax(0,
+        1fr));
 
   gap: 14px;
 }
@@ -802,8 +797,7 @@ i.pending {
     var(--white);
 
   border:
-    1px solid
-    var(--border);
+    1px solid var(--border);
 
   border-radius:
     var(--radius-large);
@@ -826,28 +820,21 @@ i.pending {
     var(--sage-dark);
 
   box-shadow:
-    0 0 0 3px
-    rgba(
-      107,
+    0 0 0 3px rgba(107,
       112,
       92,
-      0.08
-    );
+      0.08);
 
   transform:
-    translateY(
-      -2px
-    );
+    translateY(-2px);
 }
 
 .seating-table-card.table-full {
   border-color:
-    rgba(
-      215,
+    rgba(215,
       164,
       154,
-      0.55
-    );
+      0.55);
 }
 
 .seating-table-header {
@@ -904,8 +891,7 @@ i.pending {
   font-size: 0.61rem;
 }
 
-.table-capacity-row
-.capacity-full {
+.table-capacity-row .capacity-full {
   color:
     var(--blush-dark);
 
@@ -926,7 +912,7 @@ i.pending {
     999px;
 }
 
-.table-capacity-bar > div {
+.table-capacity-bar>div {
   height: 100%;
 
   background:
@@ -936,8 +922,7 @@ i.pending {
     inherit;
 }
 
-.table-full
-.table-capacity-bar > div {
+.table-full .table-capacity-bar>div {
   background:
     var(--blush-dark);
 }
@@ -1008,8 +993,7 @@ i.pending {
     var(--text-light);
 
   border:
-    1px dashed
-    var(--border);
+    1px dashed var(--border);
 
   border-radius:
     var(--radius-small);
@@ -1100,13 +1084,10 @@ i.pending {
     999px;
 
   box-shadow:
-    0 8px 24px
-    rgba(
+    0 8px 24px rgba(55,
       55,
       55,
-      55,
-      0.18
-    );
+      0.18);
 
   font-family:
     Arial,
@@ -1124,13 +1105,8 @@ i.pending {
 
 .seating-table-modal {
   width:
-    min(
-      460px,
-      calc(
-        100vw -
-        32px
-      )
-    );
+    min(460px,
+      calc(100vw - 32px));
 }
 
 
@@ -1138,27 +1114,18 @@ i.pending {
  * TABLET
  */
 
-@media (
-  max-width: 1050px
-) {
+@media (max-width: 1050px) {
   .seating-stats {
     grid-template-columns:
-      repeat(
-        3,
-        minmax(
-          0,
-          1fr
-        )
-      );
+      repeat(3,
+        minmax(0,
+          1fr));
   }
 
   .seating-layout {
     grid-template-columns:
-      270px
-      minmax(
-        0,
-        1fr
-      );
+      270px minmax(0,
+        1fr);
   }
 
   .table-grid {
@@ -1172,9 +1139,7 @@ i.pending {
  * SMALL TABLET
  */
 
-@media (
-  max-width: 760px
-) {
+@media (max-width: 760px) {
   .seating-page-header {
     flex-direction:
       column;
@@ -1195,12 +1160,26 @@ i.pending {
 
   .unseated-panel {
     position: static;
-
     max-height: none;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 650px;
+    overflow: hidden;
   }
 
   .unseated-groups {
-    max-height: 380px;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 4px 12px 16px;
   }
 
   .seating-progress-text {
@@ -1215,18 +1194,12 @@ i.pending {
  * MOBILE
  */
 
-@media (
-  max-width: 550px
-) {
+@media (max-width: 550px) {
   .seating-stats {
     grid-template-columns:
-      repeat(
-        2,
-        minmax(
-          0,
-          1fr
-        )
-      );
+      repeat(2,
+        minmax(0,
+          1fr));
   }
 
   .seating-rsvp-legend {
