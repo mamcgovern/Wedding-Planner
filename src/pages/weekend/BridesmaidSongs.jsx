@@ -25,16 +25,17 @@ import {
 import { db } from "../../services/firebase";
 import { WEDDING_ID } from "../../config/wedding";
 
-const BRIDESMAID_NAMES = [
-  "Sydni Edgington",
-  "Toph McGovern",
-  "Kay McGovern",
-  "Maddelynne McGovern",
-  "Elizabeth Cardey",
-  "Nicholas Bergan",
-  "Emily Curry",
-  "Taylor Bergan",
-  "Paula McGovern"
+// This list is intentionally independent of the Firestore guest list.
+// Keep these IDs stable so each person's votes are saved consistently.
+const BRIDESMAID_VOTERS = [
+  { id: "sydni-edgington", displayName: "Sydni Edgington" },
+  { id: "toph-mcgovern", displayName: "Toph McGovern" },
+  { id: "kay-mcgovern", displayName: "Kay McGovern" },
+  { id: "maddelynne-mcgovern", displayName: "Maddelynne McGovern" },
+  { id: "lizzy-cardey", displayName: "Lizzy Cardey" },
+  { id: "nicholas-bergan", displayName: "Nicholas Bergan" },
+  { id: "taylor-bergan", displayName: "Taylor Bergan" },
+  { id: "emily-curry", displayName: "Emily Curry" },
 ];
 
 const RATING_OPTIONS = [
@@ -45,7 +46,6 @@ const RATING_OPTIONS = [
 
 function BridesmaidSongs() {
   const [songs, setSongs] = useState([]);
-  const [guests, setGuests] = useState([]);
   const [votes, setVotes] = useState([]);
   const [selectedGuestId, setSelectedGuestId] = useState("");
   const [favoriteSongId, setFavoriteSongId] = useState("");
@@ -59,7 +59,7 @@ function BridesmaidSongs() {
     let loadedParts = 0;
     const markLoaded = () => {
       loadedParts += 1;
-      if (loadedParts >= 3) setLoading(false);
+      if (loadedParts >= 2) setLoading(false);
     };
 
     const entranceSongsRef = collection(
@@ -68,7 +68,6 @@ function BridesmaidSongs() {
       WEDDING_ID,
       "bridesmaidEntranceSongs"
     );
-    const guestsRef = collection(db, "weddings", WEDDING_ID, "guests");
     const votesRef = collection(
       db,
       "weddings",
@@ -93,41 +92,6 @@ function BridesmaidSongs() {
       }
     );
 
-    const unsubscribeGuests = onSnapshot(
-      guestsRef,
-      (snapshot) => {
-        const loadedGuests = snapshot.docs
-          .map((guestDoc) => ({ id: guestDoc.id, ...guestDoc.data() }))
-          .filter((guest) => {
-            if (
-              !guest.firstName ||
-              guest.isUnnamedGuest ||
-              guest.firstName.trim().toLowerCase() === "guest"
-            ) {
-              return false;
-            }
-
-            const displayName = normalizeName(getGuestDisplayName(guest));
-            return BRIDESMAID_NAMES.some(
-              (name) => normalizeName(name) === displayName
-            );
-          })
-          .map((guest) => ({
-            ...guest,
-            displayName: getGuestDisplayName(guest),
-          }))
-          .sort((a, b) => a.displayName.localeCompare(b.displayName));
-
-        setGuests(loadedGuests);
-        markLoaded();
-      },
-      (firebaseError) => {
-        console.error("Error loading guest names:", firebaseError);
-        setError("We couldn't load the name list. Please try refreshing the page.");
-        markLoaded();
-      }
-    );
-
     const unsubscribeVotes = onSnapshot(
       votesRef,
       (snapshot) => {
@@ -146,19 +110,24 @@ function BridesmaidSongs() {
 
     return () => {
       unsubscribeMusic();
-      unsubscribeGuests();
       unsubscribeVotes();
     };
   }, []);
 
   const selectedGuest = useMemo(
-    () => guests.find((guest) => guest.id === selectedGuestId),
-    [guests, selectedGuestId]
+    () => BRIDESMAID_VOTERS.find((guest) => guest.id === selectedGuestId),
+    [selectedGuestId]
   );
 
+  // Match by stable ID for new votes and by name for votes saved before
+  // the voter list was decoupled from the guest collection.
   const existingVote = useMemo(
-    () => votes.find((vote) => vote.id === selectedGuestId),
-    [votes, selectedGuestId]
+    () => votes.find(
+      (vote) =>
+        vote.id === selectedGuestId ||
+        normalizeName(vote.guestName) === normalizeName(selectedGuest?.displayName)
+    ),
+    [votes, selectedGuestId, selectedGuest]
   );
 
   const pollResults = useMemo(
@@ -190,10 +159,15 @@ function BridesmaidSongs() {
       return;
     }
 
-    const vote = votes.find((item) => item.id === selectedGuestId);
+    const selectedName = BRIDESMAID_VOTERS.find((guest) => guest.id === selectedGuestId)?.displayName;
+    const vote = votes.find(
+      (item) =>
+        item.id === selectedGuestId ||
+        normalizeName(item.guestName) === normalizeName(selectedName)
+    );
     setFavoriteSongId(vote?.favoriteSongId || "");
     setRatings(vote?.ratings || {});
-    setMessage(vote ? "Your previous choices have been loaded. You can update them by clicking the button below." : "");
+    setMessage(vote ? "Your previous choices have been loaded. You can update them below." : "");
     setError("");
   }, [selectedGuestId, votes]);
 
@@ -237,7 +211,13 @@ function BridesmaidSongs() {
 
     try {
       await setDoc(
-        doc(db, "weddings", WEDDING_ID, "bridesmaidSongVotes", selectedGuestId),
+        doc(
+          db,
+          "weddings",
+          WEDDING_ID,
+          "bridesmaidSongVotes",
+          existingVote?.id || selectedGuestId
+        ),
         {
           guestId: selectedGuestId,
           guestName: selectedGuest.displayName,
@@ -296,7 +276,7 @@ function BridesmaidSongs() {
             required
           >
             <option value="">Choose your name...</option>
-            {guests.map((guest) => (
+            {BRIDESMAID_VOTERS.map((guest) => (
               <option key={guest.id} value={guest.id}>
                 {guest.displayName}
               </option>
@@ -506,17 +486,6 @@ function BridesmaidSongs() {
       </section>
     </main>
   );
-}
-
-function getGuestDisplayName(guest) {
-  return [
-    guest.firstName,
-    guest.lastName,
-    guest.suffix,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .trim();
 }
 
 function normalizeName(value) {
