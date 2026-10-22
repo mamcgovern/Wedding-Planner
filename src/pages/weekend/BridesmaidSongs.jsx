@@ -283,7 +283,7 @@ function BridesmaidSongs() {
             ))}
           </select>
           <p className="bridesmaid-field-help">
-            Your choices are saved under your name, so you can return and change them later.
+            Your choices are saved under your name, so you can change them later.
           </p>
         </section>
 
@@ -291,11 +291,7 @@ function BridesmaidSongs() {
           <section className="content-card bridesmaid-songs-empty">
             <Music2 size={24} />
             <div>
-              <h2>No candidate songs yet</h2>
-              <p>
-                Add candidate songs in the separate Bridesmaid Entrance Voting section
-                on your Music Admin page. They are managed separately from your reception playlist.
-              </p>
+              <h2>No songs yet</h2>
             </div>
           </section>
         ) : (
@@ -351,7 +347,7 @@ function BridesmaidSongs() {
                       </div>
                     ) : (
                       <p className="bridesmaid-song-no-embed">
-                        Spotify playback will appear when a valid track link is added in Music Admin.
+                        Spotify playback will appear when a valid track link is added.
                       </p>
                     )}
 
@@ -437,7 +433,7 @@ function BridesmaidSongs() {
           <p>
             {votes.length === 1
               ? "1 response submitted so far."
-              : `${votes.length} responses submitted so far.`} Results update as votes are saved.
+              : `${votes.length} responses submitted so far.`}
           </p>
         </div>
 
@@ -447,7 +443,7 @@ function BridesmaidSongs() {
           </div>
         ) : songs.length === 0 ? (
           <div className="content-card bridesmaid-results-empty">
-            Add candidate songs in Music Admin to see poll results.
+            Add songs in Music Admin to see poll results.
           </div>
         ) : (
           <div className="bridesmaid-results-list">
