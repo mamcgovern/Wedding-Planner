@@ -4,6 +4,7 @@ import {
   useState,
 } from "react";
 
+
 import {
   Check,
   Heart,
@@ -23,6 +24,18 @@ import {
 
 import { db } from "../../services/firebase";
 import { WEDDING_ID } from "../../config/wedding";
+
+const BRIDESMAID_NAMES = [
+  "Sydni Edgington",
+  "Toph McGovern",
+  "Kay McGovern",
+  "Maddelynne McGovern",
+  "Elizabeth Cardey",
+  "Nicholas Bergan",
+  "Emily Curry",
+  "Taylor Bergan",
+  "Paula McGovern"
+];
 
 const RATING_OPTIONS = [
   { value: "yes", label: "Yes" },
@@ -85,11 +98,20 @@ function BridesmaidSongs() {
       (snapshot) => {
         const loadedGuests = snapshot.docs
           .map((guestDoc) => ({ id: guestDoc.id, ...guestDoc.data() }))
-          .filter((guest) =>
-            guest.firstName &&
-            !guest.isUnnamedGuest &&
-            guest.firstName.trim().toLowerCase() !== "guest"
-          )
+          .filter((guest) => {
+            if (
+              !guest.firstName ||
+              guest.isUnnamedGuest ||
+              guest.firstName.trim().toLowerCase() === "guest"
+            ) {
+              return false;
+            }
+
+            const displayName = normalizeName(getGuestDisplayName(guest));
+            return BRIDESMAID_NAMES.some(
+              (name) => normalizeName(name) === displayName
+            );
+          })
           .map((guest) => ({
             ...guest,
             displayName: getGuestDisplayName(guest),
@@ -139,6 +161,27 @@ function BridesmaidSongs() {
     [votes, selectedGuestId]
   );
 
+  const pollResults = useMemo(
+    () => songs.map((song) => {
+      const ratingCounts = { yes: 0, maybe: 0, no: 0 };
+      let favoriteCount = 0;
+
+      votes.forEach((vote) => {
+        if (vote.favoriteSongId === song.id) {
+          favoriteCount += 1;
+        }
+
+        const rating = vote.ratings?.[song.id];
+        if (rating && Object.prototype.hasOwnProperty.call(ratingCounts, rating)) {
+          ratingCounts[rating] += 1;
+        }
+      });
+
+      return { ...song, favoriteCount, ratingCounts };
+    }),
+    [songs, votes]
+  );
+
   useEffect(() => {
     if (!selectedGuestId) {
       setFavoriteSongId("");
@@ -150,7 +193,7 @@ function BridesmaidSongs() {
     const vote = votes.find((item) => item.id === selectedGuestId);
     setFavoriteSongId(vote?.favoriteSongId || "");
     setRatings(vote?.ratings || {});
-    setMessage(vote ? "Your previous choices have been loaded. You can update them below." : "");
+    setMessage(vote ? "Your previous choices have been loaded. You can update them by clicking the button below." : "");
     setError("");
   }, [selectedGuestId, votes]);
 
@@ -406,6 +449,61 @@ function BridesmaidSongs() {
           </>
         )}
       </form>
+
+      <section className="bridesmaid-results-section" aria-labelledby="bridesmaid-results-title">
+        <div className="bridesmaid-results-heading">
+          <p className="page-eyebrow">Poll Results</p>
+          <h2 id="bridesmaid-results-title">Bridesmaid Song Results</h2>
+          <p>
+            {votes.length === 1
+              ? "1 response submitted so far."
+              : `${votes.length} responses submitted so far.`} Results update as votes are saved.
+          </p>
+        </div>
+
+        {votes.length === 0 ? (
+          <div className="content-card bridesmaid-results-empty">
+            Results will appear here once someone submits their choices.
+          </div>
+        ) : songs.length === 0 ? (
+          <div className="content-card bridesmaid-results-empty">
+            Add candidate songs in Music Admin to see poll results.
+          </div>
+        ) : (
+          <div className="bridesmaid-results-list">
+            {pollResults
+              .slice()
+              .sort((a, b) => b.favoriteCount - a.favoriteCount || compareSongs(a, b))
+              .map((song, index) => (
+                <article className="content-card bridesmaid-result-card" key={song.id}>
+                  <div className="bridesmaid-result-title-row">
+                    <span className="bridesmaid-result-rank">{index + 1}</span>
+                    <div className="bridesmaid-result-song-title">
+                      <h3>{song.title || "Untitled song"}</h3>
+                      {song.artist && <p>{song.artist}</p>}
+                    </div>
+                    <div className="bridesmaid-result-favorite-count">
+                      <Star size={16} fill="currentColor" />
+                      <strong>{song.favoriteCount}</strong>
+                      <span>{song.favoriteCount === 1 ? "favorite" : "favorites"}</span>
+                    </div>
+                  </div>
+                  <div className="bridesmaid-result-ratings" aria-label={`Ratings for ${song.title}`}>
+                    <div className="bridesmaid-result-rating rating-yes">
+                      <span>Yes</span><strong>{song.ratingCounts.yes}</strong>
+                    </div>
+                    <div className="bridesmaid-result-rating rating-maybe">
+                      <span>Maybe</span><strong>{song.ratingCounts.maybe}</strong>
+                    </div>
+                    <div className="bridesmaid-result-rating rating-no">
+                      <span>No</span><strong>{song.ratingCounts.no}</strong>
+                    </div>
+                  </div>
+                </article>
+              ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }
@@ -419,6 +517,13 @@ function getGuestDisplayName(guest) {
     .filter(Boolean)
     .join(" ")
     .trim();
+}
+
+function normalizeName(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
 }
 
 function getSpotifyTrackEmbedUrl(value) {

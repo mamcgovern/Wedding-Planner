@@ -14,6 +14,7 @@ import {
   Pencil,
   Plus,
   Save,
+  Star,
   Trash2,
   X,
 } from "lucide-react";
@@ -88,6 +89,16 @@ function MusicAdmin() {
     entranceSongs,
     setEntranceSongs,
   ] = useState([]);
+
+  const [
+    entranceVotes,
+    setEntranceVotes,
+  ] = useState([]);
+
+  const [
+    activeTab,
+    setActiveTab,
+  ] = useState("overall");
 
   const [
     entranceForm,
@@ -277,6 +288,33 @@ function MusicAdmin() {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    const votesRef = collection(
+      db,
+      "weddings",
+      WEDDING_ID,
+      "bridesmaidSongVotes"
+    );
+
+    const unsubscribe = onSnapshot(
+      votesRef,
+      (snapshot) => {
+        setEntranceVotes(
+          snapshot.docs.map((voteDoc) => ({
+            id: voteDoc.id,
+            ...voteDoc.data(),
+          }))
+        );
+      },
+      (firebaseError) => {
+        console.error("Error loading bridesmaid song votes:", firebaseError);
+        setEntranceError("We couldn't load the poll results.");
+      }
+    );
+
+    return unsubscribe;
+  }, []);
+
   const songsByCategory =
     useMemo(
       () => {
@@ -315,6 +353,27 @@ function MusicAdmin() {
         ).length,
       [songs]
     );
+
+  const entrancePollResults = useMemo(
+    () => entranceSongs.map((song) => {
+      const ratingCounts = { yes: 0, maybe: 0, no: 0 };
+      let favoriteCount = 0;
+
+      entranceVotes.forEach((vote) => {
+        if (vote.favoriteSongId === song.id) {
+          favoriteCount += 1;
+        }
+
+        const rating = vote.ratings?.[song.id];
+        if (rating && Object.prototype.hasOwnProperty.call(ratingCounts, rating)) {
+          ratingCounts[rating] += 1;
+        }
+      });
+
+      return { ...song, favoriteCount, ratingCounts };
+    }),
+    [entranceSongs, entranceVotes]
+  );
 
   const spotifyFormStatus =
     getSpotifyConnectionStatus(
@@ -993,7 +1052,36 @@ function MusicAdmin() {
         )}
       </div>
 
-      <section className="content-card music-config-editor">
+      <nav className="music-page-tabs music-admin-tabs" role="tablist" aria-label="Music administration sections">
+        <button
+          type="button"
+          className={`music-page-tab${activeTab === "overall" ? " is-active" : ""}`}
+          role="tab"
+          id="music-admin-tab-overall"
+          aria-controls="music-admin-panel-overall"
+          aria-selected={activeTab === "overall"}
+          aria-pressed={activeTab === "overall"}
+          onClick={() => setActiveTab("overall")}
+        >
+          Overall Wedding Songs
+        </button>
+        <button
+          type="button"
+          className={`music-page-tab${activeTab === "bridesmaid" ? " is-active" : ""}`}
+          role="tab"
+          id="music-admin-tab-bridesmaid"
+          aria-controls="music-admin-panel-bridesmaid"
+          aria-selected={activeTab === "bridesmaid"}
+          aria-pressed={activeTab === "bridesmaid"}
+          onClick={() => setActiveTab("bridesmaid")}
+        >
+          Bridesmaid Song Options
+        </button>
+      </nav>
+
+      {activeTab === "overall" && (
+        <div id="music-admin-panel-overall" role="tabpanel" aria-labelledby="music-admin-tab-overall">
+          <section className="content-card music-config-editor">
         <div className="music-editor-heading">
           <div>
             <p className="card-eyebrow">
@@ -1084,9 +1172,13 @@ function MusicAdmin() {
             </button>
           </div>
         </form>
-      </section>
+          </section>
+        </div>
+      )}
 
-      <section className="content-card music-editor bridesmaid-entrance-admin">
+      {activeTab === "bridesmaid" && (
+        <div id="music-admin-panel-bridesmaid" role="tabpanel" aria-labelledby="music-admin-tab-bridesmaid">
+          <section className="content-card music-editor bridesmaid-entrance-admin">
         <div className="music-editor-heading">
           <div>
             <p className="card-eyebrow">
@@ -1269,6 +1361,59 @@ function MusicAdmin() {
         </div>
       </section>
 
+      <section className="bridesmaid-results-section" aria-labelledby="admin-bridesmaid-results-title">
+        <div className="bridesmaid-results-heading">
+          <p className="card-eyebrow">Poll Results</p>
+          <h2 id="admin-bridesmaid-results-title">Bridesmaid Song Results</h2>
+          <p>
+            {entranceVotes.length === 1
+              ? "1 response submitted so far."
+              : `${entranceVotes.length} responses submitted so far.`} Results update as votes are saved.
+          </p>
+        </div>
+
+        {entranceVotes.length === 0 ? (
+          <div className="content-card bridesmaid-results-empty">
+            Results will appear here once someone submits their choices.
+          </div>
+        ) : entranceSongs.length === 0 ? (
+          <div className="content-card bridesmaid-results-empty">
+            Add candidate songs above to see poll results.
+          </div>
+        ) : (
+          <div className="bridesmaid-results-list">
+            {entrancePollResults
+              .slice()
+              .sort((a, b) => b.favoriteCount - a.favoriteCount || compareSongs(a, b))
+              .map((song, index) => (
+                <article className="content-card bridesmaid-result-card" key={song.id}>
+                  <div className="bridesmaid-result-title-row">
+                    <span className="bridesmaid-result-rank">{index + 1}</span>
+                    <div className="bridesmaid-result-song-title">
+                      <h3>{song.title || "Untitled song"}</h3>
+                      {song.artist && <p>{song.artist}</p>}
+                    </div>
+                    <div className="bridesmaid-result-favorite-count">
+                      <Star size={16} fill="currentColor" />
+                      <strong>{song.favoriteCount}</strong>
+                      <span>{song.favoriteCount === 1 ? "favorite" : "favorites"}</span>
+                    </div>
+                  </div>
+                  <div className="bridesmaid-result-ratings" aria-label={`Ratings for ${song.title || "song"}`}>
+                    <div className="bridesmaid-result-rating rating-yes"><span>Yes</span><strong>{song.ratingCounts.yes}</strong></div>
+                    <div className="bridesmaid-result-rating rating-maybe"><span>Maybe</span><strong>{song.ratingCounts.maybe}</strong></div>
+                    <div className="bridesmaid-result-rating rating-no"><span>No</span><strong>{song.ratingCounts.no}</strong></div>
+                  </div>
+                </article>
+              ))}
+          </div>
+        )}
+      </section>
+        </div>
+      )}
+
+      {activeTab === "overall" && (
+        <div className="music-admin-overall-panel-content">
       <section className="content-card music-editor">
         <div className="music-editor-heading">
           <div>
@@ -1499,6 +1644,8 @@ function MusicAdmin() {
               />
             )
           )}
+        </div>
+      )}
         </div>
       )}
     </main>
