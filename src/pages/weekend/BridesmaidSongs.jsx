@@ -49,7 +49,12 @@ function BridesmaidSongs() {
       if (loadedParts >= 3) setLoading(false);
     };
 
-    const musicRef = collection(db, "weddings", WEDDING_ID, "music");
+    const entranceSongsRef = collection(
+      db,
+      "weddings",
+      WEDDING_ID,
+      "bridesmaidEntranceSongs"
+    );
     const guestsRef = collection(db, "weddings", WEDDING_ID, "guests");
     const votesRef = collection(
       db,
@@ -59,31 +64,18 @@ function BridesmaidSongs() {
     );
 
     const unsubscribeMusic = onSnapshot(
-      musicRef,
+      entranceSongsRef,
       (snapshot) => {
         const loadedSongs = snapshot.docs
-          .filter((musicDoc) => {
-            const data = musicDoc.data();
-            return musicDoc.id !== "_config" && data.kind !== "config";
-          })
           .map((musicDoc) => ({ id: musicDoc.id, ...musicDoc.data() }))
-          .filter((song) => song.type === "reception")
           .sort(compareSongs);
 
-        // If any reception songs are explicitly tagged for this entrance,
-        // show only those. Otherwise, use the reception list as the candidate list.
-        const taggedSongs = loadedSongs.filter((song) =>
-          `${song.section || ""} ${song.title || ""}`
-            .toLowerCase()
-            .includes("bridesmaid entrance")
-        );
-
-        setSongs(taggedSongs.length ? taggedSongs : loadedSongs);
+        setSongs(loadedSongs);
         markLoaded();
       },
       (firebaseError) => {
-        console.error("Error loading entrance songs:", firebaseError);
-        setError("We couldn't load the song list. Please try refreshing the page.");
+        console.error("Error loading bridesmaid entrance songs:", firebaseError);
+        setError("We couldn't load the candidate songs. Please try refreshing the page.");
         markLoaded();
       }
     );
@@ -278,8 +270,8 @@ function BridesmaidSongs() {
             <div>
               <h2>No candidate songs yet</h2>
               <p>
-                Add the options to the Reception category on your Music Admin page.
-                You can label their section “Bridesmaid Entrance” to identify them here.
+                Add candidate songs in the separate Bridesmaid Entrance Voting section
+                on your Music Admin page. They are managed separately from your reception playlist.
               </p>
             </div>
           </section>
