@@ -85,6 +85,35 @@ function MusicAdmin() {
   ] = useState([]);
 
   const [
+    entranceSongs,
+    setEntranceSongs,
+  ] = useState([]);
+
+  const [
+    entranceForm,
+    setEntranceForm,
+  ] = useState({
+    title: "",
+    artist: "",
+    spotifyUrl: "",
+  });
+
+  const [
+    editingEntranceId,
+    setEditingEntranceId,
+  ] = useState(null);
+
+  const [
+    savingEntrance,
+    setSavingEntrance,
+  ] = useState(false);
+
+  const [
+    entranceError,
+    setEntranceError,
+  ] = useState("");
+
+  const [
     form,
     setForm,
   ] = useState(
@@ -208,6 +237,42 @@ function MusicAdmin() {
           setLoading(false);
         }
       );
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const entranceSongsRef = collection(
+      db,
+      "weddings",
+      WEDDING_ID,
+      "bridesmaidEntranceSongs"
+    );
+
+    const unsubscribe = onSnapshot(
+      entranceSongsRef,
+      (snapshot) => {
+        const loadedSongs = snapshot.docs
+          .map((songDoc) => ({
+            id: songDoc.id,
+            ...songDoc.data(),
+          }))
+          .sort(compareSongs);
+
+        setEntranceSongs(loadedSongs);
+        setEntranceError("");
+      },
+      (firebaseError) => {
+        console.error(
+          "Error loading bridesmaid entrance songs:",
+          firebaseError
+        );
+
+        setEntranceError(
+          "We couldn't load the bridesmaid entrance songs."
+        );
+      }
+    );
 
     return unsubscribe;
   }, []);
@@ -688,6 +753,202 @@ function MusicAdmin() {
       }
     };
 
+  const handleEntranceChange = (event) => {
+    const { name, value } = event.target;
+
+    setEntranceForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
+
+    setEntranceError("");
+  };
+
+  const resetEntranceForm = () => {
+    setEntranceForm({
+      title: "",
+      artist: "",
+      spotifyUrl: "",
+    });
+    setEditingEntranceId(null);
+    setEntranceError("");
+  };
+
+  const handleEntranceSubmit = async (event) => {
+    event.preventDefault();
+
+    const title = entranceForm.title.trim();
+    const artist = entranceForm.artist.trim();
+    const spotifyUrl = entranceForm.spotifyUrl.trim();
+
+    if (!title) {
+      setEntranceError("Enter a song title.");
+      return;
+    }
+
+    if (spotifyUrl && !isSpotifyTrackUrl(spotifyUrl)) {
+      setEntranceError(
+        "The Spotify link doesn't look like a valid Spotify track link."
+      );
+      return;
+    }
+
+    setSavingEntrance(true);
+    setEntranceError("");
+
+    try {
+      const songData = {
+        title,
+        artist,
+        spotifyUrl,
+        updatedAt: serverTimestamp(),
+        updatedBy: user?.uid || null,
+      };
+
+      if (editingEntranceId) {
+        await updateDoc(
+          doc(
+            db,
+            "weddings",
+            WEDDING_ID,
+            "bridesmaidEntranceSongs",
+            editingEntranceId
+          ),
+          songData
+        );
+      } else {
+        await addDoc(
+          collection(
+            db,
+            "weddings",
+            WEDDING_ID,
+            "bridesmaidEntranceSongs"
+          ),
+          {
+            ...songData,
+            order: entranceSongs.length,
+            createdAt: serverTimestamp(),
+            createdBy: user?.uid || null,
+          }
+        );
+      }
+
+      resetEntranceForm();
+    } catch (firebaseError) {
+      console.error(
+        "Error saving bridesmaid entrance song:",
+        firebaseError
+      );
+
+      setEntranceError(
+        "We couldn't save that bridesmaid entrance song."
+      );
+    } finally {
+      setSavingEntrance(false);
+    }
+  };
+
+  const handleEditEntranceSong = (song) => {
+    setEditingEntranceId(song.id);
+    setEntranceForm({
+      title: song.title || "",
+      artist: song.artist || "",
+      spotifyUrl: song.spotifyUrl || "",
+    });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const handleDeleteEntranceSong = async (song) => {
+    const confirmed = window.confirm(
+      `Delete "${song.title}" from bridesmaid entrance candidates?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteDoc(
+        doc(
+          db,
+          "weddings",
+          WEDDING_ID,
+          "bridesmaidEntranceSongs",
+          song.id
+        )
+      );
+
+      if (editingEntranceId === song.id) {
+        resetEntranceForm();
+      }
+    } catch (firebaseError) {
+      console.error(
+        "Error deleting bridesmaid entrance song:",
+        firebaseError
+      );
+
+      setEntranceError(
+        "We couldn't delete that bridesmaid entrance song."
+      );
+    }
+  };
+
+  const handleMoveEntranceSong = async (song, direction) => {
+    const currentIndex = entranceSongs.findIndex(
+      (item) => item.id === song.id
+    );
+
+    const nextIndex = direction === "up"
+      ? currentIndex - 1
+      : currentIndex + 1;
+
+    if (
+      currentIndex < 0 ||
+      nextIndex < 0 ||
+      nextIndex >= entranceSongs.length
+    ) {
+      return;
+    }
+
+    const reordered = [...entranceSongs];
+    const [movedSong] = reordered.splice(currentIndex, 1);
+    reordered.splice(nextIndex, 0, movedSong);
+
+    try {
+      const batch = writeBatch(db);
+
+      reordered.forEach((item, index) => {
+        batch.update(
+          doc(
+            db,
+            "weddings",
+            WEDDING_ID,
+            "bridesmaidEntranceSongs",
+            item.id
+          ),
+          {
+            order: index,
+            updatedAt: serverTimestamp(),
+            updatedBy: user?.uid || null,
+          }
+        );
+      });
+
+      await batch.commit();
+    } catch (firebaseError) {
+      console.error(
+        "Error reordering bridesmaid entrance songs:",
+        firebaseError
+      );
+
+      setEntranceError(
+        "We couldn't reorder the bridesmaid entrance songs."
+      );
+    }
+  };
+
   return (
     <main className="page music-admin-page">
       <p className="page-eyebrow">
@@ -823,6 +1084,189 @@ function MusicAdmin() {
             </button>
           </div>
         </form>
+      </section>
+
+      <section className="content-card music-editor bridesmaid-entrance-admin">
+        <div className="music-editor-heading">
+          <div>
+            <p className="card-eyebrow">
+              Bridesmaid Entrance Voting
+            </p>
+
+            <h2>
+              {editingEntranceId
+                ? "Edit Candidate Song"
+                : "Add Candidate Song"}
+            </h2>
+
+            <p className="music-admin-help-text">
+              These songs are stored separately from your regular wedding music
+              and appear on the bridesmaid voting page.
+            </p>
+          </div>
+
+          {editingEntranceId && (
+            <button
+              type="button"
+              className="icon-button"
+              onClick={resetEntranceForm}
+              aria-label="Cancel editing candidate song"
+            >
+              <X size={17} />
+            </button>
+          )}
+        </div>
+
+        <form
+          className="music-admin-form"
+          onSubmit={handleEntranceSubmit}
+        >
+          <label className="form-field music-title-field">
+            <span>Song</span>
+            <input
+              type="text"
+              name="title"
+              value={entranceForm.title}
+              onChange={handleEntranceChange}
+              placeholder="Song title"
+              required
+            />
+          </label>
+
+          <label className="form-field">
+            <span>Artist</span>
+            <input
+              type="text"
+              name="artist"
+              value={entranceForm.artist}
+              onChange={handleEntranceChange}
+              placeholder="Artist"
+            />
+          </label>
+
+          <div className="form-field music-spotify-field">
+            <span>Spotify Link</span>
+            <input
+              type="url"
+              name="spotifyUrl"
+              value={entranceForm.spotifyUrl}
+              onChange={handleEntranceChange}
+              placeholder="https://open.spotify.com/track/..."
+            />
+            <SpotifyFieldStatus
+              status={getSpotifyConnectionStatus(entranceForm.spotifyUrl)}
+            />
+          </div>
+
+          {entranceError && (
+            <div className="music-admin-error">
+              {entranceError}
+            </div>
+          )}
+
+          <div className="music-admin-actions">
+            {editingEntranceId && (
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={resetEntranceForm}
+              >
+                Cancel
+              </button>
+            )}
+
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={savingEntrance}
+            >
+              <Plus size={16} />
+              {savingEntrance
+                ? "Saving..."
+                : editingEntranceId
+                  ? "Save Changes"
+                  : "Add Candidate Song"}
+            </button>
+          </div>
+        </form>
+
+        <div className="bridesmaid-candidate-list">
+          <div className="music-admin-section-heading">
+            <div>
+              <p className="card-eyebrow">Voting Candidates</p>
+              <h3>Bridesmaid Entrance Songs</h3>
+            </div>
+            <span className="task-count">{entranceSongs.length}</span>
+          </div>
+
+          {entranceSongs.length === 0 ? (
+            <div className="content-card music-admin-empty">
+              <Music2 size={20} />
+              <span>No candidate songs added yet.</span>
+            </div>
+          ) : (
+            <div className="music-admin-list">
+              {entranceSongs.map((song, index) => (
+                <article key={song.id} className="music-admin-card">
+                  <div className="music-admin-order">
+                    <button
+                      type="button"
+                      className="icon-button"
+                      disabled={index === 0}
+                      onClick={() => handleMoveEntranceSong(song, "up")}
+                      aria-label="Move candidate song up"
+                    >
+                      <ArrowUp size={15} />
+                    </button>
+
+                    <button
+                      type="button"
+                      className="icon-button"
+                      disabled={index === entranceSongs.length - 1}
+                      onClick={() => handleMoveEntranceSong(song, "down")}
+                      aria-label="Move candidate song down"
+                    >
+                      <ArrowDown size={15} />
+                    </button>
+                  </div>
+
+                  <div className="music-admin-song">
+                    <div className="music-admin-song-top">
+                      <p>Bridesmaid Entrance</p>
+                      <SpotifyBadge
+                        connected={isSpotifyTrackUrl(song.spotifyUrl)}
+                      />
+                    </div>
+
+                    <h3>{song.title}</h3>
+
+                    {song.artist && <span>{song.artist}</span>}
+                  </div>
+
+                  <div className="music-admin-card-actions">
+                    <button
+                      type="button"
+                      className="icon-button"
+                      onClick={() => handleEditEntranceSong(song)}
+                      aria-label="Edit candidate song"
+                    >
+                      <Pencil size={16} />
+                    </button>
+
+                    <button
+                      type="button"
+                      className="icon-button danger"
+                      onClick={() => handleDeleteEntranceSong(song)}
+                      aria-label="Delete candidate song"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
       <section className="content-card music-editor">

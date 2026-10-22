@@ -1,0 +1,409 @@
+/* Bridesmaid entrance song voting page */
+
+.bridesmaid-songs-page {
+  max-width: 1000px;
+}
+
+.bridesmaid-songs-intro {
+  margin-bottom: 30px;
+}
+
+.bridesmaid-songs-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.bridesmaid-voter-card {
+  padding: 22px;
+}
+
+.bridesmaid-field-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--sage-dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.bridesmaid-voter-select {
+  width: 100%;
+  max-width: 460px;
+  min-height: 46px;
+  padding: 10px 13px;
+  background: var(--white);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+}
+
+.bridesmaid-field-help {
+  margin: 9px 0 0;
+  color: var(--text-light);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.bridesmaid-voting-instructions {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 18px 20px;
+  background: var(--sage-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+}
+
+.bridesmaid-instruction-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--sage-dark);
+  background: var(--white);
+  border-radius: 50%;
+}
+
+.bridesmaid-voting-instructions h2 {
+  margin: 0 0 5px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.bridesmaid-voting-instructions p {
+  margin: 0;
+  color: var(--text-light);
+  line-height: 1.55;
+  font-size: 0.9rem;
+}
+
+.bridesmaid-song-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bridesmaid-song-card {
+  min-width: 0;
+  padding: 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-soft);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bridesmaid-song-card.is-favorite {
+  border-color: var(--sage-dark);
+  box-shadow: 0 0 0 2px rgba(111, 132, 107, 0.12), var(--shadow-soft);
+}
+
+.bridesmaid-song-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.bridesmaid-song-number {
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  color: var(--sage-dark);
+  background: var(--sage-light);
+  border-radius: 50%;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.bridesmaid-song-title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.bridesmaid-song-title-wrap h3 {
+  margin: 0 0 3px;
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
+.bridesmaid-song-title-wrap p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.88rem;
+}
+
+.bridesmaid-favorite-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  color: var(--sage-dark);
+  background: var(--sage-light);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.bridesmaid-song-embed {
+  padding: 8px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.bridesmaid-song-embed .spotify-track-embed {
+  display: block;
+  width: 100%;
+  min-height: 152px;
+  border: 0;
+  border-radius: 8px;
+}
+
+.bridesmaid-song-no-embed {
+  margin: 0;
+  padding: 14px;
+  color: var(--text-light);
+  background: var(--background, #f8f6f3);
+  border-radius: 10px;
+  font-size: 0.83rem;
+}
+
+.bridesmaid-song-actions {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.bridesmaid-favorite-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 13px;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.bridesmaid-favorite-option input,
+.bridesmaid-rating-option input {
+  accent-color: var(--sage-dark);
+}
+
+.bridesmaid-favorite-option.selected {
+  color: var(--sage-dark);
+  background: var(--sage-light);
+  border-color: var(--sage-dark);
+}
+
+.bridesmaid-rating-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.bridesmaid-rating-fieldset legend {
+  margin-bottom: 7px;
+  color: var(--text-light);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.bridesmaid-rating-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.bridesmaid-rating-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 76px;
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.bridesmaid-rating-option.rating-yes.selected {
+  color: #315e3b;
+  background: #edf5ed;
+  border-color: #8eaf92;
+}
+
+.bridesmaid-rating-option.rating-maybe.selected {
+  color: #856322;
+  background: #fbf4e3;
+  border-color: #d9bd79;
+}
+
+.bridesmaid-rating-option.rating-no.selected {
+  color: #8b4444;
+  background: #fbebeb;
+  border-color: #d6a0a0;
+}
+
+.bridesmaid-submit-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+  text-align: center;
+}
+
+.bridesmaid-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 12px 22px;
+  color: white;
+  background: var(--sage-dark);
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.bridesmaid-submit-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.bridesmaid-submit-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.bridesmaid-submit-note {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+.bridesmaid-form-message {
+  width: 100%;
+  margin: 0;
+  padding: 11px 14px;
+  border-radius: 9px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.bridesmaid-form-message.error {
+  color: #8b3333;
+  background: #fbebeb;
+}
+
+.bridesmaid-form-message.success {
+  color: #315e3b;
+  background: #edf5ed;
+}
+
+.bridesmaid-songs-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bridesmaid-songs-spinner {
+  animation: bridesmaid-spin 1s linear infinite;
+}
+
+.bridesmaid-songs-empty {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.bridesmaid-songs-empty h2 {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+}
+
+.bridesmaid-songs-empty p {
+  margin: 0;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+@keyframes bridesmaid-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .bridesmaid-voter-card,
+  .bridesmaid-song-card {
+    padding: 14px;
+  }
+
+  .bridesmaid-song-heading {
+    align-items: flex-start;
+    gap: 9px;
+  }
+
+  .bridesmaid-song-number {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .bridesmaid-favorite-badge {
+    padding: 5px 7px;
+    font-size: 0.68rem;
+  }
+
+  .bridesmaid-song-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .bridesmaid-favorite-option {
+    justify-content: center;
+  }
+
+  .bridesmaid-rating-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bridesmaid-rating-option {
+    min-width: 0;
+  }
+
+  .bridesmaid-submit-area {
+    padding: 18px 14px;
+  }
+
+  .bridesmaid-submit-button {
+    width: 100%;
+  }
+}

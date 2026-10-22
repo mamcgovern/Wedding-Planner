@@ -1,0 +1,45 @@
+/* Dedicated admin controls for the bridesmaid entrance song collection. */
+
+.bridesmaid-entrance-admin {
+  margin-bottom: 24px;
+}
+
+.music-admin-help-text {
+  max-width: 640px;
+  margin: 8px 0 0;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.bridesmaid-candidate-list {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.bridesmaid-candidate-list .music-admin-section-heading {
+  margin-bottom: 14px;
+}
+
+.bridesmaid-candidate-list .music-admin-section-heading h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.bridesmaid-candidate-list .music-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bridesmaid-candidate-list .music-admin-card {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .bridesmaid-candidate-list .music-admin-card {
+    gap: 8px;
+  }
+}

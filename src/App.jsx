@@ -19,6 +19,7 @@ import WeddingDayPhotos from "./pages/WeddingDayPhotos";
 import Weekend from "./pages/Weekend";
 
 import Music from "./pages/weekend/Music";
+import BridesmaidSongs from "./pages/weekend/BridesmaidSongs";
 import SleepingArrangements from "./pages/weekend/SleepingArrangements";
 import Venue from "./pages/weekend/Venue";
 import WeekendTimeline from "./pages/weekend/WeekendTimeline";
@@ -165,6 +166,13 @@ function App() {
           path="/weekend/music"
           element={
             <Music />
+          }
+        />
+
+        <Route
+          path="/weekend/bridesmaid-songs"
+          element={
+            <BridesmaidSongs />
           }
         />
 
