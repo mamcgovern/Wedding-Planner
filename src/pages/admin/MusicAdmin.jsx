@@ -96,6 +96,11 @@ function MusicAdmin() {
   ] = useState([]);
 
   const [
+    voterSearch,
+    setVoterSearch,
+  ] = useState("");
+
+  const [
     activeTab,
     setActiveTab,
   ] = useState("overall");
@@ -1406,6 +1411,116 @@ function MusicAdmin() {
                   </div>
                 </article>
               ))}
+          </div>
+        )}
+      </section>
+
+      <section
+        className="content-card bridesmaid-voters-section"
+        aria-labelledby="bridesmaid-voters-title"
+      >
+        <div className="music-editor-heading">
+          <div>
+            <p className="card-eyebrow">Voting Activity</p>
+            <h2 id="bridesmaid-voters-title">Who Has Voted?</h2>
+            <p className="music-admin-help-text">
+              {entranceVotes.length}{" "}
+              {entranceVotes.length === 1
+                ? "person has"
+                : "people have"}{" "}
+              submitted votes.
+            </p>
+          </div>
+          <span className="task-count">{entranceVotes.length}</span>
+        </div>
+
+        <label className="form-field">
+          <span>Search voters</span>
+          <input
+            type="search"
+            value={voterSearch}
+            onChange={(event) => setVoterSearch(event.target.value)}
+            placeholder="Search by name..."
+          />
+        </label>
+
+        {entranceVotes.length === 0 ? (
+          <p className="music-admin-help-text">
+            No votes have been submitted yet.
+          </p>
+        ) : (
+          <div className="bridesmaid-voter-list">
+            {entranceVotes
+              .filter((vote) =>
+                (vote.guestName || "Unknown voter")
+                  .toLowerCase()
+                  .includes(voterSearch.trim().toLowerCase())
+              )
+              .sort((a, b) =>
+                (a.guestName || "").localeCompare(b.guestName || "")
+              )
+              .map((vote) => {
+                const favorite = entranceSongs.find(
+                  (song) => song.id === vote.favoriteSongId
+                );
+
+                return (
+                  <article key={vote.id} className="bridesmaid-voter-card">
+                    <div className="bridesmaid-voter-header">
+                      <div>
+                        <h3>{vote.guestName || "Unknown voter"}</h3>
+                        <p>
+                          Favorite:{" "}
+                          <strong>
+                            {favorite
+                              ? `${favorite.title}${favorite.artist ? ` - ${favorite.artist}` : ""}`
+                              : "Song no longer available"}
+                          </strong>
+                        </p>
+                      </div>
+                      <Star size={18} aria-hidden="true" />
+                    </div>
+
+                    <div className="bridesmaid-voter-ratings">
+                      {entranceSongs
+                        .filter((song) => song.id !== vote.favoriteSongId)
+                        .map((song) => {
+                          const rating = vote.ratings?.[song.id];
+
+                          return (
+                            <div key={song.id} className="bridesmaid-voter-rating">
+                              <span>
+                                {song.title}
+                                {song.artist ? ` - ${song.artist}` : ""}
+                              </span>
+                              <strong>
+                                {rating
+                                  ? rating.charAt(0).toUpperCase() + rating.slice(1)
+                                  : "Not rated"}
+                              </strong>
+                            </div>
+                          );
+                        })}
+                    </div>
+
+                    <p className="bridesmaid-voter-updated">
+                      Last updated:{" "}
+                      {vote.updatedAt?.toDate
+                        ? vote.updatedAt.toDate().toLocaleString()
+                        : "Timestamp unavailable"}
+                    </p>
+                  </article>
+                );
+              })}
+            {entranceVotes.filter((vote) =>
+              (vote.guestName || "Unknown voter")
+                .toLowerCase()
+                .includes(voterSearch.trim().toLowerCase())
+            ).length === 0 && (
+              <p className="music-admin-help-text">
+                No voters match “{voterSearch}”.
+              </p>
+            )}
           </div>
         )}
       </section>

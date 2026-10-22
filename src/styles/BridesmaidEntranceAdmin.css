@@ -38,8 +38,83 @@
   width: 100%;
 }
 
+.bridesmaid-voters-section {
+  margin-top: 24px;
+}
+
+.bridesmaid-voter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.bridesmaid-voter-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface, white);
+}
+
+.bridesmaid-voter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.bridesmaid-voter-header h3 {
+  margin: 0 0 8px;
+}
+
+.bridesmaid-voter-header p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.bridesmaid-voter-ratings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.bridesmaid-voter-rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--background, #f7f7f7);
+}
+
+.bridesmaid-voter-rating span {
+  overflow-wrap: anywhere;
+}
+
+.bridesmaid-voter-rating strong {
+  flex-shrink: 0;
+}
+
+.bridesmaid-voter-updated {
+  margin: 14px 0 0;
+  color: var(--text-light);
+  font-size: 0.82rem;
+}
+
 @media (max-width: 640px) {
   .bridesmaid-candidate-list .music-admin-card {
     gap: 8px;
+  }
+}
+
+@media (max-width: 500px) {
+  .bridesmaid-voter-card {
+    padding: 14px;
+  }
+
+  .bridesmaid-voter-rating {
+    align-items: flex-start;
   }
 }
