@@ -31,6 +31,7 @@ const BRIDESMAID_VOTERS = [
   { id: "sydni-edgington", displayName: "Sydni Edgington" },
   { id: "toph-mcgovern", displayName: "Toph McGovern" },
   { id: "kay-mcgovern", displayName: "Kay McGovern" },
+  { id: "paula-mcgovern", displayName: "Paula McGovern" },
   { id: "maddelynne-mcgovern", displayName: "Maddelynne McGovern" },
   { id: "lizzy-cardey", displayName: "Lizzy Cardey" },
   { id: "nicholas-bergan", displayName: "Nicholas Bergan" },
